@@ -1,0 +1,24 @@
+/* 
+    Document   : style
+    Created on : Oct 26, 2011, 2:10:33 PM
+    Author     : switlik
+    Description:
+        Purpose of the stylesheet follows.
+*/
+
+/* 
+   TODO customize this sample style
+   Syntax recommendation http://www.w3.org/TR/REC-CSS2/
+*/
+
+.path-mod-email div.column {
+    display: inline-block;
+}
+
+.path-mod-email .inputmail {
+    width: 512px;
+}
+
+.path-mod-email .legendmail {
+    width: 180px;
+}
