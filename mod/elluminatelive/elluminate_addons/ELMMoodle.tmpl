@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!-- This file provides a default template for Elluminate Live! Manager.   -->
+
+<template
+    groupName="ELMMoodle"
+    autoLaunch="true"
+    launchDirector="http://[IPADDRESS]/buildtemplate.event">
+
+<!-- Room authentication is to be done by Elluminate Live! Manager.        -->
+
+    <auth class="WebAccessManager">
+        <url string="http://[IPADDRESS]/authenticate.event?adapter=moodle"/>
+    </auth>
+
+<!-- Enable all classroom functions.                                       -->
+
+    <services>
+        <all/>
+    </services>
+
+</template>
