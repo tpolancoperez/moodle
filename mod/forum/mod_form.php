@@ -69,6 +69,7 @@ class mod_forum_mod_form extends moodleform_mod {
         $options[FORUM_TRACKING_ON] = get_string('trackingon', 'forum');
         $mform->addElement('select', 'trackingtype', get_string('trackingtype', 'forum'), $options);
         $mform->addHelpButton('trackingtype', 'trackingtype', 'forum');
+        $mform->setDefault(trackingtype, FORUM_TRACKING_ON);
 
         $choices = get_max_upload_sizes($CFG->maxbytes, $COURSE->maxbytes);
         $choices[1] = get_string('uploadnotallowed');
