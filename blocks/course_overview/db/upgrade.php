@@ -47,7 +47,7 @@ function xmldb_block_course_overview_upgrade($oldversion) {
         
 
         /// community savepoint reached
-        upgrade_block_savepoint(true, 2012040202, 'community');
+        upgrade_block_savepoint(true, 2012040202, 'course_overview');
     }
 
 
