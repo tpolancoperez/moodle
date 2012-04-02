@@ -1,0 +1,91 @@
+/*
+  This file is part of Moodle - http://moodle.org/
+  Moodle is free software: you can redistribute it and/or modify
+  it under the terms of the GNU General Public License as published by
+  the Free Software Foundation, either version 3 of the License, or
+  (at your option) any later version.
+
+  Moodle is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU General Public License for more details.
+  You should have received a copy of the GNU General Public License
+  along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
+/**
+ * zebra theme css3 css file
+ *
+ * css declarations are by property, by browser in this order:
+ * W3C Standard
+ * Firefox 3.6+
+ * Safari 4+
+ * Safari 5.1+, Chrome 10+
+ * Opera 11.1+
+ * IE 10+
+ *
+ * Safari 4+ is not included in some gradient declarations as it doesn't support fixed heights in gradients
+ * IE 6+ is not included as it doesn't support multi-point gradients, fixed height gradients, or box-shadows
+ *
+ * @package    theme_zebra
+ * @copyright  2011 Danny Wahl
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
+.block,
+.dockeditempanel_content,
+#region-pre,
+#region-post {
+    background:linear-gradient(top, [[setting:colorscheme]] 0%,transparent 15px) [[setting:fifthcolor]];
+    background:-moz-linear-gradient(center top, [[setting:colorscheme]] 0%, transparent 15px) [[setting:fifthcolor]];
+    background:-webkit-linear-gradient(top, [[setting:colorscheme]] 0%,transparent 15px) [[setting:fifthcolor]];
+    background:-o-linear-gradient(top, [[setting:colorscheme]] 0%,transparent 15px) [[setting:fifthcolor]];
+    background:-ms-linear-gradient(top, [[setting:colorscheme]] 0%,transparent 15px) [[setting:fifthcolor]];
+
+    box-shadow:0 1px 0 [[setting:fifthcolor]] inset;
+    -moz-box-shadow:0 1px 0 [[setting:fifthcolor]] inset;
+    -webkit-box-shadow:0 1px 0 [[setting:fifthcolor]] inset;
+}
+
+#region-main {
+    background:linear-gradient(top, [[setting:colorscheme]] 0%,transparent 15px) [[setting:fourthcolor]];
+    background:-moz-linear-gradient(center top, [[setting:colorscheme]] 0%, transparent 15px) [[setting:fourthcolor]];
+    background:-webkit-linear-gradient(top, [[setting:colorscheme]] 0%,transparent 15px) [[setting:fourthcolor]];
+    background:-o-linear-gradient(top, [[setting:colorscheme]] 0%,transparent 15px) [[setting:fourthcolor]];
+    background:-ms-linear-gradient(top, [[setting:colorscheme]] 0%,transparent 15px) [[setting:fourthcolor]];
+
+    box-shadow:0 1px 0 [[setting:fourthcolor]] inset;
+    -moz-box-shadow:0 1px 0 [[setting:fourthcolor]] inset;
+    -webkit-box-shadow:0 1px 0 [[setting:fourthcolor]] inset;
+}
+
+#custommenu ul.dropdown {
+    background:linear-gradient(top, [[setting:menucolorscheme]] 0%,transparent 10%,transparent 90%,[[setting:menucolorscheme]] 100%) [[setting:firstcolor]];
+    background:-moz-linear-gradient(center top, [[setting:menucolorscheme]] 0%, transparent 10%, transparent 90%, [[setting:menucolorscheme]] 100%) [[setting:firstcolor]];
+    background:-webkit-gradient(linear, left top, left bottom, color-stop(0%,[[setting:menucolorscheme]]), color-stop(10%,transparent), color-stop(90%,transparent), color-stop(100%,[[setting:menucolorscheme]])) [[setting:firstcolor]];
+    background:-webkit-linear-gradient(top, [[setting:menucolorscheme]] 0%,transparent 10%,transparent 90%,[[setting:menucolorscheme]] 100%) [[setting:firstcolor]];
+    background:-o-linear-gradient(top, [[setting:menucolorscheme]] 0%,transparent 10%,transparent 90%,[[setting:menucolorscheme]] 100%) [[setting:firstcolor]];
+    background:-ms-linear-gradient(top, [[setting:menucolorscheme]] 0%,transparent 10%,transparent 90%,[[setting:menucolorscheme]] 100%) [[setting:firstcolor]];
+}
+
+#custommenu ul.dropdown > li:last-child {
+    background:linear-gradient(top, [[setting:menucolorscheme]] 0%,transparent 10%,transparent 90%,[[setting:menucolorscheme]] 100%) [[setting:thirdcolor]];
+    background:-moz-linear-gradient(center top, [[setting:menucolorscheme]] 0%, transparent 10%, transparent 90%, [[setting:menucolorscheme]] 100%) [[setting:thirdcolor]];
+    background:-webkit-gradient(linear, left top, left bottom, color-stop(0%,[[setting:menucolorscheme]]), color-stop(10%,transparent), color-stop(90%,transparent), color-stop(100%,[[setting:menucolorscheme]])) [[setting:thirdcolor]];
+    background:-webkit-linear-gradient(top, [[setting:menucolorscheme]] 0%,transparent 10%,transparent 90%,[[setting:menucolorscheme]] 100%) [[setting:thirdcolor]];
+    background:-o-linear-gradient(top, [[setting:menucolorscheme]] 0%,transparent 10%,transparent 90%,[[setting:menucolorscheme]] 100%) [[setting:thirdcolor]];
+    background:-ms-linear-gradient(top, [[setting:menucolorscheme]] 0%,transparent 10%,transparent 90%,[[setting:menucolorscheme]] 100%) [[setting:thirdcolor]];}
+
+#custommenu ul.dropdown > li:hover {
+    background:linear-gradient(top, [[setting:menucolorscheme]] 0%,transparent 10%,transparent 90%,[[setting:menucolorscheme]] 100%) [[setting:secondcolor]];
+    background:-moz-linear-gradient(center top, [[setting:menucolorscheme]] 0%, transparent 10%, transparent 90%, [[setting:menucolorscheme]] 100%) [[setting:secondcolor]];
+    background:-webkit-gradient(linear, left top, left bottom, color-stop(0%,[[setting:menucolorscheme]]), color-stop(10%,transparent), color-stop(90%,transparent), color-stop(100%,[[setting:menucolorscheme]])) [[setting:secondcolor]];
+    background:-webkit-linear-gradient(top, [[setting:menucolorscheme]] 0%,transparent 10%,transparent 90%,[[setting:menucolorscheme]] 100%) [[setting:secondcolor]];
+    background:-o-linear-gradient(top, [[setting:menucolorscheme]] 0%,transparent 10%,transparent 90%,[[setting:menucolorscheme]] 100%) [[setting:secondcolor]];
+    background:-ms-linear-gradient(top, [[setting:menucolorscheme]] 0%,transparent 10%,transparent 90%,[[setting:menucolorscheme]] 100%) [[setting:secondcolor]];}
+
+ul.dropdown ul a:hover {
+    box-shadow:0 -1px 0 [[setting:firstcolor]], 0 1px 0 [[setting:firstcolor]];
+    -moz-box-shadow:0 -1px 0 [[setting:firstcolor]], 0 1px 0 [[setting:firstcolor]];
+    -webkit-box-shadow:0 -1px 0 [[setting:firstcolor]], 0 1px 0 [[setting:firstcolor]];
+}

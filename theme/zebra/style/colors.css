@@ -1,0 +1,94 @@
+/*
+  This file is part of Moodle - http://moodle.org/
+  Moodle is free software: you can redistribute it and/or modify
+  it under the terms of the GNU General Public License as published by
+  the Free Software Foundation, either version 3 of the License, or
+  (at your option) any later version.
+
+  Moodle is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU General Public License for more details.
+  You should have received a copy of the GNU General Public License
+  along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
+/**
+ * zebra theme colors css file
+ *
+ * @package    theme_zebra
+ * @copyright  2011 Danny Wahl
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
+/* All Columns */
+html {color:[[setting:thirdcolor]];background-color:[[setting:backgroundcolor]];}
+body {background:url([[setting:backgroundurl]]) no-repeat scroll left top transparent;}
+legend {color:[[setting:thirdcolor]];}
+
+#page-header {background:url([[setting:logourl]]) no-repeat scroll left top transparent;min-height:[[setting:logourlheight]];}
+.navbar {background-color:[[setting:fourthcolor]];border-bottom:1px solid [[setting:backgroundcolor]];}
+#navbar-wrapper {background-color:[[setting:firstcolor]];}
+#page-footer-wrapper {background-color:[[setting:fourthcolor]];}
+#page-footer {background-color:[[setting:backgroundcolor]];}
+
+#user-pic .defaultuserpic {background-color:[[setting:firstcolor]];}
+
+a,
+a:visited {color:[[setting:firstcolor]];}
+a:hover,
+a:active {color:[[setting:secondcolor]];}
+
+.block {border-color:[[setting:backgroundcolor]];margin-bottom:8px;}
+
+.forumpost {border-color:[[setting:firstcolor]];background-color:[[setting:fourthcolor]];}
+.forumpost .header {background-color:[[setting:firstcolor]];color:[[setting:fourthcolor]];}
+.forumpost .header a {color:[[setting:fourthcolor]];}
+.forumpost.unread .header {background-color:[[setting:secondcolor]];color:[[setting:fourthcolor]];}
+.forumpost.unread {border-color:[[setting:secondcolor]];}
+.path-mod-forum .forumheaderlist td {border:0 none;}
+.path-mod-forum .forumheaderlist {border:1px solid [[setting:backgroundcolor]];}
+span.unread {background-color:[[setting:secondcolor]];}
+
+.r0 {background-color:[[setting:colorscheme]];}
+.block .r0,
+#dock .r0 {background:none;}
+
+.generalbox {border-color:[[setting:backgroundcolor]];}
+
+.course-content ul li.section {border: 1px solid [[setting:backgroundcolor]];}
+.course-content ul li.section.current {border-color:[[setting:firstcolor]];}
+
+.mform fieldset {border-color:[[setting:backgroundcolor]];}
+
+.calendartable th,
+.calendartable td {border-color:[[setting:backgroundcolor]];}
+
+/* 1 Column */
+@media screen and (max-width: 599px) {
+    #region-main {background-color: [[setting:fourthcolor]];}
+    #region-pre,
+    #region-post {background-color: [[setting:fifthcolor]];}
+    #page-content-wrapper {background-color:[[setting:firstcolor]];}
+}
+
+/* 2 Column */
+@media screen and (min-width: 600px) and (max-width: 799px) {
+    #region-main {background-color: [[setting:fourthcolor]];}
+    #region-main-wrap,
+    #region-pre,
+    #region-post {background-color: [[setting:fifthcolor]];}
+}
+
+/* 3 Column */
+@media screen and (min-width: 800px) {
+    #region-main {background-color:[[setting:fourthcolor]];}
+    #region-post-box,
+    #region-main-wrap,
+    #region-pre,
+    #region-post {background-color:[[setting:fifthcolor]];}
+}
+
+/* Report Layout */
+.pagelayout-report #page-content {background-color:[[setting:fourthcolor]];}
+#report-region-pre {background-color:[[setting:fifthcolor]];}

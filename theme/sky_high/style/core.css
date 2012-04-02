@@ -25,12 +25,16 @@ body.pagelayout-popup.background {
 .pagelayout-frontpage #page-content #region-main-box #region-post-box {
     padding-top: 0;
 }
-a:link, a:visited {
+a:link {
     color: #003466;
     text-decoration: none;
 }
+a:visited {
+    color: purple;
+    text-decoration: none;
+}
 a:active, a:hover, a:focus {
-    color: #4785ac;
+    color: orange;
     text-decoration: none;
 }
 #region-main-box {

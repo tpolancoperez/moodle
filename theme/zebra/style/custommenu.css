@@ -1,0 +1,206 @@
+/*
+  This file is part of Moodle - http://moodle.org/
+  Moodle is free software: you can redistribute it and/or modify
+  it under the terms of the GNU General Public License as published by
+  the Free Software Foundation, either version 3 of the License, or
+  (at your option) any later version.
+
+  Moodle is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU General Public License for more details.
+  You should have received a copy of the GNU General Public License
+  along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
+/**
+ * zebra theme custommenu css file
+ *
+ * @package    theme_zebra
+ * @copyright  2011 Danny Wahl
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
+#custommenu { 
+	height: 30px;
+        background: [[setting:firstcolor]];
+	text-shadow: 0 1px 0 [[setting:thirdcolor]];
+        color: [[setting:backgroundcolor]];
+}
+
+#custommenu ul.dropdown {
+        width:100%;
+        height:100%;
+	font:bold 13px "Trebuchet MS",Arial,Helvetica,sans-serif;
+
+}
+
+ul.dropdown > li { 
+	border-right: 1px solid [[setting:thirdcolor]]; 
+}
+
+
+ul.dropdown > li:last-child {
+        border-right:0 none;
+        float:right;
+        background-color:[[setting:thirdcolor]]
+}
+
+ul.dropdown span.customitem { 
+        padding: 0;
+        margin: 0;
+        width: 100%;
+        height:100%;
+}
+
+ul.dropdown li a,
+ul.dropdown span.customitem a { 
+	padding:6px 20px;
+}
+
+#custommenu ul.dropdown ul { 
+	padding:0;
+        width:185px;
+        margin-top:0;
+}
+
+#custommenu ul.dropdown ul ul {
+        margin-top:-1px;
+}
+
+#custommenu ul.dropdown ul a { 
+	padding:7px 0px 6px 18px;
+        width:auto;
+}
+
+ul.dropdown a {
+    width:145px;
+}
+
+ul.dropdown > li:first-child a,
+ul.dropdown > li:last-child a {
+        width:auto;
+}
+
+ul.dropdown > li:first-child a {
+        background:url([[pix:theme|menu/home_icon]]) no-repeat scroll center center;
+}
+
+ul.dropdown > li:hover,
+ul.dropdown > li:last-child:hover {
+        background-color:[[setting:secondcolor]];
+
+}
+
+ul.dropdown,
+ul.dropdown li,
+ul.dropdown ul {
+	list-style:none;
+	margin:0;
+	padding:0;
+}
+
+ul.dropdown li {
+	float:left;
+	line-height:1.3em;
+	vertical-align:middle;
+  background-color: transparent; 
+	zoom:1 !important;
+        height:30px;
+}
+
+ul.dropdown li.hover,
+ul.dropdown li:hover {
+	position:relative;
+	z-index:599;
+	cursor:default;
+}
+
+ul.dropdown ul {
+	visibility:hidden;
+	position:absolute;
+	top:100%;
+        z-index:598;
+	left:auto;
+	right:0;
+	font:100% "Trebuchet MS",Arial,Helvetica,sans-serif;
+	background-color:[[setting:thirdcolor]];
+}
+
+ul.dropdown ul li {
+	float:none;
+        border-top:1px solid rgba(255,255,255,0.1);
+        border-bottom:1px solid rgba(0,0,0,0.4);
+}
+
+ul.dropdown ul ul {
+	top:0;
+	right:auto;
+	left:100%;
+	margin-top:-2px;
+}
+
+ul.dropdown li:hover > ul {
+	visibility:visible;
+}
+ul.dropdown span,
+ul.dropdown span a,
+ul.dropdown li.clickable-with-children > a {
+	width:145px;
+	padding:2px 6px 4px 20px;
+}
+
+ul.dropdown ul span, 
+ul.dropdown ul span a, 
+ul.dropdown ul li.clickable-with-children > a { 
+	background:[[setting:thirdcolor]] url([[pix:theme|menu/menu_arrow]]) no-repeat 95% center;
+}
+
+ul.dropdown a:link, ul.dropdown a:visited {
+	color: [[setting:fourthcolor]];
+	text-decoration: none;
+}
+
+ul.dropdown ul a {
+        background-color: [[setting:thirdcolor]];
+}
+
+ul.dropdown ul a:hover { 
+	background-color: [[setting:firstcolor]];
+}
+
+ul.dropdown ul ul li,
+ul.dropdown ul ul ul li { 
+	background-color:[[setting:thirdcolor]];
+}
+
+ul.dropdown li a,
+ul.dropdown span,
+ul.dropdown span a { 
+	border: 0 none; 
+	background-color: transparent;
+}
+
+ul.dropdown a,ul.dropdown span{ 
+	display:block; 
+}
+
+ul.dropdown ul a {
+	width:166px;
+	padding:2px 0 4px 5px;
+}
+
+ul.dropdown ul li:hover > span, 
+ul.dropdown ul li:hover > span a {
+	background-image:url([[pix:theme|menu/menu_arrow]]) [[setting:firstcolor]];
+}
+
+ul.dropdown li.clickable-with-children:hover > a {
+background-image:url([[pix:theme|menu/menu_arrow]]);
+}
+
+ul.dropdown ul ul *.open,
+ul.dropdown ul ul li:hover > span,
+ul.dropdown ul ul li:hover > span a {
+background-image:url([[pix:theme|menu/menu_arrow]]) [[setting:firstcolor]];
+}
