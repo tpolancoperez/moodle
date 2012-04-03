@@ -58,7 +58,7 @@ class block_quickmail extends block_list {
                 $drafts_email_str
             );
             $this->content->items[] = $drafts;
-            $this->content->icons[] = $OUTPUT->pix_icon('i/settings', $drafts_email_str);
+            $this->content->icons[] = $OUTPUT->pix_icon('i/drafts', $drafts_email_str);
 
             $history_str = quickmail::_s('history');
             $history = html_writer::link(
@@ -66,7 +66,7 @@ class block_quickmail extends block_list {
                 $history_str
             );
             $this->content->items[] = $history;
-            $this->content->icons[] = $OUTPUT->pix_icon('i/settings', $history_str);
+            $this->content->icons[] = $OUTPUT->pix_icon('i/history', $history_str);
         }
 
         if (has_capability('block/quickmail:allowalternate', $context)) {
