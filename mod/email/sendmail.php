@@ -55,16 +55,27 @@
     $selectedusers = NULL;
     
     include_once('sendmail_form.php'); 
-    $context = context_module::instance($cm->id);
     
-    $formoptions = get_form_options($email, $mail, $options, $selectedusers);
+    $context = get_context_instance(CONTEXT_MODULE, $cm->id);
+    
+    $formoptions = get_form_options($email, $mail, $options, $selectedusers, $context);
     
     $mform = new mod_email_sendmail_form('sendmail.php', $formoptions);
+    
     //Form processing and displaying is done here
     if ($mform->is_cancelled()) {
         //Handle form cancel operation, if cancel button is present on form
         redirect($CFG->wwwroot.'/mod/email/view.php?id='.$cm->id);
     } else if ($form = $mform->get_data()) {
+        
+        //Handle File and Content attachments.
+        $draftitemid = file_get_submitted_draft_itemid('attachments');
+        file_prepare_draft_area($draftitemid, $modcontext->id, 'mod_email', 'attachments', empty($mail->id)?null:$mail->id, $formoptions["attachmentoptions"]);
+
+        $draftid_editor = file_get_submitted_draft_itemid('body');
+        $form->body["text"] = file_prepare_draft_area($draftid_editor, $context->id, 'mod_email', 'body', empty($mail->id)?null:$mail->id, $formoptions["bodyoptions"], $form->body["text"]);
+
+    
         //because of the methods used whe sending the To,Cc, & Bcc fields they aren't handled by Moodle Form API
         if(isset($_POST["to"])){
             $form->to = $_POST["to"];
@@ -80,7 +91,7 @@
             $mail->accountid = $account->id;
 
             // Generic URL for send mails errors
-            $baseurl =  $CFG->wwwroot.'/mod/email/view.php?id='.$cm->id.'&amp;mailid='.$options->mailid.'&amp;subject=\''.$form->subject.'\'&amp;body=\''.$form->body_editor['text'].'\'';
+            $baseurl =  $CFG->wwwroot.'/mod/email/view.php?id='.$cm->id.'&amp;mailid='.$options->mailid.'&amp;subject=\''.$form->subject.'\'&amp;body=\''.$form->body['text'].'\'';
 
             // Check destinataries if no drafting
             if ( !( isset($form->to) or isset($form->cc) or isset($form->bcc) )  and empty($form->draft)) {
@@ -89,7 +100,7 @@
                     $error = EMAIL_NOSENDERS;
 
                     // Redirect to new mail form, for it's not empty
-                    redirect($CFG->wwwroot.'/mod/email/view.php?'.$url.'&action=newmail&subject='.$form->subject.'&body='.$form->body_editor['text'].'&error='.$error);
+                    redirect($CFG->wwwroot.'/mod/email/view.php?'.$url.'&action=newmail&subject='.$form->subject.'&body='.$form->body['text'].'&error='.$error);
             }
 
             // Check subject
@@ -99,7 +110,7 @@
                     $error = EMAIL_NOSUBJECT;
 
                     // Redirect to new mail form, for it's not empty
-                    redirect($CFG->wwwroot.'/mod/email/view.php?'.$url.'&amp;action=\'newmail\'&amp;body='.$form->body_editor['text'].'&amp;error='.$error.'');
+                    redirect($CFG->wwwroot.'/mod/email/view.php?'.$url.'&amp;action=\'newmail\'&amp;body='.$form->body['text'].'&amp;error='.$error.'');
             } else {
                     // Strip all tags except multilang
                     $mail->subject = clean_param(strip_tags($form->subject, '<lang><span>'), PARAM_CLEAN);
@@ -112,11 +123,11 @@
                 if (! $cm = get_coursemodule_from_instance('email', $email->id, $email->course)) {
                     $cm->id = 0;
                 }
-                $form->body_editor['text'] = trusttext_strip($form->body_editor['text']);
+                $form->body['text'] = trusttext_strip($form->body['text']);
             }
 
             // Add body
-            $mail->body = $form->body_editor['text'];
+            $mail->body = $form->body['text'];
 
             // Add new mail, in the Inbox or corresponding folder
             if ( empty($form->draft) ) {

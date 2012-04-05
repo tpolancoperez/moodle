@@ -163,6 +163,8 @@
     // Print header of central colunm
     //print_simple_box_start('center', '100%', 'white', 5, 'sitetopic');
 
+    $context = get_context_instance(CONTEXT_MODULE, $cm->id);
+    
     // Print action in case . . .
     switch( $action ) {
         case 'viewmail':
@@ -171,7 +173,7 @@
         case 'newmail':
                 // If is new mail, mailid = null or zero.
                 $options->mailid = 0;
-                email_newmailform($email, $fieldsmail, $options, $selectedusers);
+                email_newmailform($email, $fieldsmail, $options, $selectedusers, $context);
             break;
 
         case 'draftmail':

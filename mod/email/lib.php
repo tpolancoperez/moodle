@@ -1248,14 +1248,12 @@ function email_have_account($courseid, $userid, $emailid=null) {
     }
 }
 
-function get_form_options($email, $mail, $options, $selectedusers){
-    global $COURSE;
-    $cm = get_coursemodule_from_instance("email", $email->id, $COURSE->id);
-    $context = context_module::instance($cm->id);
+function get_form_options($email, $mail, $options, $selectedusers, $context){
     $bodyoptions = array('subdirs'=>false, 'maxfiles'=>50, 'maxbytes'=>$email->maxbytes, 'trusttext'=>true, 'context'=>$context);
-    $attachmentoptions = array('subdirs'=>false, 'maxfiles'=>50, 'maxbytes'=>$email->maxbytes);
+    $attachmentoptions = array('subdirs'=>false, 'maxfiles'=>50, 'maxbytes'=>$email->maxbytes, 'context'=>$context);
+    
     $mail->id = null;  //being set to NULL creates a new entry
-    $mail = file_prepare_standard_filemanager($mail, 'attachments', $attachmentoptions, $context, 'mod_email', 'attachment', $mail->id);
+    $mail = file_prepare_standard_filemanager($mail, 'attachments', $attachmentoptions, $context, 'mod_email', 'attachments', $mail->id);
     $mail = file_prepare_standard_editor($mail, 'body', $bodyoptions, $context, 'mod_email', 'body', $mail->id);
     $formoptions = array('mail'=>$mail
                         , 'email'=>$email
@@ -1278,10 +1276,10 @@ function get_form_options($email, $mail, $options, $selectedusers){
  * @return boolean Success/Fail
  * @todo Finish documenting this function
  **/
-function email_newmailform($email, $mail, $options, $selectedusers=NULL) {
+function email_newmailform($email, $mail, $options, $selectedusers, $context) {
 
 	global $CFG;
-
+        
 	// Errors
         $nosenders = '';
 	if ( $mail->error ) {
@@ -1297,9 +1295,16 @@ function email_newmailform($email, $mail, $options, $selectedusers=NULL) {
 	}
 
         include_once('sendmail_form.php');
-        $formoptions = get_form_options($email, $mail, $options, $selectedusers);
+        $formoptions = get_form_options($email, $mail, $options, $selectedusers, $context);
         $mform = new mod_email_sendmail_form('sendmail.php', $formoptions);
         
+        $draftitemid = file_get_submitted_draft_itemid('attachments');
+        file_prepare_draft_area($draftitemid, $context->id, 'mod_email', 'attachments', empty($post->id)?null:$post->id, $formoptions["attachmentoptions"]);
+        
+        $draftid_editor = file_get_submitted_draft_itemid('body');
+        $currenttext = file_prepare_draft_area($draftid_editor, $context->id, 'mod_email', 'body', empty($mail->id) ? null : $mail->id, $formoptions["bodyoptions"], $mail->body);
+
+
         //Form processing and displaying is done here
         if ($mform->is_cancelled()) {
             //Handle form cancel operation, if cancel button is present on form
@@ -1309,9 +1314,11 @@ function email_newmailform($email, $mail, $options, $selectedusers=NULL) {
         } else {
             // this branch is executed if the form is submitted but the data doesn't validate and the form should be redisplayed
             // or on the first display of the form.
+            
             //Set default data (if any)
-//            $toform = array();
-//            $mform->set_data($toform);
+//            $mformdata = array();
+//            $mform->set_data($mformdata);
+            
             //displays the form
             $mform->display();
         }
