@@ -2997,7 +2997,8 @@ function email_add_new_mail($mail, $usersto, $userscc, $usersbcc, $mailid, $cont
     }
 
     // Add attachments
-    $mail   = file_postupdate_standard_filemanager($mail, 'attachments', $attachmentoptions, $context, 'mod_email', 'attachments', $mail->id);
+    //$mail   = file_postupdate_standard_filemanager($mail, 'attachments', $attachmentoptions, $context, 'mod_email', 'attachments', $mail->id);
+    file_save_draft_area_files($mail->attachments, $context->id, 'mod_email', 'attachments', $mail->id);
     $mail   = file_postupdate_standard_editor($mail, 'body', $bodyoptions, $context, 'mod_email', 'body', $mail->id);
     
     // Prepare send mail

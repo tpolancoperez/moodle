@@ -70,7 +70,7 @@
         
         //Handle File and Content attachments.
         $draftitemid = file_get_submitted_draft_itemid('attachments');
-        file_prepare_draft_area($draftitemid, $modcontext->id, 'mod_email', 'attachments', empty($mail->id)?null:$mail->id, $formoptions["attachmentoptions"]);
+        file_prepare_draft_area($draftitemid, $context->id, 'mod_email', 'attachments', empty($mail->id)?null:$mail->id, $formoptions["attachmentoptions"]);
 
         $draftid_editor = file_get_submitted_draft_itemid('body');
         $form->body["text"] = file_prepare_draft_area($draftid_editor, $context->id, 'mod_email', 'body', empty($mail->id)?null:$mail->id, $formoptions["bodyoptions"], $form->body["text"]);
@@ -129,11 +129,15 @@
             // Add body
             $mail->body = $form->body['text'];
 
+            //Add attachment draft ids
+            $mail->attachments = $draftitemid;
+            
             // Add new mail, in the Inbox or corresponding folder
             if ( empty($form->draft) ) {
                 if(!isset($form->cc)){ $form->cc = array();}
                 if(!isset($form->bcc)){ $form->bcc = array();}
-
+                if(!isset($form->mailid)){ $form->mailid = NULL;}
+                
                 if (! $mailid = email_add_new_mail($mail, $form->to, $form->cc, $form->bcc, $form->mailid, $context, $formoptions["attachmentoptions"], $formoptions["bodyoptions"]) ) {
                         notify('Could not send mail');
                 }
