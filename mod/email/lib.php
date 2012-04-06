@@ -1304,24 +1304,7 @@ function email_newmailform($email, $mail, $options, $selectedusers, $context) {
         $draftid_editor = file_get_submitted_draft_itemid('body');
         $currenttext = file_prepare_draft_area($draftid_editor, $context->id, 'mod_email', 'body', empty($mail->id) ? null : $mail->id, $formoptions["bodyoptions"], $mail->body);
 
-
-        //Form processing and displaying is done here
-        if ($mform->is_cancelled()) {
-            //Handle form cancel operation, if cancel button is present on form
-//        } else if ($fromform = $mform->get_data()) {
-            //In this case you process validated data. $mform->get_data() returns data posted in form.
-            //this isn't used here.  This Mod submits to sendmail.php instead.  
-        } else {
-            // this branch is executed if the form is submitted but the data doesn't validate and the form should be redisplayed
-            // or on the first display of the form.
-            
-            //Set default data (if any)
-//            $mformdata = array();
-//            $mform->set_data($mformdata);
-            
-            //displays the form
-            $mform->display();
-        }
+        $mform->display();
 
 	return true;
 }
@@ -2067,35 +2050,35 @@ function email_get_reference2foldermail($mailid, $folderid) {
  **/
 function email_mail2read($mailids, $accountid, $options, $printsuccess=true) {
 
-	global $CFG,$DB;
+    global $CFG,$DB;
 
-	$success = true;
+    $success = true;
 
-	// Get account
-	if (! $account = email_get_account_by_id($accountid) ) {
-		print_error('noaccount', 'email');
-	}
+    // Get account
+    if (! $account = email_get_account_by_id($accountid) ) {
+        print_error('noaccount', 'email');
+    }
 
-	if ($mailids) {
-		foreach ( $mailids as $mailid ) {
-			// Delete reference mail for this account
-			if (! $mail = $DB->set_field('email_send', 'readed', 1, array('mailid'=>$mailid, 'accountid'=>$account->id))) {
-			    	return false;
-			}
-		}
-	} else {
-		$success = false;
-	}
+    if ($mailids) {
+        foreach ( $mailids as $mailid ) {
+            // Delete reference mail for this account
+            if (! $mail = $DB->set_field('email_send', 'readed', 1, array('mailid'=>$mailid, 'accountid'=>$account->id))) {
+                return false;
+            }
+        }
+    } else {
+        $success = false;
+    }
 
-	// Build url part options
-	$url = email_build_url($options);
+    // Build url part options
+    $url = email_build_url($options);
 
-	if ( $printsuccess ) {
-		// Notify
-    	redirect( $CFG->wwwroot.'/mod/email/view.php?'.$url.'&amp;action=\'viewmails\'', '<div class="notifyproblem">'.get_string('toreadok', 'email').'</div>' );
-	}
+    if ( $printsuccess ) {
+        // Notify
+        redirect( $CFG->wwwroot.'/mod/email/view.php?'.$url.'&amp;action=\'viewmails\'', '<div class="notifyproblem">'.get_string('toreadok', 'email').'</div>' );
+    }
 
-	return $success;
+    return $success;
 }
 
 /**
@@ -2717,7 +2700,7 @@ function email_showaccountmails($accountid, $order = '', $page=0, $perpage=10, $
             $attachment_icon = '<img src="'.$CFG->wwwroot.'/mod/email/pix/clip.gif" alt="attachment" /> ';
         }
         
-        $table->add_data(array('<input id="mail" type="checkbox" name="mailid[]" value="'.$mail->id.'" />'
+        $table->add_data(array('<input id="mail" type="checkbox" name="selectedmailids[]" value="'.$mail->id.'" />'
                                 , $attachment_icon.$urltosent
                                 , $struser
                                 , userdate($mail->timecreated)
@@ -2760,6 +2743,11 @@ function email_has_attachments($mail, $cm) {
     $context = context_module::instance($cm->id);
     $fs = get_file_storage();
     $files = $fs->get_area_files($context->id, 'mod_email', 'attachments', $mail->id);
+    if(count($files)>1){
+        return true;
+    }
+    
+    $files = $fs->get_area_files($context->id, 'mod_email', 'body', $mail->id);
     return (count($files)>1);
 }
 
@@ -2954,6 +2942,9 @@ function email_get_parent_folder($folder) {
 function email_add_new_mail($mail, $usersto, $userscc, $usersbcc, $mailid, $context, $attachmentoptions, $bodyoptions) {
     global $DB;
     
+    $draftid_editor = $mail->body["itemid"];
+    $mail->body = $mail->body["text"];
+    
     if (! $mailid ) {
         $mail->timecreated = time();
 
@@ -2997,9 +2988,11 @@ function email_add_new_mail($mail, $usersto, $userscc, $usersbcc, $mailid, $cont
     }
 
     // Add attachments
-    //$mail   = file_postupdate_standard_filemanager($mail, 'attachments', $attachmentoptions, $context, 'mod_email', 'attachments', $mail->id);
-    file_save_draft_area_files($mail->attachments, $context->id, 'mod_email', 'attachments', $mail->id);
-    $mail   = file_postupdate_standard_editor($mail, 'body', $bodyoptions, $context, 'mod_email', 'body', $mail->id);
+    file_save_draft_area_files($mail->attachments, $context->id, 'mod_email', 'attachments', $mail->id, $attachmentoptions);
+    if(!empty($draftid_editor)){
+        $mail->body = file_save_draft_area_files($draftid_editor, $context->id, 'mod_email', 'body', $mail->id, $bodyoptions, $mail->body);
+        $DB->set_field('email_mail', 'body', $mail->body, array('id'=>$mail->id));
+    }
     
     // Prepare send mail
     $send = new stdClass();

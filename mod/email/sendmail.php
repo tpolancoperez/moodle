@@ -46,7 +46,6 @@
     $options = new stdClass();
     $options->id = $id;
     $options->a	 = $a;
-    $options->mailid = $mailid;
     $options->folderid = $folderid;
     $options->filterid = $filterid;
     $options->folderoldid = isset($folderoldid) ? $folderoldid : NULL;
@@ -84,36 +83,36 @@
 
         
         if (! empty($form->send) or ! empty($form->draft)) {
-            // Associted accountid
+            // Associated accountid
             if (! $account = $DB->get_record('email_account', array('emailid'=>$email->id, 'userid'=>$USER->id))) {
                 print_error('noaccount','email');
             }
             $mail->accountid = $account->id;
 
             // Generic URL for send mails errors
-            $baseurl =  $CFG->wwwroot.'/mod/email/view.php?id='.$cm->id.'&amp;mailid='.$options->mailid.'&amp;subject=\''.$form->subject.'\'&amp;body=\''.$form->body['text'].'\'';
+            $baseurl =  $CFG->wwwroot.'/mod/email/view.php?id='.$cm->id.'&amp;mailid='.$mailid.'&amp;subject=\''.$form->subject.'\'&amp;body=\''.$form->body['text'].'\'';
 
             // Check destinataries if no drafting
             if ( !( isset($form->to) or isset($form->cc) or isset($form->bcc) )  and empty($form->draft)) {
 
-                    $url = email_build_url($options);
-                    $error = EMAIL_NOSENDERS;
+                $url = email_build_url($options);
+                $error = EMAIL_NOSENDERS;
 
-                    // Redirect to new mail form, for it's not empty
-                    redirect($CFG->wwwroot.'/mod/email/view.php?'.$url.'&action=newmail&subject='.$form->subject.'&body='.$form->body['text'].'&error='.$error);
+                // Redirect to new mail form, for it's not empty
+                redirect($CFG->wwwroot.'/mod/email/view.php?'.$url.'&action=newmail&subject='.$form->subject.'&body='.$form->body['text'].'&error='.$error);
             }
 
             // Check subject
             if (empty($form->subject)) {
 
-                    $url = email_build_url($options);
-                    $error = EMAIL_NOSUBJECT;
+                $url = email_build_url($options);
+                $error = EMAIL_NOSUBJECT;
 
-                    // Redirect to new mail form, for it's not empty
-                    redirect($CFG->wwwroot.'/mod/email/view.php?'.$url.'&amp;action=\'newmail\'&amp;body='.$form->body['text'].'&amp;error='.$error.'');
+                // Redirect to new mail form, for it's not empty
+                redirect($CFG->wwwroot.'/mod/email/view.php?'.$url.'&amp;action=\'newmail\'&amp;body='.$form->body['text'].'&amp;error='.$error.'');
             } else {
-                    // Strip all tags except multilang
-                    $mail->subject = clean_param(strip_tags($form->subject, '<lang><span>'), PARAM_CLEAN);
+                // Strip all tags except multilang
+                $mail->subject = clean_param(strip_tags($form->subject, '<lang><span>'), PARAM_CLEAN);
             }            
 
             // For body no checked, because no have problem if is empty
@@ -127,7 +126,7 @@
             }
 
             // Add body
-            $mail->body = $form->body['text'];
+            $mail->body = $form->body;
 
             //Add attachment draft ids
             $mail->attachments = $draftitemid;

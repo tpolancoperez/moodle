@@ -17,12 +17,13 @@
     require_once("../../config.php");
     require_once("lib.php");
 
-    $id         = optional_param('id', 0, PARAM_INT); 				// Course Module ID, or
-    $a          = optional_param('a', 0, PARAM_INT);  				// account ID
-    $action 	= optional_param('action', '', PARAM_ALPHANUM); 	// Action to execute
-    $mailid 	= optional_param('mailid', 0, PARAM_INT); 			// email ID
+    $id         = optional_param('id', 0, PARAM_INT);                   // Course Module ID, or
+    $a          = optional_param('a', 0, PARAM_INT);                    // account ID
+    $action 	= optional_param('action', '', PARAM_ALPHANUM);         // Action to execute
+    $mailid 	= optional_param('mailid', 0, PARAM_INT);               // email ID
+    $selectedmailids 	= optional_param_array('selectedmailids', 0, PARAM_INT);    // email ID
     $folderid	= optional_param('folderid', 0, PARAM_INT); 		// folder ID
-    $filterid	= optional_param('filterid', 0, PARAM_INT);			// filter ID
+    $filterid	= optional_param('filterid', 0, PARAM_INT);		// filter ID
 
     $message 	= optional_param('message', '', PARAM_TEXT); 	// Message to display
 
@@ -121,7 +122,6 @@
     $options = new stdClass();
     $options->id = $id;
     $options->a	 = $a;
-    $options->mailid = $mailid;
     $options->folderid = $folderid;
     $options->filterid = $filterid;
     $options->folderoldid = $folderoldid;
@@ -172,7 +172,6 @@
             break;
         case 'newmail':
                 // If is new mail, mailid = null or zero.
-                $options->mailid = 0;
                 email_newmailform($email, $fieldsmail, $options, $selectedusers, $context);
             break;
 
@@ -181,20 +180,14 @@
             break;
 
         case 'reply':
-                // Old mailid passend per parametrers.
-                $options->mailid = 0;
                 email_reply($mailid, $options);
             break;
 
         case 'replyall':
-                // Old mailid passend per parametrers.
-                $options->mailid = 0;
                 email_replyall($mailid, $options);
             break;
 
         case 'forward':
-                // Old mailid passend per parametrers.
-                $options->mailid = 0;
                 email_forward($mailid, $options);
             break;
 
@@ -212,10 +205,10 @@
 
         case 'removemail':
                 // When remove an mail, this functions only accept array in param, overthere converting this param ...
-                if (! is_array($mailid)) {
-                        $newmailid = array($mailid);
+                if (! is_array($selectedmailids)) {
+                        $newmailid = array($selectedmailids);
                 } else {
-                        $newmailid = $mailid;
+                        $newmailid = $selectedmailids;
                 }
 
                 // Apply this functions
@@ -226,23 +219,23 @@
             break;
 
         case 'toread':
-                email_mail2read($mailid, $a, $options);
+                email_mail2read($selectedmailids, $a, $options);
             break;
 
         case 'tounread':
-                email_mail2unread($mailid, $a, $options);
+                email_mail2unread($selectedmailids, $a, $options);
             break;
 
         case 'move2folder':
                 // In variable folderid
                 $success = true;
                 // Move mails -- This variable is an array of ID's
-                foreach ( $mailid as $mail ) {
+                foreach ( $selectedmailids as $mailid ) {
                         // Get foldermail reference
-                        $foldermail = email_get_reference2foldermail($mail, $folderoldid);
+                        $foldermail = email_get_reference2foldermail($mailid, $folderoldid);
 
                         // Move this mail into folder
-                        if (! email_move2folder($mail, $foldermail->id, $folderid) ) {
+                        if (! email_move2folder($mailid, $foldermail->id, $folderid) ) {
                                 $success = false;
                         }
                 }

@@ -71,7 +71,6 @@
     $options = new stdClass();
     $options->id = $id;
     $options->a	 = $a;
-    $options->mailid = $mailid;
     $options->folderid = $folderid;
     $options->filterid = $filterid;
     $options->folderoldid = $folderoldid;

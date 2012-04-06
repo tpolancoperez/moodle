@@ -123,6 +123,7 @@
         <td style="border: 1px solid black" colspan="3" align="left">
             <br />
             <?php
+                $mail->body = file_rewrite_pluginfile_urls($mail->body, 'pluginfile.php', $context->id, 'mod_email', 'body', $mail->id);
                 echo text_to_html($mail->body, true, false);
             ?>
             <br />
