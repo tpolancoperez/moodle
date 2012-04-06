@@ -2075,7 +2075,7 @@ function email_mail2read($mailids, $accountid, $options, $printsuccess=true) {
 
     if ( $printsuccess ) {
         // Notify
-        redirect( $CFG->wwwroot.'/mod/email/view.php?'.$url.'&amp;action=\'viewmails\'', '<div class="notifyproblem">'.get_string('toreadok', 'email').'</div>' );
+        print('<div class="notifyproblem">'.get_string('toreadok', 'email').'</div>' );
     }
 
     return $success;
@@ -2093,29 +2093,29 @@ function email_mail2read($mailids, $accountid, $options, $printsuccess=true) {
  **/
 function email_mail2unread($mailids, $accountid, $options) {
 
-	global $CFG,$DB;
+    global $CFG,$DB;
 
-	// Get account
-	if (! $account = email_get_account_by_id($accountid) ) {
-		print_error('noaccount', 'email');
-	}
+    // Get account
+    if (! $account = email_get_account_by_id($accountid) ) {
+            print_error('noaccount', 'email');
+    }
 
-	if ($mailids) {
-		foreach ( $mailids as $mailid ) {
-			// Delete reference mail for this account
-			if (! $DB->set_field('email_send', 'readed', 0, array('mailid'=>$mailid, 'accountid'=>$account->id))) {
-			    	return false;
-			}
-		}
-	}
+    if ($mailids) {
+            foreach ( $mailids as $mailid ) {
+                    // Delete reference mail for this account
+                    if (! $DB->set_field('email_send', 'readed', 0, array('mailid'=>$mailid, 'accountid'=>$account->id))) {
+                            return false;
+                    }
+            }
+    }
 
-	// Build url part options
- 	$url = email_build_url($options);
+    // Build url part options
+    $url = email_build_url($options);
 
-	// Notify
-    redirect( $CFG->wwwroot.'/mod/email/view.php?'.$url.'&amp;action=\'viewmails\'', '<div class="notifyproblem">'.get_string('tounreadok', 'email').'</div>' );
+    // Notify
+    print('<div class="notifyproblem">'.get_string('tounreadok', 'email').'</div>' );
 
-	return true;
+    return true;
 }
 
 /**

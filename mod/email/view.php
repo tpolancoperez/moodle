@@ -220,10 +220,12 @@
 
         case 'toread':
                 email_mail2read($selectedmailids, $a, $options);
+                email_showaccountmails($a, '', $page, $perpage, $options);
             break;
 
         case 'tounread':
                 email_mail2unread($selectedmailids, $a, $options);
+                email_showaccountmails($a, '', $page, $perpage, $options);
             break;
 
         case 'move2folder':
