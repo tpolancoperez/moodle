@@ -165,6 +165,7 @@ class backup_email_activity_structure_step extends backup_activity_structure_ste
         
         // Define file annotations
         $email_mail->annotate_files('mod_email', 'attachments', 'id');
+        $email_mail->annotate_files('mod_email', 'body', 'id');
 
         // Return the root element (choice), wrapped into standard activity structure
         return $this->prepare_activity_structure($email);

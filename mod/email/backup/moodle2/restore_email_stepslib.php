@@ -121,6 +121,7 @@ class restore_email_activity_structure_step extends restore_activity_structure_s
     protected function after_execute() {
         // Add email related files, no need to match by itemname (just internally handled context)
         $this->add_related_files('mod_email', 'attachments', 'email_mail');
+        $this->add_related_files('mod_email', 'body', 'email_mail');
     }
 }
 ?>
