@@ -119,7 +119,9 @@ function xmldb_block_quickmail_upgrade($oldversion) {
 
         $table->addKey($key);
 
-        $dbman->create_table($table);
+        if (!$dbman->table_exists($table)) {
+            $dbman->create_table($table);
+        }
 
         foreach (array('log', 'drafts') as $table) {
             // Define field alternateid to be added to block_quickmail_log
