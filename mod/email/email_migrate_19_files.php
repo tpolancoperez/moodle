@@ -50,12 +50,27 @@ foreach($emails as $email){
                                 if($h_file = opendir($dir_email."/".$dir_account."/".$dir_mail))
                                 {
                                     while(($filename = readdir($h_file)) !== false){
-                                        if($filename != "." && $filename != ".." && !is_dir($dir_email."/".$dir_account."/".$dir_mail."/".$dir_mail."/".$filename))
+                                        $fullpath = $dir_email."/".$dir_account."/".$dir_mail."/".$filename;
+                                        if($filename != "." && $filename != ".." && !is_dir($fullpath))
                                         {
                                             $file = $fs->get_file($context->id, 'mod_email', 'attachments', $dir_mail, "/", $filename);
                                             if($file===false){
-                                                echo "*";
                                                 //Copy the file to the repo.
+                                                $file_record = array('contextid'=>$context->id
+                                                                    , 'component'=>'mod_email'
+                                                                    , 'filearea'=>'attachments'
+                                                                    , 'filepath'=>'/'
+                                                                    , 'filename'=>$filename
+                                                                    , 'itemid'=>$dir_mail
+                                                                    );
+                                                $file = $fs->create_file_from_pathname($file_record, $fullpath);
+                                                if($file===false){
+                                                    echo "[Error Copying File] ";
+                                                }else{
+                                                    echo "[Migrated] ";
+                                                }   
+                                            }else{
+                                                echo "[Skip] "; //Already Migrated
                                             }
                                             echo $dir_email."/".$dir_account."/".$dir_mail."/".$dir_mail."/".$filename."<br/>\n";
                                             
