@@ -2,6 +2,8 @@
 echo "START<br/>";
 require_once('../../config.php');
 
+require_login();
+
 //Get all courses with duplicate instances of Internal Email
 $sql = "SELECT course";
 $sql.= " FROM mdl_email";
