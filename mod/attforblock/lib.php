@@ -362,6 +362,17 @@ function attforblock_scale_used ($attforblockid, $scaleid) {
     return $return;
 }
 
+
+function attforblock_scale_used_anywhere ($scaleid) {
+//This function returns if a scale is being used by one attforblock
+//it it has support for grading and scales. Commented code should be
+//modified if necessary. See forum, glossary or journal modules
+//as reference.
+   
+   
+    return false;
+}
+
 //////////////////////////////////////////////////////////////////////////////////////
 /// Any other attforblock functions go here.  Each of them must have a name that 
 /// starts with attforblock_
