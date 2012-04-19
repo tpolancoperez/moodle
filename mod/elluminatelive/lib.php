@@ -913,7 +913,7 @@ function elluminatelive_supports($feature) {
  */
 function elluminatelive_scale_used_anywhere($scaleid) {
 	global $DB;
-    if ($scaleid and $DB->record_exists('elluminatelive', 'grade', -$scaleid)) {
+    if ($scaleid and $DB->record_exists('elluminatelive', array('grade'=>$scaleid))) {
         return true;
     } else {
         return false;
