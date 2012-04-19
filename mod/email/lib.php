@@ -400,6 +400,10 @@ function email_scale_used ($emailid,$scaleid) {
     return $return;
 }
 
+function email_scale_used_anywhere($scaleid) {
+    return false;
+}
+
 /**
  * This function add accounts to one instance of email
  * Add teachers and students of this course.
@@ -4098,14 +4102,4 @@ function email_pluginfile($course, $cm, $context, $filearea, $args, $forcedownlo
     // finally send the file
     send_stored_file($file, 0, 0, true); // download MUST be forced - security!
 }
-
-
-function email_scale_used_anywhere($scaleid) {
-    return false;
-}
-
-function email_scale_used ($glossaryid,$scaleid){
-    return false;
-}
-
 ?>
