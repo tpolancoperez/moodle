@@ -1,7 +1,7 @@
 <?php
 set_time_limit(36000);
 
-echo "START<br/>";
+echo "START ".date("Y-m-d h:i:s")."<br/>";
 require_once('../../config.php');
 
 require_login();
@@ -65,15 +65,15 @@ foreach($emails as $email){
                                                                     );
                                                 $file = $fs->create_file_from_pathname($file_record, $fullpath);
                                                 if($file===false){
-                                                    echo "[Error Copying File] ";
+                                                    echo "[Error Copying File] ".$fullpath."<br/>\n";
+                                                    break;
                                                 }else{
-                                                    echo "[Migrated] ";
+                                                    echo "[Migrated] ".$fullpath."<br/>\n";
                                                 }   
                                             }else{
-                                                echo "[Skip] "; //Already Migrated
+                                                echo "[Skip] ".$fullpath."<br/>\n"; //Already Migrated
                                             }
-                                            echo $dir_email."/".$dir_account."/".$dir_mail."/".$dir_mail."/".$filename."<br/>\n";
-                                            
+                                            //Code to remove file after migration goes here.
                                         }      
                                     }
                                     closedir($h_file);
@@ -88,5 +88,5 @@ foreach($emails as $email){
         }
     }
 }
-echo "END<br/>\n";
+echo "END ".date("Y-m-d h:i:s")."<br/>\n";
 ?>
