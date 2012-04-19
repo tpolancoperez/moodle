@@ -74,6 +74,7 @@ foreach($emails as $email){
                                                 echo "[Skip] ".$fullpath."<br/>\n"; //Already Migrated
                                             }
                                             //Code to remove file after migration goes here.
+                                            
                                         }      
                                     }
                                     closedir($h_file);
