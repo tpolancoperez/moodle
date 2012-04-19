@@ -1,7 +1,7 @@
 <?php
-set_time_limit(36000);
+set_time_limit(0);
 
-echo "START ".date("Y-m-d h:i:s")."<br/>";
+echo "START ".date("Y-m-d H:i:s")."<br/>";
 require_once('../../config.php');
 
 require_login();
@@ -14,8 +14,6 @@ $sql = "SELECT";
     $sql.= " id,";
     $sql.= " course";
 $sql.= " FROM mdl_email";
-$sql.= " WHERE course=72278";
-//$sql.= " GROUP BY course";
 $sql.= ";";
 $emails = $DB->get_records_sql($sql);
 foreach($emails as $email){
@@ -89,5 +87,5 @@ foreach($emails as $email){
         }
     }
 }
-echo "END ".date("Y-m-d h:i:s")."<br/>\n";
+echo "END ".date("Y-m-d H:i:s")."<br/>\n";
 ?>
