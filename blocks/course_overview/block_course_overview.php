@@ -128,8 +128,8 @@ class block_course_overview extends block_base {
     	    	}
     	    	
     	    	.OUhiddenmessagesmall {
-    	    		margin-bottom: -5px;
-    	    		margin-top: -5px;
+    	    		margin-bottom: 0px;
+    	    		margin-top: 0px;
     	    		margin-left: 10px;
     	    		border: 0px;
     	    		color: #999;
@@ -167,22 +167,22 @@ class block_course_overview extends block_base {
     	    			$thishide = false;
     	    		}
     	    		if (!$started) {
-    	    			print_container_start(TRUE, '', 'messages');
+    	    			$content[] = $this->box_start('messages');
     	    			$started = true;
     	    		}
-    	    		print_simple_box_start('' ,'' ,'' ,5 , $thisclass, 'message'.$message->id);
+    	    		$content[] = $this->box_start($thisclass, 'message'.$message->id);
     			    if (!$thishide) {
     				    $content[] = '<span id="messagex'.$message->id.'" alt="Remove Message" onClick="closeMessage('.$message->id.')" style="float: right; cursor: pointer"><img alt="Remove Message" src="'.$OUTPUT->pix_url('i/cross_red_big', '')->out().'"></span>';
     			    }
     			    $content[] = $message->message;
     			    
-    			    print_simple_box_end();
+                    $content[] = $this->box_end();
     			    
     	    	}
     	    }
     	    if ($hidden) {
     	    	if (!$started) {
-        			print_container_start(TRUE, '', 'messages');
+        			$content[] = $this->box_start('messages');
         			$started = true;
         			
         		} else {
@@ -193,18 +193,18 @@ class block_course_overview extends block_base {
     
     	    if ($started) {
     	    	if ($hidden) {
-    	    		print_simple_box_start('' ,'' ,'' ,5 , 'OUhiddenmessagesmall', 'hiddenmessages');
+    	    		$content[] = $this->box_start('OUhiddenmessagesmall', 'hiddenmessages');
     	    	} else {
-    	    		print_simple_box_start('' ,'' ,'' ,5 , 'OUhiddenmessagesmallhide', 'hiddenmessages');
+    	    		$content[] = $this->box_start('OUhiddenmessagesmallhide', 'hiddenmessages');
     	    	}
     	    	$content[] = '<span onClick="showMessages()" style="cursor: pointer;">To view hidden announcements, click here...</span>';
-        		print_simple_box_end();
+        		$content[] = $this->box_end();
         		
-        		print_simple_box_start('' ,'' ,'' ,5 , 'OUhiddenmessagesmallhide', 'unhiddenmessages');
+        		$content[] = $this->box_start('OUhiddenmessagesmallhide', 'unhiddenmessages');
     	    	$content[] = '<span onClick="rehideMessages()" style="cursor: pointer;">To collapse hidden announcements, click here...</span>';
-        		print_simple_box_end();
+        		$content[] = $this->box_end();
         		
-    		    print_container_end();
+    		    $content[] = $this->box_end();
     	    }
     	    
     	    $content[] = '
@@ -309,7 +309,7 @@ class block_course_overview extends block_base {
 			$DB->insert_record('elis_mymoodle', $mymoodle);
 		}
 		
-		$hiddenmessages = array(); //Placeholder
+		//$hiddenmessages = array(); //Placeholder
 		
 		//$content[] = container_start('', 'jswarning');
     	//print_simple_box_start('center', '100%', '', 5, "coursebox", '');
@@ -571,6 +571,22 @@ class block_course_overview extends block_base {
         $this->content->text = implode($content);
 
         return $this->content;
+    }
+    
+    private function box_start($class = null, $id = null) {
+        $add = '';
+        if ($class) {
+            $add .= ' class="'.$class.'"';
+        }
+        if ($id) {
+            $add .= ' id="'.$id.'"';
+        }
+        
+        return '<div'.$add.'>';
+    }
+    
+    private function box_end() {
+        return "</div>";
     }
 
     /**
