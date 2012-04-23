@@ -130,6 +130,11 @@ class restore_course_task extends restore_task {
      */
     protected function define_settings() {
 
+        $courseid = $this->plan->get_courseid();
+        $coursectx= get_context_instance(CONTEXT_COURSE, $courseid);
+        $userid   = $this->plan->get_userid();
+        $hasusercap   = has_capability('moodle/site:config', $coursectx, $userid);
+
         //$name, $vtype, $value = null, $visibility = self::VISIBLE, $status = self::NOT_LOCKED
         $fullname = new restore_course_generic_text_setting('course_fullname', base_setting::IS_TEXT, $this->get_info()->original_course_fullname);
         $fullname->get_ui()->set_label(get_string('setting_course_fullname', 'backup'));
@@ -150,6 +155,11 @@ class restore_course_task extends restore_task {
             $keep_enrols->set_value(false);
             $keep_enrols->set_status(backup_setting::LOCKED_BY_CONFIG);
             $keep_enrols->set_visibility(backup_setting::HIDDEN);
+        } else {
+            $keep_enrols->set_value(true);
+            if (!$hasusercap) {
+                $keep_enrols->set_status(backup_setting::LOCKED_BY_PERMISSION);
+            }
         }
         $this->add_setting($keep_enrols);
 
@@ -160,6 +170,11 @@ class restore_course_task extends restore_task {
             $keep_groups->set_value(false);
             $keep_groups->set_status(backup_setting::LOCKED_BY_CONFIG);
             $keep_groups->set_visibility(backup_setting::HIDDEN);
+        } else {
+            $keep_groups->set_value(true);
+            if (!$hasusercap) {
+                $keep_groups->set_status(backup_setting::LOCKED_BY_PERMISSION);
+            }
         }
         $this->add_setting($keep_groups);
 
@@ -171,6 +186,11 @@ class restore_course_task extends restore_task {
             $overwrite->set_value(true);
             $overwrite->set_status(backup_setting::LOCKED_BY_CONFIG);
             $overwrite->set_visibility(backup_setting::HIDDEN);
+        } else {
+            $overwrite->set_value(false);
+            if (!$hasusercap) {
+                $overwrite->set_status(backup_setting::LOCKED_BY_PERMISSION);
+            }
         }
         $this->add_setting($overwrite);
 
