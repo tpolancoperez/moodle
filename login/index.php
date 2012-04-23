@@ -357,7 +357,7 @@ if (isloggedin() and !isguestuser()) {
         print "</body></html>";
     } else {
         include("elis_template_header.php");
-        print_header('', '', '', $focus, '', '', '');
+        //print_header('', '', '', $focus, '', '', '');
         include("elis_template_form.php");
         include("elis_template_footer.php");
     }
@@ -368,4 +368,4 @@ if (isloggedin() and !isguestuser()) {
     }
 }
 
-echo $OUTPUT->footer();
+//echo $OUTPUT->footer();
