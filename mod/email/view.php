@@ -125,6 +125,7 @@
     $options->folderid = $folderid;
     $options->filterid = $filterid;
     $options->folderoldid = $folderoldid;
+    $options->mailid = $mailid;
 
     // Fields of error mail (only use when created new email and it's insert fail)
     $fieldsmail->user = '';
@@ -180,15 +181,15 @@
             break;
 
         case 'reply':
-                email_reply($mailid, $options);
+                email_reply($mailid, $options, $context);
             break;
 
         case 'replyall':
-                email_replyall($mailid, $options);
+                email_replyall($mailid, $options, $context);
             break;
 
         case 'forward':
-                email_forward($mailid, $options);
+                email_forward($mailid, $options, $context);
             break;
 
         case 'search':

@@ -1252,9 +1252,9 @@ function email_have_account($courseid, $userid, $emailid=null) {
     }
 }
 
-function get_form_options($email, $mail, $options, $selectedusers, $context){
-    $bodyoptions = array('subdirs'=>false, 'maxfiles'=>50, 'maxbytes'=>$email->maxbytes, 'trusttext'=>true, 'context'=>$context);
-    $attachmentoptions = array('subdirs'=>false, 'maxfiles'=>50, 'maxbytes'=>$email->maxbytes, 'context'=>$context);
+function email_get_form_options($email, $mail, $options, $selectedusers, $context){
+    $bodyoptions = array('subdirs'=>0, 'maxfiles'=>50, 'maxbytes'=>$email->maxbytes, 'trusttext'=>true, 'context'=>$context);
+    $attachmentoptions = array('subdirs'=>0, 'maxfiles'=>50, 'maxbytes'=>$email->maxbytes, 'context'=>$context);
     
     $mail->id = null;  //being set to NULL creates a new entry
     $mail = file_prepare_standard_filemanager($mail, 'attachments', $attachmentoptions, $context, 'mod_email', 'attachments', $mail->id);
@@ -1299,7 +1299,7 @@ function email_newmailform($email, $mail, $options, $selectedusers, $context) {
 	}
 
         include_once('sendmail_form.php');
-        $formoptions = get_form_options($email, $mail, $options, $selectedusers, $context);
+        $formoptions = email_get_form_options($email, $mail, $options, $selectedusers, $context);
         $mform = new mod_email_sendmail_form('sendmail.php', $formoptions);
         
         $draftitemid = file_get_submitted_draft_itemid('attachments');
@@ -1684,7 +1684,7 @@ function email_modify_body_for_reply($mail, $user){
  * @return boolean Success/Fail
  * @todo Finish documenting this function
  */
-function email_reply($mailid, $options) {
+function email_reply($mailid, $options, $context) {
     global $DB, $CFG;
     
     // Get mail
@@ -1714,7 +1714,7 @@ function email_reply($mailid, $options) {
     $mail->body = email_modify_body_for_reply($mail, $userwriter);
 
     include_once('sendmail_form.php');
-    $formoptions = get_form_options($email, $mail, $options, $selectedusers);
+    $formoptions = email_get_form_options($email, $mail, $options, $selectedusers, $context);
     $mform = new mod_email_sendmail_form('sendmail.php', $formoptions);
     
     $mform->set_data($mail);
@@ -1731,7 +1731,7 @@ function email_reply($mailid, $options) {
  * @return boolean Success/Fail
  * @todo Finish documenting this function
  */
-function email_replyall($mailid, $options) {
+function email_replyall($mailid, $options, $context) {
 
     global $DB, $CFG, $USER;
 
@@ -1772,7 +1772,7 @@ function email_replyall($mailid, $options) {
     $mail->body = email_modify_body_for_reply($mail, $userwriter);
 
     include_once('sendmail_form.php');
-    $formoptions = get_form_options($email, $mail, $options, $selectedusers);
+    $formoptions = email_get_form_options($email, $mail, $options, $selectedusers, $context);
     $mform = new mod_email_sendmail_form('sendmail.php', $formoptions);
     
     $mform->set_data($mail);
@@ -1789,7 +1789,7 @@ function email_replyall($mailid, $options) {
  * @return boolean Success/Fail
  * @todo Finish documenting this function
  */
-function email_forward($mailid, $options) {
+function email_forward($mailid, $options, $context) {
     global $DB, $CFG;
     
     // Get mail
@@ -1824,7 +1824,7 @@ function email_forward($mailid, $options) {
     $options->action = 'forward';
     $selectedusers = array();
     include_once('sendmail_form.php');
-    $formoptions = get_form_options($email, $mail, $options, $selectedusers);
+    $formoptions = email_get_form_options($email, $mail, $options, $selectedusers, $context);
     $mform = new mod_email_sendmail_form('sendmail.php', $formoptions);
     
     //Form processing and displaying is done here
@@ -1862,7 +1862,7 @@ function email_draftmailform($mailid, $options) {
 
 	include_once('sendmail_form.php');
         $selectedusers = array();
-        $formoptions = get_form_options($email, $mail, $options, $selectedusers);
+        $formoptions = email_get_form_options($email, $mail, $options, $selectedusers);
         $mform = new mod_email_sendmail_form('sendmail.php', $formoptions);
 
         //Form processing and displaying is done here

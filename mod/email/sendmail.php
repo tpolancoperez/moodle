@@ -57,7 +57,7 @@
     
     $context = get_context_instance(CONTEXT_MODULE, $cm->id);
     
-    $formoptions = get_form_options($email, $mail, $options, $selectedusers, $context);
+    $formoptions = email_get_form_options($email, $mail, $options, $selectedusers, $context);
     
     $mform = new mod_email_sendmail_form('sendmail.php', $formoptions);
     

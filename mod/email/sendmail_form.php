@@ -59,7 +59,7 @@ class mod_email_sendmail_form extends moodleform {
         $mform->setDefault('subject', '');        
 
         $label = get_string('attachment', 'email') . "<br/>(".get_string('maxsize',null,display_size($email->maxbytes)).")";
-        $mform->addElement('filemanager', 'attachments', $label, $attachmentoptions);
+        $mform->addElement('filemanager', 'attachments', $label, null, $attachmentoptions);
         
         
         $mform->addElement('editor', 'body', get_string("body", "email"), null, $bodyoptions);
