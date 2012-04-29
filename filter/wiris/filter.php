@@ -156,19 +156,47 @@ class filter_wiris extends moodle_text_filter {
 		// content is returned without any modification
 		$n1 = stripos($text, $this->TAGS->in_mathopen);
 		
+		$start = 0;
+		$end = 0;
+		
 		if($n1 === false) {
 			return $text; // directly return the content
 		}
 		
 		// filtering
 		while($n1 !== false) {
-			$output .= substr($text, $n0, $n1 - $n0);
+            $inimg = false;
+            
+            if ($start = strrpos(substr($text, $n0, $n1 - $n0), '<img')) {
+                $inimg = true;
+                if ($endpos = strrpos(substr($text, $n0, $n1 - $n0), '>')) {
+                    if ($endpos > $start) {
+                        $start = false;
+                    }
+                }
+                
+            }
+            if (!$start) {
+                $inimg = false;
+                $start = $n1;
+            } 
+            
+			$output .= substr($text, $end, $start - $end);
+
 			$n0 = $n1;
 			$n1 = stripos($text, $this->TAGS->in_mathclose, $n0);
 			if(!$n1) {
 				break;
 			}
 			$n1 = $n1 + strlen($this->TAGS->in_mathclose);
+			
+			if ($inimg) {
+                $end = strpos($text, '>', $n1);
+                $end += 1;
+			} else {
+                $end = $n1;
+			}
+			
 			// Getting the substring «math ... «/math»
 			$sub = substr($text, $n0, $n1 - $n0);
 			
@@ -200,7 +228,7 @@ class filter_wiris extends moodle_text_filter {
 			// searching next '«math'
 			$n1 = stripos($text, $this->TAGS->in_mathopen, $n0);
 		}
-		$output .= substr($text, $n0);
+		$output .= substr($text, $end);
 		return $output;
 	}	
 	
@@ -245,4 +273,3 @@ class filter_wiris extends moodle_text_filter {
 		return $output;
 	}
 }
-?>

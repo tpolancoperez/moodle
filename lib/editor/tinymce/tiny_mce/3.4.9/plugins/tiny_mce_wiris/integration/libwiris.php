@@ -284,6 +284,10 @@ function wrs_parseIni($filePath, $parseSections = false, $properties = null) {
 			}
 		}
 		else {
+            if (strpos($filePath, '.xml')) {
+                $line = 'mml='.$line;
+            }
+            
 			$lineWords = explode('=', $line, 2);
 			
 			if (isset($lineWords[1])) {
