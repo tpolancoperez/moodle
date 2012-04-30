@@ -650,9 +650,139 @@ function xmldb_enrol_lmb_upgrade($oldversion=0) {
         // lmb savepoint reached
         upgrade_plugin_savepoint(true, 2012032701, 'enrol', 'lmb');
     }
+    
+    
+    
+    if ($oldversion < 2012032901) {
 
+        // Define table lmb_courses to be renamed to enrol_lmb_courses
+        $table = new xmldb_table('lmb_courses');
 
+        // Launch rename table for lmb_courses
+        $dbman->rename_table($table, 'enrol_lmb_courses');
+        
+        
+        // Define table lmb_people to be renamed to enrol_lmb_people
+        $table = new xmldb_table('lmb_people');
 
+        // Launch rename table for lmb_people
+        $dbman->rename_table($table, 'enrol_lmb_people');
+        
+        
+        // Define table lmb_enrolments to be renamed to enrol_lmb_enrolments
+        $table = new xmldb_table('lmb_enrolments');
+
+        // Launch rename table for lmb_enrolments
+        $dbman->rename_table($table, 'enrol_lmb_enrolments');
+        
+        
+        // Define table lmb_raw_xml to be renamed to enrol_lmb_raw_xml
+        $table = new xmldb_table('lmb_raw_xml');
+
+        // Launch rename table for lmb_courses
+        $dbman->rename_table($table, 'enrol_lmb_raw_xml');
+        
+        
+        // Define table lmb_crosslist to be renamed to enrol_lmb_crosslists
+        $table = new xmldb_table('lmb_crosslist');
+
+        // Launch rename table for lmb_crosslist
+        $dbman->rename_table($table, 'enrol_lmb_crosslists');
+        
+        
+        // Define table lmb_courses to be renamed to enrol_lmb_terms
+        $table = new xmldb_table('lmb_terms');
+
+        // Launch rename table for lmb_terms
+        $dbman->rename_table($table, 'enrol_lmb_terms');
+        
+        
+        // Define table lmb_categories to be renamed to enrol_lmb_categories
+        $table = new xmldb_table('lmb_categories');
+
+        // Launch rename table for lmb_categories
+        $dbman->rename_table($table, 'enrol_lmb_categories');
+        
+        
+
+        // lmb savepoint reached
+        upgrade_plugin_savepoint(true, 2012032901, 'enrol', 'lmb');
+    }
+    
+    if ($oldversion < 2012033001) {
+        $config = get_config('enrol_lmb');
+        
+        if (!isset($config->cathidden)) {
+            set_config('cathidden', 0, 'enrol_lmb');
+        }
+        
+        if (!isset($config->computesections)) {
+            set_config('computesections', 0, 'enrol_lmb');
+        }
+        
+        
+        if (!isset($config->forcecomputesections)) {
+            set_config('forcecomputesections', 0, 'enrol_lmb');
+        }
+        
+        upgrade_plugin_savepoint(true, 2012033001, 'enrol', 'lmb');
+    }
+    
+    if ($oldversion < 2012033004) {
+        $config_bad = get_config('enrol/lmb');
+        
+        
+        $objarray = get_object_vars($config_bad);
+        
+        foreach ($objarray as $key => $val) {
+            if (get_config('enrol_lmb', $key) === false) {
+                set_config($key, $val, 'enrol_lmb');
+            }
+            unset_config($key, 'enrol/lmb');
+        }
+        
+        upgrade_plugin_savepoint(true, 2012033004, 'enrol', 'lmb');
+    }
+
+    if ($oldversion < 2012033005) {
+        if (($config = get_config('enrol_lmb', 'enrol_lmb/endbiztimemin')) !== false) {
+            set_config('enrol_lmb/endbiztimemin', $config, 'endbiztimemin');
+            unset_config('enrol_lmb/endbiztimemin', 'enrol_lmb');
+            
+        }
+        
+        if (($config = get_config('enrol_lmb', 'enrol_lmb/startbiztimemin')) !== false) {
+            set_config('enrol_lmb/startbiztimemin', $config, 'startbiztimemin');
+            unset_config('enrol_lmb/startbiztimemin', 'enrol_lmb');
+            
+        }
+        
+        
+        upgrade_plugin_savepoint(true, 2012033005, 'enrol', 'lmb');
+    }
+
+	if ($oldversion < 2012040101) {
+		$config = get_config('enrol_lmb');
+	
+        if (!isset($config->parsecoursexml)) {
+            set_config('parsecoursexml', 1, 'enrol_lmb');
+        }
+        
+        if (!isset($config->parsexlsxml)) {
+            set_config('parsexlsxml', 1, 'enrol_lmb');
+        }
+        
+        if (!isset($config->parsepersonxml)) {
+            set_config('parsepersonxml', 1, 'enrol_lmb');
+        }
+        
+        if (!isset($config->parseenrolxml)) {
+            set_config('parseenrolxml', 1, 'enrol_lmb');
+        }
+        
+        
+        upgrade_plugin_savepoint(true, 2012040101, 'enrol', 'lmb');
+    }
     
     return $result;
 }

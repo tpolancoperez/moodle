@@ -2,16 +2,23 @@
 
 
 if ($ADMIN->fulltree) {
-    //include('version.php');
+
+    $plugin = new stdClass();
+    include($CFG->dirroot.'/enrol/lmb/version.php');
     
-    $settings->add(new admin_setting_heading('enrol_lmb_settings', '', get_string('version', 'enrol_lmb', 7)));
+    $a = new stdClass(); 
+    $a->version = $plugin->release.' ('.$plugin->version.')';
+    $a->toolslink = $CFG->wwwroot.'/enrol/lmb/tools';   
+    
+    $settings->add(new admin_setting_heading('enrol_lmb_settings', '', get_string('header', 'enrol_lmb', $a)));
     
     
     
     // Log Settings --------------------------------------------------------------------------------
     $settings->add(new admin_setting_heading('enrol_lmb_logsettings', get_string('logsettings', 'enrol_lmb'), ''));
     
-    $settings->add(new admin_setting_configtext('enrol_lmb/logtolocation', get_string('logtolocation', 'enrol_lmb'), get_string('logtolocationhelp', 'enrol_lmb'), ''));
+
+    $settings->add(new admin_setting_configfile('enrol_lmb/logtolocation', get_string('logtolocation', 'enrol_lmb'), get_string('logtolocationhelp', 'enrol_lmb'), ''));
     
     $settings->add(new admin_setting_configcheckbox('enrol_lmb/logerrors', get_string('logerrors', 'enrol_lmb'), get_string('logerrorshelp', 'enrol_lmb'), 1));
     
@@ -38,9 +45,9 @@ if ($ADMIN->fulltree) {
     $settings->add(new admin_setting_heading('enrol_lmb_lmbcheck', get_string('lmbcheck', 'enrol_lmb'), ''));
     
     $settings->add(new admin_setting_configcheckbox('enrol_lmb/lmbcheck', get_string('lmbcheck', 'enrol_lmb'), get_string('lmbcheckhelp', 'enrol_lmb'), 0));
-    $settings->add(new admin_setting_configtime('enrol_lmb/startbiztimehr', 'enrol_lmb/startbiztimemin', get_string('startbiztime', 'enrol_lmb'), get_string('startbiztimehelp', 'enrol_lmb'), array('h' => 9, 'm' => 0)));//TODO2 Config names are wrong
+    $settings->add(new admin_setting_configtime('enrol_lmb/startbiztimehr', 'startbiztimemin', get_string('startbiztime', 'enrol_lmb'), get_string('startbiztimehelp', 'enrol_lmb'), array('h' => 9, 'm' => 0)));//TODO2 Config names are wrong
     
-    $settings->add(new admin_setting_configtime('enrol_lmb/endbiztimehr', 'enrol_lmb/endbiztimemin', get_string('endbiztime', 'enrol_lmb'), get_string('endbiztimehelp', 'enrol_lmb'), array('h' => 17, 'm' => 0)));
+    $settings->add(new admin_setting_configtime('enrol_lmb/endbiztimehr', 'endbiztimemin', get_string('endbiztime', 'enrol_lmb'), get_string('endbiztimehelp', 'enrol_lmb'), array('h' => 17, 'm' => 0)));
     
     $settings->add(new admin_setting_configtext('enrol_lmb/bizgrace', get_string('bizdowngrace', 'enrol_lmb'), get_string('bizdowngracehelp', 'enrol_lmb'), '30'));
     
@@ -53,11 +60,11 @@ if ($ADMIN->fulltree) {
     // Banner Extract Import -----------------------------------------------------------------------
     $settings->add(new admin_setting_heading('enrol_lmb_bannerextractimport', get_string('bannerextractimport', 'enrol_lmb'), ''));
     
-    $settings->add(new admin_setting_configtext('enrol_lmb/bannerxmllocation', get_string('bannerxmllocation', 'enrol_lmb'), get_string('bannerxmllocationhelp', 'enrol_lmb'), ''));
+    $settings->add(new admin_setting_configfile('enrol_lmb/bannerxmllocation', get_string('bannerxmllocation', 'enrol_lmb'), get_string('bannerxmllocationhelp', 'enrol_lmb'), ''));
     
     $settings->add(new admin_setting_configcheckbox('enrol_lmb/bannerxmllocationcomp', get_string('bannerxmllocationcomp', 'enrol_lmb'), get_string('bannerxmllocationcomphelp', 'enrol_lmb'), 0));
     
-    $settings->add(new admin_setting_configtext('enrol_lmb/bannerxmlfolder', get_string('bannerxmlfolder', 'enrol_lmb'), get_string('bannerxmlfolderhelp', 'enrol_lmb'), ''));
+    $settings->add(new admin_setting_configdirectory('enrol_lmb/bannerxmlfolder', get_string('bannerxmlfolder', 'enrol_lmb'), get_string('bannerxmlfolderhelp', 'enrol_lmb'), ''));
     
     $settings->add(new admin_setting_configcheckbox('enrol_lmb/bannerxmlfoldercomp', get_string('bannerxmlfoldercomp', 'enrol_lmb'), get_string('bannerxmlfoldercomphelp', 'enrol_lmb'), 0));
     
@@ -85,6 +92,8 @@ if ($ADMIN->fulltree) {
     
     // Parse Course --------------------------------------------------------------------------------
     $settings->add(new admin_setting_heading('enrol_lmb_parsecourse', get_string('parsecourse', 'enrol_lmb'), ''));
+    
+    $settings->add(new admin_setting_configcheckbox('enrol_lmb/parsecoursexml', get_string('parsecoursexml', 'enrol_lmb'), get_string('parsecoursexmlhelp', 'enrol_lmb'), 1));
     
     $settings->add(new admin_setting_configtext('enrol_lmb/coursetitle', get_string('coursetitle', 'enrol_lmb'), get_string('coursetitlehelp', 'enrol_lmb'), '[RUBRIC]-[CRN]-[FULL]'));
     
@@ -135,6 +144,8 @@ if ($ADMIN->fulltree) {
     // Parse XLS -----------------------------------------------------------------------------------
     $settings->add(new admin_setting_heading('enrol_lmb_parsexls', get_string('parsexls', 'enrol_lmb'), ''));
     
+    $settings->add(new admin_setting_configcheckbox('enrol_lmb/parsexlsxml', get_string('parsexlsxml', 'enrol_lmb'), get_string('parsexlsxmlhelp', 'enrol_lmb'), 1));
+    
     $settings->add(new admin_setting_configtext('enrol_lmb/xlstitle', get_string('xlstitle', 'enrol_lmb'), get_string('xlstitlehelp', 'enrol_lmb'), '[XLSID] - [REPEAT]'));
     
     $settings->add(new admin_setting_configtext('enrol_lmb/xlstitlerepeat', get_string('xlstitlerepeat', 'enrol_lmb'), get_string('xlstitlerepeathelp', 'enrol_lmb'), '[CRN]'));
@@ -157,6 +168,8 @@ if ($ADMIN->fulltree) {
     
     // Parse Person --------------------------------------------------------------------------------
     $settings->add(new admin_setting_heading('enrol_lmb_parseperson', get_string('parseperson', 'enrol_lmb'), ''));
+    
+    $settings->add(new admin_setting_configcheckbox('enrol_lmb/parsepersonxml', get_string('parsepersonxml', 'enrol_lmb'), get_string('parsepersonxmlhelp', 'enrol_lmb'), 1));
     
     $settings->add(new admin_setting_configcheckbox('enrol_lmb/createnewusers', get_string('createnewusers', 'enrol_lmb'), get_string('createnewusershelp', 'enrol_lmb'), 1));
     
@@ -190,7 +203,7 @@ if ($ADMIN->fulltree) {
 	foreach ($modules as $module => $path) {
 		$options[$module] = get_string("pluginname", "auth_".$module);
 	}
-	$settings->add(new admin_setting_configselect('enrol_lmb/auth', get_string('authmethod', 'enrol_lmb'), get_string('authmethodhelp', 'enrol_lmb'), '', $options));
+	$settings->add(new admin_setting_configselect('enrol_lmb/auth', get_string('authmethod', 'enrol_lmb'), get_string('authmethodhelp', 'enrol_lmb'), 'manual', $options));
 
     unset($options);
 	$options = array();
@@ -199,7 +212,7 @@ if ($ADMIN->fulltree) {
 	$options['sctid'] = get_string('useridtypesctid', 'enrol_lmb');
 	$options['emailid'] = get_string('useridtypeemail', 'enrol_lmb');
 	$options['other'] = get_string('useridtypeother', 'enrol_lmb');
-    $settings->add(new admin_setting_configselect('enrol_lmb/passwordnamesource', get_string('passwordsource', 'enrol_lmb'), get_string('passwordsourcehelp', 'enrol_lmb'), 'emailname', $options));
+    $settings->add(new admin_setting_configselect('enrol_lmb/passwordnamesource', get_string('passwordsource', 'enrol_lmb'), get_string('passwordsourcehelp', 'enrol_lmb'), 'none', $options));
     
     $settings->add(new admin_setting_configtext('enrol_lmb/passworduseridtypeother', get_string('otherpassword', 'enrol_lmb'), get_string('otherpasswordhelp', 'enrol_lmb'), ''));
     
@@ -220,7 +233,7 @@ if ($ADMIN->fulltree) {
 	$options['xml'] = get_string('locality', 'enrol_lmb');
 	$options['standardxml'] = get_string('usestandardcityxml', 'enrol_lmb');
 	$options['standard'] = get_string('usestandardcity', 'enrol_lmb');
-    $settings->add(new admin_setting_configselect('enrol_lmb/defaultcity', get_string('defaultcity', 'enrol_lmb'), get_string('defaultcityhelp', 'enrol_lmb'), 'emailname', $options));
+    $settings->add(new admin_setting_configselect('enrol_lmb/defaultcity', get_string('defaultcity', 'enrol_lmb'), get_string('defaultcityhelp', 'enrol_lmb'), 'xml', $options));
     
     $settings->add(new admin_setting_configtext('enrol_lmb/standardcity', get_string('standardcity', 'enrol_lmb'), get_string('standardcityhelp', 'enrol_lmb'), ''));
     
@@ -231,28 +244,36 @@ if ($ADMIN->fulltree) {
     // Parse Enrollments ---------------------------------------------------------------------------
     $settings->add(new admin_setting_heading('enrol_lmb_parseenrol', get_string('parseenrol', 'enrol_lmb'), ''));
     
+    $settings->add(new admin_setting_configcheckbox('enrol_lmb/parseenrolxml', get_string('parseenrolxml', 'enrol_lmb'), get_string('parseenrolxmlhelp', 'enrol_lmb'), 1));
     
-    //TODO Loop rolls
-    //if (!during_initial_install()) {
+    if (!during_initial_install()) {
         
-    $coursecontext = get_context_instance(CONTEXT_COURSE, SITEID);
-    $assignableroles = get_assignable_roles($coursecontext);
-    $assignableroles = array('0' => get_string('ignore', 'enrol_imsenterprise')) + $assignableroles;
-    
-    $imsroles = array(
-    '01'=>'Learner',
-    '02'=>'Instructor',
-    );
-    
-    $imsmappings = array(
-    '01'=>'student',
-    '02'=>'editingteacher',
-    );
-    
-    foreach ($imsroles as $imsrolenum => $imsrolename) {
-        $settings->add(new admin_setting_configselect('enrol_lmb/imsrolemap'.$imsrolenum, format_string('"'.$imsrolename.'" ('.$imsrolenum.')'), '', $imsmappings[$imsrolenum], $assignableroles));
+        $coursecontext = get_context_instance(CONTEXT_COURSE, SITEID);
+        $assignableroles = get_assignable_roles($coursecontext);
+        $assignableroles = array('0' => get_string('ignore', 'enrol_imsenterprise')) + $assignableroles;
+        
+        $imsroles = array(
+        '01'=>'Learner',
+        '02'=>'Instructor',
+        );
+        
+        $imsmappings = array(
+        '01'=>'student',
+        '02'=>'editingteacher',
+        );
+        
+        foreach ($imsroles as $imsrolenum => $imsrolename) {
+            $default = false;
+            
+            if ($role = get_archetype_roles($imsmappings[$imsrolenum])) {
+                $role = reset($role);
+                $default = $role->id;
+            }
+            
+        
+            $settings->add(new admin_setting_configselect('enrol_lmb/imsrolemap'.$imsrolenum, format_string('"'.$imsrolename.'" ('.$imsrolenum.')'), '', $default, $assignableroles));
+        }
     }
-    //}
     
     
     $settings->add(new admin_setting_configcheckbox('enrol_lmb/unenrolmember', get_string('unenrolmember', 'enrol_lmb'), get_string('unenrolmemberhelp', 'enrol_lmb'), 0));

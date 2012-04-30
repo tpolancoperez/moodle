@@ -1,5 +1,5 @@
 Luminis Message Broker enrollment Module.
-Version: 2.0.5
+Version: 2.1.0
 Moodle version: 2.x
 Maintainer: Eric Merrill (merrill@oakland.edu)
 
@@ -11,6 +11,55 @@ Maintainer: Eric Merrill (merrill@oakland.edu)
 
 CHANGES
 -------
+Since 2.0.5
+IMPORTANT!:
+Renamed tables to match Moodle conventions, adding enrol_ to the front of table names:
+lmb_courses    => enrol_lmb_courses
+lmb_people     => enrol_lmb_people
+lmb_enrolments => enrol_lmb_enrolments
+lmb_raw_xml    => enrol_lmb_raw_xml
+lmb_crosslist  => enrol_lmb_crosslists   (NOTE: added 's' to the end also)
+lmb_terms      => enrol_lmb_terms
+lmb_categories => enrol_lmb_categories
+
+If you use any additional scripts that access these tables, they will need to be updated. You can find them
+by using the regular expression: (?<!enrol_)\b(?:OLDNAME) and then replace with the new name for that table.
+
+Removed unused functions - check code compatibility:
+enrol_lmb->lmb_assign_role
+enrol_lmb->lmb_unassign_role
+enrol_lmb->process_enrolment
+enrol_lmb->lmb_assign_role (use lmb_assign_role_log)
+enrol_lmb->lmb_unassign_role (use lmb_unassign_role_log)
+
+enrol_lmb_assign_role_log
+enrol_lmb_unassign_role
+enrol_lmb_unassign_role_log
+enrol_lmb_get_course_contextid
+enrol_lmb_reset_all_term_enrolments renamed to enrol_lmb_retry_term_enrolments
+
+
+Fixed Version display and link to tools on LMB settings page.
+Fixed error in drop percent calculation for bulk processing.
+Fix get string errors in tools.
+Fix errors in tools breadcrumbs.
+Fix set_url() error on tool pages.
+Fixed context errors on tool pages.
+Enrollment processing during course update does not show creation/update error.
+Set some missing defaults in upgrade.php.
+Fixes to some settings using the incorrect enrol/lmb plugin name. Settings migrated to enrol_lmb.
+Fixed Buisness hours minute fields not working correctly.
+Fixed defaults in various setting items.
+Defaults now shown for ims role mapping.
+Sets new users default country to whatever the sitewide config is.
+Completed prune raw xml in "Prune LMB Tables" tool.
+Decresed insert count on enrolment update.
+Added optional_param to importnow.php to skip filetime check (add ?force=1 to url).
+Added options to skip parsing of different types (person, course, crosslist, enrolments)
+
+
+
+
 Since 2.0.1
 Added option to compute number of sections based on course duration.
 Removed make enrollable option - not supported in Moodle 2.
@@ -59,12 +108,13 @@ TODO
 ----
 Catch exceptions for update_course and similar
 Use moodle delete functions
-Prune XML table
 -Reprocess enrolments (enrol/unenrol need to be done in plugin now)
 Check into term length dependancies
-Load config descriptions
 Filter Terms
 meta sync changes (when to sync)
+Hide merge child courses
+-Setup defaults on install
+Option to set ENROL_RESTORE_TYPE supported (disable user restores for this plugin)
 
 
 

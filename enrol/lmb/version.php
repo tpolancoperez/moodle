@@ -1,7 +1,7 @@
 <?php
 
-$plugin->version  = 2012032702;
+$plugin->version  = 2012040101;
 
-$plugin->release = "2.0.5";
+$plugin->release = "2.1.0";
 
 ?>

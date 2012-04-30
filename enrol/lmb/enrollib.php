@@ -12,7 +12,6 @@
 
 
 
-//function enrol_lmb_process_extract_drops($termid)
 
 /**
  * Returns the id of the moodle role for a provided ims/xml role
@@ -41,105 +40,16 @@ function enrol_lmb_get_roleid($imsrole, $config=NULL) {
 
 
 
-/**
- * Assigns a moodle role to a user in the provided context
- * 
- * @param int $roleid id of the moodle role to assign
- * @param int $rolecontextid id of the context to assign
- * @param int $userid id of the moodle user
- * @param string $logline passed logline object to append log entries to
- * @return bool success or failure of the role assignment
- */ //TODO2 remove
-function enrol_lmb_assign_role_log($roleid, $rolecontextid, $userid, &$logline) {
-    if (!$rolecontextid) {
-        $logline .= 'missing rolecontextid:';
-    }
-    
-    if (role_assign($roleid, $userid, $rolecontextid, 'enrol_lmb')) {
-        $logline .= 'enrolled:';
-        return true;
-    }
-    
-    $logline .= 'error enrolling:';
-    return false;
-}
-
-
-/**
- * Used to call enrol_lmb_unassign_role_log() without passing a 
- * logline variable. See enrol_lmb_unassign_role_log()
- * 
- * @param int $roleid id of the moodle role to assign
- * @param int $rolecontextid id of the context to assign
- * @param int $userid id of the moodle user
- * @param object $config passed plugin config object
- * @return bool success or failure of the role assignment
- */ //TODO2 remove
-function enrol_lmb_unassign_role($roleid, $rolecontextid, $userid) {
-    $logline = '';
-    
-    $status = enrol_lmb_unassign_role_log($roleid, $rolecontextid, $userid, &$logline);
-    
-    unset($logline);
-    
-    return $status;
-}
-
-
-/**
- * Unassigns a moodle role to a user in the provided context
- * 
- * @param int $roleid id of the moodle role to assign
- * @param int $rolecontextid id of the context to assign
- * @param int $userid id of the moodle user
- * @param string $logline passed logline object to append log entries to
- * @return bool success or failure of the role assignment
- */ //TODO2 remove
-function enrol_lmb_unassign_role_log($roleid, $rolecontextid, $userid, &$logline) {
-    if (!$rolecontextid) {
-        $logline .= 'missing rolecontextid:';
-        return false;
-    }
-    
-    if (role_unassign($roleid, $userid, $rolecontextid, 'enrol_lmb')) {
-        $logline .= 'unenrolled:';
-        return true;
-    }
-    
-    $logline .= 'error unenrolling:';
-    return false;
-}
-
-
-/**
- * Returns the course level context for the provided idnumber
- * 
- * @param string $idnumber the ims/xml course id to find
- * @param bool $original if true, ignore crosslists when finding course
- * @return int|bool the context id for the given idnumber, false if not found
- */
-function enrol_lmb_get_course_contextid($idnumber, $original = false) {
-    if ($courseid = enrol_lmb_get_course_id($idnumber, $original)) {
-        if ($rolecontext = get_context_instance(CONTEXT_COURSE, $courseid)) {
-            return $rolecontext->id;
-        }
-    }
-
-    return false;
-}
-
-
-
 
 
 function enrol_lmb_get_crosslist_groupid($coursesourcedid, $crosslistsourcedid = null) {
     global $DB;
     if ($crosslistsourcedid) {
-        if (!$crosslist = $DB->get_record('lmb_crosslist', array('coursesourcedid' => $coursesourcedid, 'crosslistsourcedid' => $crosslistsourcedid))) {
+        if (!$crosslist = $DB->get_record('enrol_lmb_crosslists', array('coursesourcedid' => $coursesourcedid, 'crosslistsourcedid' => $crosslistsourcedid))) {
             return false;
         }
     } else {
-        if (!$crosslist = $DB->get_record('lmb_crosslist', array('coursesourcedid' => $coursesourcedid))) {
+        if (!$crosslist = $DB->get_record('enrol_lmb_crosslists', array('coursesourcedid' => $coursesourcedid))) {
             return false;
         }
     }
@@ -164,7 +74,7 @@ function enrol_lmb_create_crosslist_group($lmbcrosslist) {
         return false;
     }
     
-    if (!$lmbcourse = $DB->get_record('lmb_courses', array('sourcedid' => $lmbcrosslist->coursesourcedid))) {
+    if (!$lmbcourse = $DB->get_record('enrol_lmb_courses', array('sourcedid' => $lmbcrosslist->coursesourcedid))) {
         return false;
     }
     
@@ -183,7 +93,7 @@ function enrol_lmb_create_crosslist_group($lmbcrosslist) {
     $crossup = new Object();
     $crossup->id = $lmbcrosslist->id;
     $crossup->crosslistgroupid = $groupid;
-    $DB->update_record('lmb_crosslist', $crossup);
+    $DB->update_record('enrol_lmb_crosslists', $crossup);
     
     return $groupid;
     
@@ -202,7 +112,7 @@ function enrol_lmb_expand_course_title($lmbcourse, $titledef) {
     $title = str_replace('[SOURCEDID]', $lmbcourse->sourcedid, $titledef);
     $title = str_replace('[CRN]', $lmbcourse->coursenumber, $title);
     $title = str_replace('[TERM]', $lmbcourse->term, $title);
-    if ($lmbterm = $DB->get_record('lmb_terms', array('sourcedid' => $lmbcourse->term))) {
+    if ($lmbterm = $DB->get_record('enrol_lmb_terms', array('sourcedid' => $lmbcourse->term))) {
         $title = str_replace('[TERMNAME]', $lmbterm->title, $title);
     } else {
         $title = str_replace('[TERMNAME]', $lmbcourse->term, $title);
@@ -227,24 +137,22 @@ function enrol_lmb_expand_course_title($lmbcourse, $titledef) {
  * @return bool success or failure of the role assignments
  */
 function enrol_lmb_restore_users_to_course($idnumber) {
-    global $DB;
+    global $DB, $CFG;
     $config = enrol_lmb_get_config();
     $status = true;
 
     if (!class_exists('enrol_lmb_plugin')) {
-        require_once('./lib.php');
+        require_once($CFG->dirroot.'/enrol/lmb/lib.php');
     }
     
     $enrolmod = new enrol_lmb_plugin();
     
 
-    if ($enrols = $DB->get_records('lmb_enrolments', array('status' => 1, 'coursesourcedid' => $idnumber))) {
-        $rolecontext = enrol_lmb_get_course_contextid($idnumber);
+    if ($enrols = $DB->get_records('enrol_lmb_enrolments', array('status' => 1, 'coursesourcedid' => $idnumber))) {
 
         foreach ($enrols as $enrol) {
-            //$status = enrol_lmb_process_enrolment($enrol, $config, $rolecontext) && $status;
             $logline = '';
-            $status = $enrolmod->process_enrolment_log($enrol, $logline, $config, $rolecontext) && $status;
+            $status = $enrolmod->process_enrolment_log($enrol, $logline, $config) && $status;
         }
         
         unset($enrols);
@@ -260,15 +168,22 @@ function enrol_lmb_restore_users_to_course($idnumber) {
  * @return bool sucess of failure of the drops
  */
 function enrol_lmb_drop_crosslist_users($xlist) {
-    global $DB;
+    global $DB, $CFG;
     $status = true;
     
-    if ($enrols = $DB->get_records('lmb_enrolments', array('status' => 1, 'coursesourcedid' => $xlist->coursesourcedid))) {
-        if ($rolecontext = enrol_lmb_get_course_contextid($xlist->crosslistsourcedid)) {
+    if ($enrols = $DB->get_records('enrol_lmb_enrolments', array('status' => 1, 'coursesourcedid' => $xlist->coursesourcedid))) {
+        if (!class_exists('enrol_lmb_plugin')) {
+            require_once($CFG->dirroot.'/enrol/lmb/lib.php');
+        }
+        
+        $enrolmod = new enrol_lmb_plugin();
+    
+        if ($courseid = enrol_lmb_get_course_id($xlist->crosslistsourcedid)) {
             foreach ($enrols as $enrol) {
                 if ($userid = $DB->get_field('user', 'id', array('idnumber' => $enrol->personsourcedid))) {
                     if ($roleid = enrol_lmb_get_roleid($enrol->role)) {
-                        $status = enrol_lmb_unassign_role_log($roleid, $rolecontext, $userid) && $status;
+                        $logline = '';
+                        $status = $enrolmod->lmb_unassign_role_log($roleid, $courseid, $userid, $logline) && $status;
                     }
                 }
                 
@@ -288,20 +203,25 @@ function enrol_lmb_drop_crosslist_users($xlist) {
  * @return bool success or failure of the drops
  */
 function enrol_lmb_drop_all_users($idnumber, $role = NULL, $original = FALSE) {
-    global $DB;
+    global $DB, $CFG;
     
     $status = true;
     $config = enrol_lmb_get_config();
 
     if ($role) {
-        $enrols = $DB->get_records('lmb_enrolments', array('status' => 1, 'role' => $role, 'coursesourcedid'=> $idnumber));
+        $enrols = $DB->get_records('enrol_lmb_enrolments', array('status' => 1, 'role' => $role, 'coursesourcedid'=> $idnumber));
     } else {
-        $enrols = $DB->get_records('lmb_enrolments', array('status' => 1, 'coursesourcedid' => $idnumber));
+        $enrols = $DB->get_records('enrol_lmb_enrolments', array('status' => 1, 'coursesourcedid' => $idnumber));
     }
 
     if ($enrols) {
-        if ($rolecontext = enrol_lmb_get_course_contextid($idnumber, $original)) {
-        
+        if ($courseid = enrol_lmb_get_course_id($idnumber, $original)) {
+            if (!class_exists('enrol_lmb_plugin')) {
+                require_once($CFG->dirroot.'/enrol/lmb/lib.php');
+            }
+            
+            $enrolmod = new enrol_lmb_plugin();
+
             foreach ($enrols as $enrol) {
                 $enrolup = new object();
     
@@ -309,14 +229,15 @@ function enrol_lmb_drop_all_users($idnumber, $role = NULL, $original = FALSE) {
                 
                 if ($userid = $DB->get_field('user', 'id', array('idnumber' => $enrol->personsourcedid))) {
                     if ($roleid = enrol_lmb_get_roleid($enrol->role)) {
-                        $status = enrol_lmb_unassign_role($roleid, $rolecontext, $userid) && $status;
+                        $logline = '';
+                        $status = $enrolmod->lmb_unassign_role_log($roleid, $courseid, $userid, $logline) && $status;
                     } else {
                         $status = false;
                     }
                 }
                 
                 $enrolup->id = $enrol->id;
-                $DB->update_record('lmb_enrolments', $enrolup);
+                $DB->update_record('enrol_lmb_enrolments', $enrolup);
                 unset($enrolup);
             }
         }
@@ -339,7 +260,7 @@ function enrol_lmb_force_all_courses($termid, $print = false, $printverbose = fa
     $status = true;
     
     
-    $courses = $DB->get_records('lmb_courses', array('term' => $termid));
+    $courses = $DB->get_records('enrol_lmb_courses', array('term' => $termid));
     
     $count = count($courses);
     $i = 1;
@@ -376,18 +297,17 @@ function enrol_lmb_force_all_courses($termid, $print = false, $printverbose = fa
  * @return bool success or failure of the enrolments
  */
 function enrol_lmb_force_course_to_db($idnumber,$print = false) {
-    global $DB;
+    global $DB, $CFG;
     $status = true;
 
-    if ($enrols = $DB->get_records('lmb_enrolments', array('coursesourcedid' => $idnumber))) {
-        $rolecontext = enrol_lmb_get_course_contextid($idnumber);
+    if ($enrols = $DB->get_records('enrol_lmb_enrolments', array('coursesourcedid' => $idnumber))) {
         
         if ($print) {
             print $idnumber."<br>\n";
         }
         
         if (!class_exists('enrol_lmb_plugin')) {
-            require_once('./lib.php');
+            require_once($CFG->dirroot.'/enrol/lmb/lib.php');
         }
         
         $enrolmod = new enrol_lmb_plugin();
@@ -396,8 +316,7 @@ function enrol_lmb_force_course_to_db($idnumber,$print = false) {
         foreach ($enrols as $enrol) {
             $logline = $enrol->personsourcedid.':';
             
-            //$status = enrol_lmb_process_enrolment_log($enrol, $logline, $config, $rolecontext) && $status;
-            $status = $enrolmod->process_enrolment_log($enrol, $logline, $config, $rolecontext) && $status;
+            $status = $enrolmod->process_enrolment_log($enrol, $logline, $config) && $status;
             
             $logline .= "<br>\n";
             if ($print) {
@@ -428,7 +347,7 @@ function enrol_lmb_get_course_id($idnumber, $original = FALSE) {
     
     $newidnumber = $idnumber;
     
-    if (!$original && $xlist = $DB->get_record('lmb_crosslist', array('status' => 1, 'coursesourcedid' => $idnumber))) {
+    if (!$original && $xlist = $DB->get_record('enrol_lmb_crosslists', array('status' => 1, 'coursesourcedid' => $idnumber))) {
         if ($xlist->type == 'merge') {
             $newidnumber = $xlist->crosslistsourcedid;
         }
@@ -442,7 +361,7 @@ function enrol_lmb_get_course_ids($idnumber, $original = FALSE) {
     global $DB;
     $out = array();
     
-    if (!$original && $xlists = $DB->get_records('lmb_crosslist', array('status' => 1, 'coursesourcedid' => $idnumber))) {
+    if (!$original && $xlists = $DB->get_records('enrol_lmb_crosslists', array('status' => 1, 'coursesourcedid' => $idnumber))) {
         foreach ($xlists as $xlist) {
             if ($xlist->type == 'merge') {
                 $courseid = $DB->get_field('course', 'id', array('idnumber' => $xlist->crosslistsourcedid));
@@ -487,57 +406,30 @@ function enrol_lmb_compare_objects($new, $old) {
 
 
 /**
- * For a given person id number, run all enrol and unenrol records in
- * the local lmb database
- * 
- * @param string $idnumber the ims/xml id of a person
- * @return bool success or failure of the enrolments
- */
-function enrol_lmb_restore_user_enrolments($idnumber) {
-    global $DB;
-    $config = enrol_lmb_get_config();
-
-    $status = true;
-    
-    if (!class_exists('enrol_lmb_plugin')) {
-        require_once('./lib.php');
-    }
-    
-    $enrolmod = new enrol_lmb_plugin();
-    
-
-    if ($enrols = $DB->get_records('lmb_enrolments', array('personsourcedid' => $idnumber))) {
-        foreach ($enrols as $enrol) {
-            //$status = enrol_lmb_process_enrolment($enrol, $config) && $status;
-            $logline = '';
-            $status = $enrolmod->process_enrolment_log($enrol, $logline, $config) && $status;
-        }
-
-    }
-    
-    return $status;
-}
-
-
-/**
  * For a given term, retry all unsuccessful enrolments
  * 
  * @param string $termid the ims/xml id of the term
  * @return bool success or failure of the enrolments
  */
-function enrol_lmb_reset_all_term_enrolments($termid) {
-    global $DB;
+function enrol_lmb_retry_term_enrolments($termid) {
+    global $DB, $CFG;
 
     $status = true;
     $sqlparams = array('termid' => $termid, 'succeeded' => 0);
-    $sql = "SELECT personsourcedid FROM {lmb_enrolments} WHERE term = :termid AND succeeded = :succeeded GROUP BY personsourcedid";
+    $sql = "SELECT personsourcedid FROM {enrol_lmb_enrolments} WHERE term = :termid AND succeeded = :succeeded GROUP BY personsourcedid";
 
-    if ($enrols = $DB->get_records_sql($sql, $sqlparams)) {
-        $count = sizeof($enrols);
+    if ($persons = $DB->get_records_sql($sql, $sqlparams)) {
+        if (!class_exists('enrol_lmb_plugin')) {
+            require_once($CFG->dirroot.'/enrol/lmb/lib.php');
+        }
+        
+        $enrolmod = new enrol_lmb_plugin();
+        
+        $count = sizeof($persons);
         $i = 1;
-        foreach ($enrols as $enrol) {
-            print $i." of ".$count.":".$enrol->personsourcedid;
-            $status = enrol_lmb_restore_user_enrolments($enrol->personsourcedid) && $status;
+        foreach ($persons as $person) {
+            print $i." of ".$count.":".$person->personsourcedid;
+            $status = $enrolmod->restore_user_enrolments($person->personsourcedid) && $status;
             print "<br>\n";
             $i++;
         }
@@ -554,7 +446,7 @@ function enrol_lmb_reset_all_term_enrolments($termid) {
  * @return string the generated id
  */
 function enrol_lmb_create_new_crosslistid($term = '') {
-    if (!$count = get_config('enrol/lmb', 'last_internal_crosslist_num')) {
+    if (!$count = get_config('enrol_lmb', 'last_internal_crosslist_num')) {
         $count = 0;
     }
     
@@ -562,7 +454,7 @@ function enrol_lmb_create_new_crosslistid($term = '') {
 
     $did = 'XLSi'.$count.$term;
     
-    set_config('last_internal_crosslist_num', $count, 'enrol/lmb');
+    set_config('last_internal_crosslist_num', $count, 'enrol_lmb');
     
     return $did;
 
@@ -577,7 +469,7 @@ function enrol_lmb_get_terms() {
     global $DB;
     $out = array();
     
-    if ($terms = $DB->get_records('lmb_terms', null, 'id DESC')) {
+    if ($terms = $DB->get_records('enrol_lmb_terms', null, 'id DESC')) {
         foreach ($terms as $term) {
             $out[] = $term->sourcedid;
         }
@@ -595,7 +487,7 @@ function enrol_lmb_make_terms_menu_array() {
     global $DB;
     $out = array();
     
-    if ($terms = $DB->get_records('lmb_terms', null, 'id DESC')) {
+    if ($terms = $DB->get_records('enrol_lmb_terms', null, 'id DESC')) {
         foreach ($terms as $term) {
             $out[$term->sourcedid] = $term->title.' ('.$term->sourcedid.')';
         }

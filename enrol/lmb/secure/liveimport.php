@@ -99,9 +99,9 @@ if ($config->storexml != 'never') {
     $xmlstorage->xml = addslashes($xml);
 }
 
-set_config('lastlmbmessagetime', time(), 'enrol/lmb');
+set_config('lastlmbmessagetime', time(), 'enrol_lmb');
 
-$xmlstorage->id = $DB->insert_record('lmb_raw_xml', $xmlstorage, true);
+$xmlstorage->id = $DB->insert_record('enrol_lmb_raw_xml', $xmlstorage, true);
 
 
 $result = $enrol->process_xml_line($xml);
@@ -118,7 +118,7 @@ if ($result) {
         $xmlupdate->xml = ''; //Can we set this to NULL? Update record doesn't seem to support it.
     }
     
-    $DB->update_record('lmb_raw_xml', $xmlupdate);
+    $DB->update_record('enrol_lmb_raw_xml', $xmlupdate);
 }    
 
 ?>

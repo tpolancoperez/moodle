@@ -1,19 +1,17 @@
 <?php
 require_once(dirname(dirname(dirname(dirname(__FILE__)))) . '/config.php');
 require_login();
-//require_capability('moodle/site:doanything', get_context_instance(CONTEXT_SYSTEM, SITEID));
-require_capability('moodle/site:config', get_context_instance(CONTEXT_SYSTEM, SITEID));
+require_capability('moodle/site:config', get_context_instance(CONTEXT_SYSTEM));
 
 $PAGE->set_context(get_context_instance(CONTEXT_SYSTEM));
+$PAGE->set_url('/enrol/lmb/tools/prunelmbtables.php');
 
-/// get language strings
-$str = get_strings(array('enrolments', 'users', 'administration', 'settings'));
 $nav[0] = array('name' => 'Admin', 'link' => '../../../'.$CFG->admin.'/index.php', 'type' => '');
-$nav[1] = array('name' => 'LMB', 'link' => '../../../'.$CFG->admin.'/enrol_config.php?enrol=lmb', 'type' => '');
+$nav[1] = array('name' => 'LMB', 'link' => '../../../'.$CFG->admin.'/settings.php?section=enrolsettingslmb', 'type' => '');
 $nav[2] = array('name' => 'Tools', 'link' => './index.php', 'type' => '');
 $nav[3] = array('name' => 'Prune Banner LMB Module Tables', 'link' => '', 'type' => 'title');
 
-print_header("$SITE->shortname: $str->enrolments", $SITE->fullname,
+print_header("$SITE->shortname: ".get_string('enrolments', 'enrol'), $SITE->fullname,
               build_navigation($nav));
               
 require_once('../lib.php');
@@ -24,12 +22,12 @@ require_once('../lib.php');
 echo $OUTPUT->box_start();
 $sem = optional_param("sem", false, PARAM_INT);
 $conf = optional_param("conf", false, PARAM_ALPHA);
-$years = optional_param("years", 0, PARAM_INT);
-$months = optional_param("months", 0, PARAM_INT);
-$days = optional_param("days", 0, PARAM_INT);
-$hours = optional_param("hours", 0, PARAM_INT);
+$years = optional_param("timeyears", 0, PARAM_INT);
+$months = optional_param("timemonths", 0, PARAM_INT);
+$days = optional_param("timedays", 0, PARAM_INT);
+$hours = optional_param("timehours", 0, PARAM_INT);
 
-$time = time()-(3600*24*365*3);
+$time = time()-(3600*24*365*3); //So if you just click threw, we will delete things 3yrs old
 $timesub = false;
 if ($years && $months && $days) {
     $time = mktime($hours, 0, 0, $months, $days, $years);
@@ -53,28 +51,33 @@ if ($sem && $conf) {
     $enrol->prune_tables($sem);
     print "Pruned ".$sem.'.';
 } else if ($timesub && $conf) {
+    $sqlparams = array('timereceived' => $time);
+    $sql = "timereceived < :timereceived";
+               
+    $count = $DB->delete_records_select('enrol_lmb_raw_xml', $sql, $sqlparams);
     
+    print "Deleted";
 } else if ($timesub) {
     $sqlparams = array('timereceived' => $time);
-    $sql = "SELECT id, timereceived FROM {lmb_raw_xml} WHERE timereceived < :timereceived";
+    $sql = "timereceived < :timereceived";
                
-    $count = $DB->count_records_sql($sql, $sqlparams);
+    $count = $DB->count_records_select('enrol_lmb_raw_xml', $sql, $sqlparams);
     
     ?>
 	
 	<form action="" METHOD="post">
-	Are you sure you want to prune the lmb_raw_xml table? This will remove the <? echo $count; ?> records before .<br>
-	<input type="hidden" name="years" value="<?php print $years; ?>">
-	<input type="hidden" name="months" value="<?php print $months; ?>">
-	<input type="hidden" name="days" value="<?php print $days; ?>">
-	<input type="hidden" name="hours" value="<?php print $hours; ?>">
+	Are you sure you want to prune the enrol_lmb_raw_xml table? This will remove the <?php echo $count; ?> records before .<br>
+	<input type="hidden" name="timeyears" value="<?php print $years; ?>">
+	<input type="hidden" name="timemonths" value="<?php print $months; ?>">
+	<input type="hidden" name="timedays" value="<?php print $days; ?>">
+	<input type="hidden" name="timehours" value="<?php print $hours; ?>">
 	<input TYPE=SUBMIT VALUE=Yes name=conf><input TYPE=SUBMIT VALUE=No name=conf>
 	</form>
 	
-<?
+<?php
     
 } else if ($sem) {
-    $term = get_record('lmb_terms', 'sourcedid', $sem);
+    $term = $DB->get_record('enrol_lmb_terms', array('sourcedid' => $sem));
     ?>
 	
 	<form action="" METHOD="post">
@@ -83,7 +86,7 @@ if ($sem && $conf) {
 	<input TYPE=SUBMIT VALUE=Yes name=conf><input TYPE=SUBMIT VALUE=No name=conf>
 	</form>
 	
-<?
+<?php
 } else {
     $terms = enrol_lmb_make_terms_menu_array();
     
@@ -119,7 +122,7 @@ if ($sem && $conf) {
 	<input TYPE=SUBMIT VALUE="Prune...">
 	</form>
 	
-    <?
+    <?php
 }
 
 

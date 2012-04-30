@@ -57,428 +57,6 @@ class enrol_lmb_plugin extends enrol_plugin {
     }
     
     
-    /**
-     * Sets up the object that the web form uses, and displays the form
-     * 
-     * @param object $frm the form object
-     */
-    public function config_form($frm) {
-        global $CFG;
-    
-        $frm = $this->get_config(true);
-        if (!$frm) {
-            $this->process_config(new Object());
-            $frm = $this->get_config(true);
-        }
-    
-        include ("$CFG->dirroot/enrol/lmb/config.html");    
-        
-    }
-    
-    
-    /**
-     * This public function stores config data passed from config.html in mdl_config_plugin
-     * 
-     * @param int $config An array of config variables
-     */
-    public function process_config($config) {
-        
-        
-        if (!isset($config->logtolocation)) {
-            $config->logtolocation = '';
-        }
-        set_config('logtolocation', $config->logtolocation, 'enrol/lmb');
-        
-        if (!isset($config->logerrors)) {
-            $config->logerrors = '';
-        }
-        set_config('logerrors', $config->logerrors, 'enrol/lmb');
-    
-        if (!isset($config->storexml)) {
-            $config->storexml = 'never';
-        }
-        set_config('storexml', $config->storexml, 'enrol/lmb');
-        
-        // ---- LMB Security ----
-        if (!isset($config->lmbusername)) {
-            $config->lmbusername = 0;
-        }
-        set_config('lmbusername', $config->lmbusername, 'enrol/lmb');
-        
-        if (!isset($config->lmbpasswd)) {
-            $config->lmbpasswd = 0;
-        }
-        set_config('lmbpasswd', $config->lmbpasswd, 'enrol/lmb');
-        
-        
-        // ---- LMB Downtime Check ----
-        
-        if (!isset($config->performlmbcheck)) {
-            $config->performlmbcheck = '';
-        }
-        set_config('performlmbcheck', $config->performlmbcheck, 'enrol/lmb');
-        
-        
-        if (!isset($config->startbiztimehr)) {
-            $config->startbiztimehr = '09';
-        }
-        set_config('startbiztimehr', $config->startbiztimehr, 'enrol/lmb');
-        
-        
-        if (!isset($config->startbiztimemin)) {
-            $config->startbiztimemin = '00';
-        }
-        set_config('startbiztimemin', $config->startbiztimemin, 'enrol/lmb');
-        
-        
-        if (!isset($config->endbiztimehr)) {
-            $config->endbiztimehr = '17';
-        }
-        set_config('endbiztimehr', $config->endbiztimehr, 'enrol/lmb');
-        
-        
-        if (!isset($config->endbiztimemin)) {
-            $config->endbiztimemin = '00';
-        }
-        set_config('endbiztimemin', $config->endbiztimemin, 'enrol/lmb');
-        
-        if (!isset($config->bizgrace)) {
-            $config->bizgrace = '30';
-        }
-        $config->bizgrace = (int)$config->bizgrace;
-        set_config('bizgrace', $config->bizgrace, 'enrol/lmb');
-        
-        if (!isset($config->nonbizgrace)) {
-            $config->nonbizgrace = '0';
-        }
-        $config->nonbizgrace = (int)$config->nonbizgrace;
-        set_config('nonbizgrace', $config->nonbizgrace, 'enrol/lmb');
-        
-        
-        if (!isset($config->emails)) {
-            $config->emails = '';
-        }
-        set_config('emails', $config->emails, 'enrol/lmb');
-        
-        
-        // ---- Banner Import ----
-        if (!isset($config->bannerxmllocation)) {
-            $config->bannerxmllocation = '';
-        }
-        set_config('bannerxmllocation', $config->bannerxmllocation, 'enrol/lmb');
-        
-        if (!isset($config->bannerxmllocationcomp)) {
-            $config->bannerxmllocationcomp = false;
-        }
-        set_config('bannerxmllocationcomp', $config->bannerxmllocationcomp, 'enrol/lmb');
-        
-        if (!isset($config->bannerxmlfolder)) {
-            $config->bannerxmlfolder = '';
-        }
-        set_config('bannerxmlfolder', $config->bannerxmlfolder, 'enrol/lmb');
-        
-        if (!isset($config->bannerxmlfoldercomp)) {
-            $config->bannerxmlfoldercomp = false;
-        }
-        set_config('bannerxmlfoldercomp', $config->bannerxmlfoldercomp, 'enrol/lmb');
-        
-        if (!isset($config->dropprecentlimit)) {
-            $config->dropprecentlimit = 0;
-        }
-        set_config('dropprecentlimit', $config->dropprecentlimit, 'enrol/lmb');
-        
-        if (!isset($config->usestatusfiles)) {
-            $config->usestatusfiles = '';
-        }
-        set_config('usestatusfiles', $config->usestatusfiles, 'enrol/lmb');
-        
-        // ---- Cron Options ----
-        if (!isset($config->cronxmlfile)) {
-            $config->cronxmlfile = false;
-        }
-        set_config('cronxmlfile', $config->cronxmlfile, 'enrol/lmb');
-        
-        if (!isset($config->cronxmlfolder)) {
-            $config->cronxmlfolder = false;
-        }
-        set_config('cronxmlfolder', $config->cronxmlfolder, 'enrol/lmb');
-        
-           
-        if (!isset($config->cronunhidecourses)) {
-            $config->cronunhidecourses = false;
-        }
-        set_config('cronunhidecourses', $config->cronunhidecourses, 'enrol/lmb');
-        
-        if (!isset($config->cronunhidedays) || $config->cronunhidedays < 0) {
-            $config->cronunhidedays = 0;
-        }
-        set_config('cronunhidedays', $config->cronunhidedays, 'enrol/lmb');
-        
-        // ---- XML Course ----
-        
-        if (!isset($config->coursetitle)) {
-            $config->coursetitle = '';
-        }
-        set_config('coursetitle', $config->coursetitle, 'enrol/lmb');
-        
-        
-        if (!isset($config->forcetitle)) {
-            $config->forcetitle = '';
-        }
-        set_config('forcetitle', $config->forcetitle, 'enrol/lmb');
-        
-        
-        if (!isset($config->courseshorttitle)) {
-            $config->courseshorttitle = '';
-        }
-        set_config('courseshorttitle', $config->courseshorttitle, 'enrol/lmb');
-        
-        
-        if (!isset($config->forceshorttitle)) {
-            $config->forceshorttitle = '';
-        }
-        set_config('forceshorttitle', $config->forceshorttitle, 'enrol/lmb');
-        
-        
-        if (!isset($config->coursehidden)) {
-            $config->coursehidden = 'never';
-        }
-        set_config('coursehidden', $config->coursehidden, 'enrol/lmb');
-            
-        if (!isset($config->cattype)) {
-            $config->cattype = 'term';
-        }
-        set_config('cattype', $config->cattype, 'enrol/lmb');
-        
-        
-        if (!isset($config->catselect)) {
-            $config->catselect = '';
-        }
-        set_config('catselect', $config->catselect, 'enrol/lmb');
-        
-        
-        if (!isset($config->cathidden)) {
-            $config->cathidden = 0;
-        }
-        set_config('cathidden', $config->cathidden, 'enrol/lmb');
-        
-        if (!isset($config->forcecat)) {
-            $config->forcecat = '';
-        }
-        set_config('forcecat', $config->forcecat, 'enrol/lmb');
-        
-        if (!isset($config->usemoodlecoursesettings)) {
-            $config->usemoodlecoursesettings = 0;
-        }
-        set_config('usemoodlecoursesettings', $config->usemoodlecoursesettings, 'enrol/lmb');
-        
-        if (!isset($config->computesections)) {
-            $config->computesections = 0;
-        }
-        set_config('computesections', $config->computesections, 'enrol/lmb');
-        
-        if (!isset($config->forcecomputesections)) {
-            $config->forcecomputesections = 0;
-        }
-        set_config('forcecomputesections', $config->forcecomputesections, 'enrol/lmb');
-        
-        // ---- XML XLS ----
-        
-        if (!isset($config->xlstitle)) {
-            $config->xlstitle = '';
-        }
-        set_config('xlstitle', $config->xlstitle, 'enrol/lmb');
-        
-        
-        if (!isset($config->xlstitlerepeat)) {
-            $config->xlstitlerepeat = '';
-        }
-        set_config('xlstitlerepeat', $config->xlstitlerepeat, 'enrol/lmb');
-        
-        
-        if (!isset($config->xlstitledivider)) {
-            $config->xlstitledivider = '';
-        }
-        set_config('xlstitledivider', $config->xlstitledivider, 'enrol/lmb');
-        
-        
-        if (!isset($config->xlsshorttitle)) {
-            $config->xlsshorttitle = '';
-        }
-        set_config('xlsshorttitle', $config->xlsshorttitle, 'enrol/lmb');
-        
-        
-        if (!isset($config->xlsshorttitlerepeat)) {
-            $config->xlsshorttitlerepeat = '';
-        }
-        set_config('xlsshorttitlerepeat', $config->xlsshorttitlerepeat, 'enrol/lmb');
-        
-        
-        if (!isset($config->xlsshorttitledivider)) {
-            $config->xlsshorttitledivider = '';
-        }
-        set_config('xlsshorttitledivider', $config->xlsshorttitledivider, 'enrol/lmb');
-        
-        
-        if (!isset($config->xlstype)) {
-            $config->xlstype = 'merge';
-        }
-        set_config('xlstype', $config->xlstype, 'enrol/lmb');
-        
-        if (!isset($config->xlsmergegroups)) {
-            $config->xlsmergegroups = false;
-        }
-        set_config('xlsmergegroups', $config->xlsmergegroups, 'enrol/lmb');
-        // ---- XML Person ----
-        
-        if (!isset($config->createnewusers)) {
-            $config->createnewusers = '';
-        }
-        set_config('createnewusers', $config->createnewusers, 'enrol/lmb');
-        
-        
-        if (!isset($config->createusersemaildomain)) {
-            $config->createusersemaildomain = '';
-        }
-        set_config('createusersemaildomain', $config->createusersemaildomain, 'enrol/lmb');
-        
-        if (!isset($config->donterroremail)) {
-            $config->donterroremail = '';
-        }
-        set_config('donterroremail', $config->donterroremail, 'enrol/lmb');
-        
-        if (!isset($config->imsdeleteusers)) {
-            $config->imsdeleteusers = '';
-        }
-        set_config('imsdeleteusers', $config->imsdeleteusers, 'enrol/lmb');
-        
-        if (!isset($config->usernamesource)) {
-            $config->usernamesource = 'emailname';
-        }
-        set_config('usernamesource', $config->usernamesource, 'enrol/lmb');
-        
-        if (!isset($config->useridtypeother)) {
-            $config->useridtypeother = '';
-        }
-        set_config('useridtypeother', $config->useridtypeother, 'enrol/lmb');
-        
-        if (!isset($config->ignoreusernamecase)) {
-            $config->ignoreusernamecase = '';
-        }
-        set_config('ignoreusernamecase', $config->ignoreusernamecase, 'enrol/lmb');
-        
-        if (!isset($config->sourcedidfallback)) {
-            $config->sourcedidfallback = '';
-        }
-        set_config('sourcedidfallback', $config->sourcedidfallback, 'enrol/lmb');
-        
-        
-        if (!isset($config->consolidateusernames)) {
-            $config->consolidateusernames = '';
-        }
-        set_config('consolidateusernames', $config->consolidateusernames, 'enrol/lmb');
-        
-        
-        if (!isset($config->auth)) {
-            $config->auth = 'manual';
-        }
-        set_config('auth', $config->auth, 'enrol/lmb');
-        
-        
-        if (!isset($config->passwordnamesource)) {
-            $config->passwordnamesource = 'none';
-        }
-        set_config('passwordnamesource', $config->passwordnamesource, 'enrol/lmb');
-        
-        
-        if (!isset($config->passworduseridtypeother)) {
-            $config->passworduseridtypeother = '';
-        }
-        set_config('passworduseridtypeother', $config->passworduseridtypeother, 'enrol/lmb');
-        
-        
-        if (!isset($config->defaultcity)) {
-            $config->defaultcity = 'xml';
-        }
-        set_config('defaultcity', $config->defaultcity, 'enrol/lmb');
-        
-        if (!isset($config->standardcity)) {
-            $config->standardcity = '';
-        }
-        set_config('standardcity', $config->standardcity, 'enrol/lmb');
-        
-        
-        if (!isset($config->passworduseridtypeother)) {
-            $config->passworduseridtypeother = '';
-        }
-        set_config('passworduseridtypeother', $config->passworduseridtypeother, 'enrol/lmb');
-        
-        
-        
-        if (!isset($config->nickname)) {
-            $config->nickname = '';
-        }
-        set_config('nickname', $config->nickname, 'enrol/lmb');
-        
-        if (!isset($config->forcename)) {
-            $config->forcename = '';
-        }
-        set_config('forcename', $config->forcename, 'enrol/lmb');
-        
-        if (!isset($config->forceemail)) {
-            $config->forceemail = '';
-        }
-        set_config('forceemail', $config->forceemail, 'enrol/lmb');
-        
-        if (!isset($config->includetelephone)) {
-            $config->includetelephone = '';
-        }
-        set_config('includetelephone', $config->includetelephone, 'enrol/lmb');
-        
-        if (!isset($config->forcetelephone)) {
-            $config->forcetelephone = '';
-        }
-        set_config('forcetelephone', $config->forcetelephone, 'enrol/lmb');
-        
-        if (!isset($config->includeaddress)) {
-            $config->includeaddress = '';
-        }
-        set_config('includeaddress', $config->includeaddress, 'enrol/lmb');
-        
-        if (!isset($config->forceaddress)) {
-            $config->forceaddress = '';
-        }
-        set_config('forceaddress', $config->forceaddress, 'enrol/lmb');
-        
-        
-        // ---- XML Enrol ----
-        
-        foreach($this->imsroles as $imsrolenum=>$imsrolename){
-            $configref = 'imsrolemap' . $imsrolenum;
-            if (!isset($config->$configref)) {
-                //echo "<p>Resetting config->$configref</p>";
-                $config->$configref = $this->determine_default_rolemapping($imsrolenum);
-            }
-            set_config('imsrolemap' . $imsrolenum, $config->$configref, 'enrol/lmb');
-        }
-        
-        
-        
-        if (!isset($config->unenrolmember)) {
-            $config->unenrolmember = '';
-        }
-        set_config('unenrolmember', $config->unenrolmember, 'enrol/lmb');
-    
-    
-    
-        $this->get_config(true);
-    
-    
-        
-        return true;
-    
-    }
-    
     
     /**
      * Preform any cron tasks for the module.
@@ -505,7 +83,7 @@ class enrol_lmb_plugin extends enrol_plugin {
 	    	$endtoday = mktime(23, 59, 59, date('n', $curtime), date('j', $curtime), date('Y', $curtime), 0);
 	    	
 	    	$config->nextunhiderun = $endtoday;
-	    	set_config('nextunhiderun', $endtoday, 'enrol/lmb');
+	    	set_config('nextunhiderun', $endtoday, 'enrol_lmb');
         }
         
         if ($config->cronunhidecourses && (time() > $config->nextunhiderun)) {
@@ -521,8 +99,8 @@ class enrol_lmb_plugin extends enrol_plugin {
         	
         	$this->unhide_courses($starttime, $endtime);
         	
-        	set_config('nextunhiderun', $endtoday, 'enrol/lmb');
-        	set_config('prevunhideendtime', $endtime, 'enrol/lmb');
+        	set_config('nextunhiderun', $endtoday, 'enrol_lmb');
+        	set_config('prevunhideendtime', $endtime, 'enrol_lmb');
         }
         
     }
@@ -540,7 +118,7 @@ class enrol_lmb_plugin extends enrol_plugin {
         
         //Update normal courses
         $sqlparams = array('start' => $start, 'end' => $end);
-        $sql = 'UPDATE {course} SET visible=1 WHERE visible=0 AND idnumber IN (SELECT sourcedid FROM {lmb_courses} WHERE startdate > :start AND startdate <= :end)';
+        $sql = 'UPDATE {course} SET visible=1 WHERE visible=0 AND idnumber IN (SELECT sourcedid FROM {enrol_lmb_courses} WHERE startdate > :start AND startdate <= :end)';
                
         $this->log_line('cron unhide:'.$sql);
         $DB->execute($sql, $sqlparams);
@@ -548,7 +126,7 @@ class enrol_lmb_plugin extends enrol_plugin {
         
         //Update crosslists
         $sqlparams = array('start' => $start, 'end' => $end);
-        $sql = 'UPDATE {course} SET visible=1 WHERE visible=0 AND idnumber IN (SELECT crosslistsourcedid FROM {lmb_crosslist} WHERE coursesourcedid IN (SELECT sourcedid FROM {lmb_courses} WHERE startdate > :start AND startdate <= :end))';
+        $sql = 'UPDATE {course} SET visible=1 WHERE visible=0 AND idnumber IN (SELECT crosslistsourcedid FROM {enrol_lmb_crosslists} WHERE coursesourcedid IN (SELECT sourcedid FROM {enrol_lmb_courses} WHERE startdate > :start AND startdate <= :end))';
 
         $this->log_line('cron unhide:'.$sql);
         $DB->execute($sql, $sqlparams);
@@ -650,7 +228,7 @@ class enrol_lmb_plugin extends enrol_plugin {
             @set_time_limit(0);
             $starttime = time(); 
             
-            set_config('processingfile', $starttime, 'enrol/lmb');
+            set_config('processingfile', $starttime, 'enrol_lmb');
             
     
             $this->log_line('Found file '.$filename);
@@ -715,8 +293,8 @@ class enrol_lmb_plugin extends enrol_plugin {
             
             $timeelapsed = time() - $starttime;
             
-            set_config('xmlfiletime', $filetime, 'enrol/lmb');
-            set_config('processingfile', 0, 'enrol/lmb');
+            set_config('xmlfiletime', $filetime, 'enrol_lmb');
+            set_config('processingfile', 0, 'enrol_lmb');
             
             $this->log_line('Process has completed. Time taken: '.$timeelapsed.' seconds.');
     
@@ -906,6 +484,11 @@ class enrol_lmb_plugin extends enrol_plugin {
         
         $config = $this->get_config();
         
+        if (!$config->parsecoursexml) {
+        	$this->log_line('Course:skipping.');
+        	return true;
+        }
+        
         unset($course);
         
         
@@ -967,7 +550,7 @@ class enrol_lmb_plugin extends enrol_plugin {
             $course->depttitle = trim($matches[1]);
         } else {
             $course->depttitle = '';
-            $logline .= 'department title not found:';
+            $logline .= 'org/orgunit not defined:';
         }
         
         
@@ -979,23 +562,23 @@ class enrol_lmb_plugin extends enrol_plugin {
         
         $course->timemodified = time();
         
-        if ($oldcourse = $DB->get_record('lmb_courses', array('sourcedid' => $course->sourcedid))) {
+        if ($oldcourse = $DB->get_record('enrol_lmb_courses', array('sourcedid' => $course->sourcedid))) {
             $course->id = $oldcourse->id;
             if (enrol_lmb_compare_objects($course, $oldcourse)) {
-                if ($DB->update_record('lmb_courses', $course)) {
-                    $logline .= 'updated lmb_courses:';
+                if ($DB->update_record('enrol_lmb_courses', $course)) {
+                    $logline .= 'updated enrol_lmb_courses:';
                 } else {
-                    $logline .= 'failed to update lmb_courses:';
+                    $logline .= 'failed to update enrol_lmb_courses:';
                     $status = false;
                 }
             } else {
                 $logline .= 'no lmb changes to make:';
             }
         } else {
-            if ($course->id = $DB->insert_record('lmb_courses', $course, true)) {
-                $logline .= 'inserted into lmb_courses:';
+            if ($course->id = $DB->insert_record('enrol_lmb_courses', $course, true)) {
+                $logline .= 'inserted into enrol_lmb_courses:';
             } else {
-                $logline .= 'failed to insert into lmb_courses:';
+                $logline .= 'failed to insert into enrol_lmb_courses:';
                 $status = false;
             }
         }
@@ -1073,7 +656,11 @@ class enrol_lmb_plugin extends enrol_plugin {
         
         
         if ($status) {
-            $status = enrol_lmb_restore_users_to_course($course->sourcedid);
+            //TODO make optional        
+            $tmpstatus = enrol_lmb_restore_users_to_course($course->sourcedid);
+            if (!$tmpstatus) {
+                $logline .= 'error restoring some enrolments:';
+            }
         }
         
         
@@ -1279,7 +866,7 @@ class enrol_lmb_plugin extends enrol_plugin {
             case 'deptcode':
             case 'dept':
                 //TODO2 - Removed addslashes around depttitle, check
-                if ($lmbcat = $DB->get_record('lmb_categories', array('dept' => $depttitle, 'cattype' => 'dept'))) {
+                if ($lmbcat = $DB->get_record('enrol_lmb_categories', array('dept' => $depttitle, 'cattype' => 'dept'))) {
                     $cat->id = $lmbcat->categoryid;
                 } else {
                     $cat->name = $depttitle;
@@ -1297,8 +884,8 @@ class enrol_lmb_plugin extends enrol_plugin {
                         $cat->context = get_context_instance(CONTEXT_COURSECAT, $cat->id);
                         mark_context_dirty($cat->context->path);
                         fix_course_sortorder();
-                        if (!$DB->insert_record('lmb_categories', $lmbcat)) {
-                            $logline .= "error saving category to lmb_categories:";
+                        if (!$DB->insert_record('enrol_lmb_categories', $lmbcat)) {
+                            $logline .= "error saving category to enrol_lmb_categories:";
                         }
                         $logline .= 'Created new (hidden) category:';
                     }else{
@@ -1313,7 +900,7 @@ class enrol_lmb_plugin extends enrol_plugin {
             case 'termdeptcode':
             case 'termdept':
                 //TODO2 - Removed addslashes around depttitle, check
-                if ($lmbcat = $DB->get_record('lmb_categories', array('termsourcedid' => $term, 'dept' => $depttitle, 'cattype' => 'termdept'))) {
+                if ($lmbcat = $DB->get_record('enrol_lmb_categories', array('termsourcedid' => $term, 'dept' => $depttitle, 'cattype' => 'termdept'))) {
                     $cat->id = $lmbcat->categoryid;
                 } else {
                     if ($termid = $this->get_term_category_id($term, $logline, $status)) {
@@ -1331,8 +918,8 @@ class enrol_lmb_plugin extends enrol_plugin {
                             $cat->context = get_context_instance(CONTEXT_COURSECAT, $cat->id);
                             mark_context_dirty($cat->context->path);
                             fix_course_sortorder();
-                            if (!$DB->insert_record('lmb_categories', $lmbcat, true)) {
-                                $logline .= "error saving category to lmb_categories:";
+                            if (!$DB->insert_record('enrol_lmb_categories', $lmbcat, true)) {
+                                $logline .= "error saving category to enrol_lmb_categories:";
                             }
                             $logline .= 'Created new (hidden) category:';
                         }else{
@@ -1384,10 +971,10 @@ class enrol_lmb_plugin extends enrol_plugin {
         
         $config = $this->get_config();
         
-        if ($lmbcat = $DB->get_record('lmb_categories', array('termsourcedid' => $term, 'cattype' => 'term'))) {
+        if ($lmbcat = $DB->get_record('enrol_lmb_categories', array('termsourcedid' => $term, 'cattype' => 'term'))) {
             return $lmbcat->categoryid;
         } else {
-            if ($lmbterm = $DB->get_record('lmb_terms', array('sourcedid' => $term))) {
+            if ($lmbterm = $DB->get_record('enrol_lmb_terms', array('sourcedid' => $term))) {
                 $cat->name = $lmbterm->title;
                 if ($config->cathidden) {
                     $cat->visible = 0;
@@ -1407,8 +994,8 @@ class enrol_lmb_plugin extends enrol_plugin {
                     mark_context_dirty($cat->context->path);
                     fix_course_sortorder();
                     
-                    if (!$DB->insert_record('lmb_categories', $lmbcat)) {
-                        $logline .= "error saving category to lmb_categories:";
+                    if (!$DB->insert_record('enrol_lmb_categories', $lmbcat)) {
+                        $logline .= "error saving category to enrol_lmb_categories:";
                     }
                     $logline .= 'Created new (hidden) category:';
                     
@@ -1438,6 +1025,11 @@ class enrol_lmb_plugin extends enrol_plugin {
     public function process_crosslisted_group_tag($tagcontents) {
         $config = $this->get_config();
     
+    	if ((!$config->parsexlsxml) || (!$config->parsecoursexml)) {
+        	$this->log_line('Crosslist Group:skipping.');
+        	return true;
+        }
+    
         $status = true;
         $deleted = false;
         $logline = 'Crosslist Group:';
@@ -1446,7 +1038,7 @@ class enrol_lmb_plugin extends enrol_plugin {
         
     
         
-        
+        //TODO remove this?
         
         
         if ($status && !$deleted) {
@@ -1489,6 +1081,11 @@ class enrol_lmb_plugin extends enrol_plugin {
         global $DB;
         
         $config = $this->get_config();
+        
+        if ((!$config->parsexlsxml) || (!$config->processcoursexml)) {
+        	$this->log_line('Crosslist Group:skipping.');
+        	return true;
+        }
     
         $status = true;
         $deleted = false;
@@ -1587,7 +1184,7 @@ class enrol_lmb_plugin extends enrol_plugin {
         }
     
         
-        if ($status && $existing_xlists = $DB->get_records('lmb_crosslist', array('crosslistsourcedid' => $crosslistsourcedid))) {
+        if ($status && $existing_xlists = $DB->get_records('enrol_lmb_crosslists', array('crosslistsourcedid' => $crosslistsourcedid))) {
             foreach ($existing_xlists as $existing_xlist) {
                 if (isset($existing_type)) {
                     if ($existing_type != $existing_xlist->type) {
@@ -1609,7 +1206,7 @@ class enrol_lmb_plugin extends enrol_plugin {
         }
     
         foreach ($xlists as $xlist) {
-            if ($oldxlist = $DB->get_record('lmb_crosslist', array('status' => 1, 'coursesourcedid' => $xlist->coursesourcedid, 'type' => 'merge'))) {
+            if ($oldxlist = $DB->get_record('enrol_lmb_crosslists', array('status' => 1, 'coursesourcedid' => $xlist->coursesourcedid, 'type' => 'merge'))) {
                 if (($oldxlist->crosslistsourcedid != $xlist->crosslistsourcedid) ) {
                     $logline .= $xlist->coursesourcedid.' is already in xlist '.$oldxlist->crosslistsourcedid.':';
                     $errorcode = 3;
@@ -1618,7 +1215,7 @@ class enrol_lmb_plugin extends enrol_plugin {
                 }
             }
             if ($status && $type == 'merge') {
-                if ($oldxlist = $DB->get_record('lmb_crosslist', array('coursesourcedid' => $xlist->coursesourcedid, 'type' => 'meta'))) {
+                if ($oldxlist = $DB->get_record('enrol_lmb_crosslists', array('coursesourcedid' => $xlist->coursesourcedid, 'type' => 'meta'))) {
                     $logline .= $xlist->coursesourcedid.' is already in xlist '.$oldxlist->crosslistsourcedid.':';
                     $errormessage = $xlist->coursesourcedid.' is already in xlist '.$oldxlist->crosslistsourcedid;
                     $errorcode = 3;
@@ -1631,10 +1228,10 @@ class enrol_lmb_plugin extends enrol_plugin {
             $newxlists = array();
             foreach ($xlists as $xlist) {
                 $xlist->type = $type;
-                if ($oldxlist = $DB->get_record('lmb_crosslist', array('crosslistsourcedid' => $xlist->crosslistsourcedid, 'coursesourcedid' => $xlist->coursesourcedid))) {
+                if ($oldxlist = $DB->get_record('enrol_lmb_crosslists', array('crosslistsourcedid' => $xlist->crosslistsourcedid, 'coursesourcedid' => $xlist->coursesourcedid))) {
                     $xlist->id = $oldxlist->id;
                     if (enrol_lmb_compare_objects($xlist, $oldxlist)) {
-                        if ($DB->update_record('lmb_crosslist', $xlist)) {
+                        if ($DB->update_record('enrol_lmb_crosslists', $xlist)) {
                             $xlist->newrecord = 1;
                             $logline .= 'lmb updated:';
                         } else {
@@ -1647,7 +1244,7 @@ class enrol_lmb_plugin extends enrol_plugin {
                         $logline .= 'no lmb changes to make:';
                     }
                 } else {
-                    if ($xlist->id = $DB->insert_record('lmb_crosslist', $xlist, true)) {
+                    if ($xlist->id = $DB->insert_record('enrol_lmb_crosslists', $xlist, true)) {
                         $logline .= 'lmb inserted:';
                         
                         
@@ -1797,7 +1394,7 @@ class enrol_lmb_plugin extends enrol_plugin {
         }//Close status check
     
         if (isset($droppedUsers) && $droppedUsers) {
-            if ($allxlists = $DB->get_records('lmb_crosslist', array('status' => 1, 'crosslistsourcedid' => $crosslistsourcedid))) {
+            if ($allxlists = $DB->get_records('enrol_lmb_crosslists', array('status' => 1, 'crosslistsourcedid' => $crosslistsourcedid))) {
                 foreach ($allxlists as $xlist) {
                     enrol_lmb_restore_users_to_course($xlist->coursesourcedid);
                 }
@@ -1903,12 +1500,12 @@ class enrol_lmb_plugin extends enrol_plugin {
         $title = $titledef;
         $repeat = '';
         
-        if ($courseIds = $DB->get_records('lmb_crosslist', array('status' => 1, 'crosslistsourcedid' => $idnumber))) {
+        if ($courseIds = $DB->get_records('enrol_lmb_crosslists', array('status' => 1, 'crosslistsourcedid' => $idnumber))) {
             $courses = array();
             
             foreach ($courseIds as $courseId) {
             
-                if ($course = $DB->get_record('lmb_courses', array('sourcedid' => $courseId->coursesourcedid))) {
+                if ($course = $DB->get_record('enrol_lmb_courses', array('sourcedid' => $courseId->coursesourcedid))) {
                     array_push($courses, $course);
                     
                 }
@@ -1954,11 +1551,11 @@ class enrol_lmb_plugin extends enrol_plugin {
     public function get_crosslist_endtime($idnumber) {
         global $DB;
         
-        if ($courseIds = $DB->get_records('lmb_crosslist', array('status' => 1, 'crosslistsourcedid' => $idnumber))) {
+        if ($courseIds = $DB->get_records('enrol_lmb_crosslists', array('status' => 1, 'crosslistsourcedid' => $idnumber))) {
             $enddates = array();
             
             foreach ($courseIds as $courseId) {
-                if ($enddate = $DB->get_field('lmb_courses', 'enddate', array('sourcedid' => $courseId->coursesourcedid))) {
+                if ($enddate = $DB->get_field('enrol_lmb_courses', 'enddate', array('sourcedid' => $courseId->coursesourcedid))) {
                     array_push($enddates, $enddate);
                     
                 }
@@ -1983,11 +1580,11 @@ class enrol_lmb_plugin extends enrol_plugin {
     public function get_crosslist_starttime($idnumber) {
         global $DB;
         
-        if ($courseIds = $DB->get_records('lmb_crosslist', array('status' => 1, 'crosslistsourcedid' => $idnumber))) {
+        if ($courseIds = $DB->get_records('enrol_lmb_crosslists', array('status' => 1, 'crosslistsourcedid' => $idnumber))) {
             $startdates = array();
             
             foreach ($courseIds as $courseId) {
-                if ($startdate = $DB->get_field('lmb_courses', 'startdate', array('sourcedid' => $courseId->coursesourcedid))) {
+                if ($startdate = $DB->get_field('enrol_lmb_courses', 'startdate', array('sourcedid' => $courseId->coursesourcedid))) {
                     array_push($startdates, $startdate);
                     
                 }
@@ -2013,6 +1610,11 @@ class enrol_lmb_plugin extends enrol_plugin {
     public function process_person_tag($tagcontents){
         global $CFG, $DB;
         $config = $this->get_config();
+        
+        if (!$config->parsepersonxml) {
+        	$this->log_line('Person:skipping.');
+        	return true;
+        }
         
         $status = true;
         $deleted = false;
@@ -2238,11 +1840,11 @@ class enrol_lmb_plugin extends enrol_plugin {
         $lmbpersonslash = $lmbperson;
     
         //Check to see if we have an existing record for this person
-        if ($oldlmbperson = $DB->get_record('lmb_people', array('sourcedid' => $lmbperson->sourcedid))) {
+        if ($oldlmbperson = $DB->get_record('enrol_lmb_people', array('sourcedid' => $lmbperson->sourcedid))) {
             $lmbpersonslash->id = $oldlmbperson->id;
             if (enrol_lmb_compare_objects($lmbpersonslash, $oldlmbperson)) {
-                if (!$DB->update_record('lmb_people', $lmbpersonslash)) {
-                    $logline .= 'error updating lmb_people:';
+                if (!$DB->update_record('enrol_lmb_people', $lmbpersonslash)) {
+                    $logline .= 'error updating enrol_lmb_people:';
                     $status = false;
                 } else {
                     $logline .= 'updated lmb table:';
@@ -2251,8 +1853,8 @@ class enrol_lmb_plugin extends enrol_plugin {
                 $logline .= 'no lmb changes to make:';
             }
         } else {
-            if (!$DB->insert_record('lmb_people', $lmbpersonslash)) {
-                $logline .= 'error inserting lmb_people:';
+            if (!$DB->insert_record('enrol_lmb_people', $lmbpersonslash)) {
+                $logline .= 'error inserting enrol_lmb_people:';
                 $status = false;
             } else {
                 $logline .= 'inserted into lmb table:';
@@ -2303,7 +1905,6 @@ class enrol_lmb_plugin extends enrol_plugin {
             $firstname = $lmbperson->givenname;
         }
     
-        //$status = $status && enrol_lmb_restore_user_enrolments($lmbperson->sourcedid);
         if (isset($lmbperson->email)) {
             if ($emailallow && $lmbperson->recstatus != 3 && trim($lmbperson->username) != '') {
                 unset($moodleuser);
@@ -2419,6 +2020,8 @@ class enrol_lmb_plugin extends enrol_plugin {
                         $moodleuser->address = '';
                     }
                     
+                    $moodleuser->country = $CFG->country;
+                    
                     if ($config->createnewusers) {
                         if ($collisionid = $DB->get_field('user', 'id', array('username' => $moodleuser->username))) {
                             $logline .= 'username collision, could not create user:';
@@ -2428,7 +2031,7 @@ class enrol_lmb_plugin extends enrol_plugin {
                                 $logline .= "created new user:";
                                 $moodleuser->id = $id;
                                 
-                                $status = $status && enrol_lmb_restore_user_enrolments($lmbperson->sourcedid);
+                                $status = $status && $this->restore_user_enrolments($lmbperson->sourcedid);
         
                             } else {
                                 $logline .= 'failed to insert new user:';
@@ -2549,17 +2152,17 @@ class enrol_lmb_plugin extends enrol_plugin {
         $term->timemodified = time();
         
         
-        if ($oldterm = $DB->get_record('lmb_terms', array('sourcedid' => $term->sourcedid))) {
+        if ($oldterm = $DB->get_record('enrol_lmb_terms', array('sourcedid' => $term->sourcedid))) {
             $term->id = $oldterm->id;
             
-            if($id = $DB->update_record('lmb_terms', $term)){
+            if($id = $DB->update_record('enrol_lmb_terms', $term)){
                 $logline .= 'updated term:';
             } else {
                 $logline .= 'failed to update term:';
                 $status = false;
             }
         } else {
-            if($id = $DB->insert_record('lmb_terms', $term, true)){
+            if($id = $DB->insert_record('enrol_lmb_terms', $term, true)){
                 $logline .= 'create term:';
                 $term->id = $id;
             } else {
@@ -2632,8 +2235,13 @@ class enrol_lmb_plugin extends enrol_plugin {
         
         $config = $this->get_config();
         
+        if ((!$config->parsepersonxml) || (!$config->parsecoursexml) || (!$config->parsepersonxml)) {
+        	$this->log_line('Enrolment:skipping.');
+        	return true;
+        }
+        
         $status = true;
-        $logline = 'enrolment:';
+        $logline = 'Enrolment:';
         unset($enrolment);
         
         if(preg_match('{<sourcedid>.*?<id>(.+?)</id>.*?</sourcedid>}is', $tagcontents, $matches)){
@@ -2666,7 +2274,7 @@ class enrol_lmb_plugin extends enrol_plugin {
             }
             
             if(preg_match('{<role.*?roletype *= *"(.*?)".*?\>.*?</role>}is', $member, $matches)){
-                $enrolment->role = trim($matches[1]);
+                $enrolment->role = (int)trim($matches[1]);
             } else {
                 $logline .= 'person role not found:';
                 $status = false;
@@ -2714,11 +2322,13 @@ class enrol_lmb_plugin extends enrol_plugin {
         $enrolment->timemodified = time();
         
         if ($status) {
-            if ($oldenrolment = $DB->get_record('lmb_enrolments', array('coursesourcedid' => $enrolment->coursesourcedid, 'personsourcedid' => $enrolment->personsourcedid))) {
+            if ($oldenrolment = $DB->get_record('enrol_lmb_enrolments', array('coursesourcedid' => $enrolment->coursesourcedid, 'personsourcedid' => $enrolment->personsourcedid))) {
                 $enrolment->id = $oldenrolment->id;
+                $enrolment->succeeded = $oldenrolment->succeeded;
+                
                 if (enrol_lmb_compare_objects($enrolment, $oldenrolment)) {
-                    if (!$DB->update_record('lmb_enrolments', $enrolment)) {
-                        $logline .= 'error updating in lmb_enrolments:';
+                    if (!$DB->update_record('enrol_lmb_enrolments', $enrolment)) {
+                        $logline .= 'error updating in enrol_lmb_enrolments:';
                         $status = false;
                     } else {
                         $logline .= 'lmb updated:';
@@ -2728,8 +2338,8 @@ class enrol_lmb_plugin extends enrol_plugin {
                 }
                 
             } else {
-                if (!$enrolment->id = $DB->insert_record('lmb_enrolments', $enrolment, true)) {
-                    $logline .= 'error inserting into lmb_enrolments:';
+                if (!$enrolment->id = $DB->insert_record('enrol_lmb_enrolments', $enrolment, true)) {
+                    $logline .= 'error inserting into enrol_lmb_enrolments:';
                     $status = false;
                 } else {
                     $logline .= 'lmb inserted:';
@@ -2737,7 +2347,6 @@ class enrol_lmb_plugin extends enrol_plugin {
             }
         }
         
-        //$status = $status && enrol_lmb_process_enrolment_log($enrolment, $logline, $config);
         $status = $status && $this->process_enrolment_log($enrolment, $logline, $config);
         
         
@@ -2775,13 +2384,13 @@ class enrol_lmb_plugin extends enrol_plugin {
     public function prune_tables($term) {
         global $DB;
         
-        $DB->delete_records('lmb_enrolments', array('term' => $term));
-        $DB->delete_records('lmb_courses', array('term' => $term));
+        $DB->delete_records('enrol_lmb_enrolments', array('term' => $term));
+        $DB->delete_records('enrol_lmb_courses', array('term' => $term));
         
         $sqlparams = array('term' => '%'.$term);
-        $DB->delete_records_select('lmb_crosslist', "coursesourcedid LIKE :term", $sqlparams);
+        $DB->delete_records_select('enrol_lmb_crosslists', "coursesourcedid LIKE :term", $sqlparams);
         
-        $DB->delete_records('lmb_terms', array('sourcedid' => $term));
+        $DB->delete_records('enrol_lmb_terms', array('sourcedid' => $term));
         
         return true;
     }
@@ -2796,7 +2405,7 @@ class enrol_lmb_plugin extends enrol_plugin {
     public function log_line($string){
         //$config = $this->get_config();
         
-        $silent = get_config('enrol/lmb', 'silent');
+        $silent = get_config('enrol_lmb', 'silent');
         
         $message = '';
         
@@ -3016,11 +2625,11 @@ class enrol_lmb_plugin extends enrol_plugin {
             $this->log_line('Processing drops for term '.$termid);
 
             $sqlparams = array('term' => $termid, 'status' => 1);
-            $termcnt = $DB->count_records('lmb_enrolments', $sqlparams);
+            $termcnt = $DB->count_records('enrol_lmb_enrolments', $sqlparams);
             
             
             $sqlparams = array('processid' => $this->processid, 'termid' => $termid, 'status' => 1);
-            $termcnt = $DB->count_records_select('lmb_enrolments', 'extractstatus < :processid AND term = :termid AND status = :status', $sqlparams);
+            $dropcnt = $DB->count_records_select('enrol_lmb_enrolments', 'extractstatus < :processid AND term = :termid AND status = :status', $sqlparams);
             
                         
             $percent = (int)ceil(($dropcnt/$termcnt)*100);
@@ -3034,7 +2643,7 @@ class enrol_lmb_plugin extends enrol_plugin {
             $sqlparams = array('extractstatus' => $this->processid, 'termid' => $termid);
             
             
-            if ($enrols = $DB->get_records_select('lmb_enrolments', 'extractstatus < :extractstatus AND term = :termid', $sqlparams, 'coursesourcedid ASC')) {
+            if ($enrols = $DB->get_records_select('enrol_lmb_enrolments', 'extractstatus < :extractstatus AND term = :termid', $sqlparams, 'coursesourcedid ASC')) {
                 $count = count($enrols);
                 $curr = 0;
                 $percent = 0;
@@ -3057,14 +2666,11 @@ class enrol_lmb_plugin extends enrol_plugin {
                     if ($csourcedid != $enrol->coursesourcedid) {
                         $csourcedid = $enrol->coursesourcedid;
                         $courseid = enrol_lmb_get_course_id($csourcedid);
-                        $rolecontext = get_context_instance(CONTEXT_COURSE, $courseid);
-                        $rolecontext = $rolecontext->id;
                     }
                     
                     
                     
                     
-                    //if !status and succeeded skip
                     if ($enrol->status || !$enrol->succeeded) {
                         $enrolup = new Object();
                         $enrolup->id = $enrol->id;
@@ -3072,10 +2678,10 @@ class enrol_lmb_plugin extends enrol_plugin {
                         $enrolup->status = 0;
                         $enrolup->succeeded = 0;
                         
-                        if ($rolecontext) {
+                        if ($courseid) {
                             if ($userid = $DB->get_field('user', 'id', array('idnumber' => $enrol->personsourcedid))) {
                                 if ($roleid = enrol_lmb_get_roleid($enrol->role)) {
-                                    if (!role_unassign($roleid, $userid, 0, $rolecontext)) {
+                                    if (!$this->lmb_unassign_role_log($roleid, $courseid, $userid, $logline)) {
                                         $logline .= 'could not drop user:';
                                         $enrolup->succeeded = 0;
                                         $enrolstatus = false;
@@ -3092,11 +2698,11 @@ class enrol_lmb_plugin extends enrol_plugin {
                                 $logline .= 'user not found:';
                             }
                         } else {
-                            $logline .= 'role context not found:';
+                            $logline .= 'role course not found:';
                         }
                         
                         if (enrol_lmb_compare_objects($enrolup, $enrol)) {
-                            if (!$DB->update_record('lmb_enrolments', $enrolup)) {
+                            if (!$DB->update_record('enrol_lmb_enrolments', $enrolup)) {
                                 $logline .= 'error updating lmb:';
                                 $enrolstatus = false;
                             } else {
@@ -3152,35 +2758,15 @@ class enrol_lmb_plugin extends enrol_plugin {
     
     
     /**
-     * Used to call process_enrolment_log() without passing a 
-     * logline variable. See process_enrolment_log()
-     * 
-     * @param object $enrol an enrol object representing a record in lmb_enrolments
-     * @param object $config plugin config object passed optionally passes for caching speed
-     * @param int $rolecontextid role context id passed optionally passes for caching speed. Can cause errors if impropperly set.
-     * @return bool success or failure of the role assignments
-     */
-    public function process_enrolment($enrol, $config=NULL, $rolecontextid=NULL) {
-        $logline = '';
-        
-        $status = $this->process_enrolment_log($enrol, &$logline, $config=NULL, $rolecontextid);
-        
-        unset($logline);
-        
-        return $status;
-    }
-    
-    /**
      * Processes an enrol object, executing the associated assign or
      * unassign and update the lmb entry for success or failure
      * 
-     * @param object $enrol an enrol object representing a record in lmb_enrolments
+     * @param object $enrol an enrol object representing a record in enrol_lmb_enrolments
      * @param string $logline passed logline object to append log entries to
      * @param object $config plugin config object passed optionally passes for caching speed
-     * @param int $rolecontextid role context id passed optionally passes for caching speed. Can cause errors if impropperly set.
      * @return bool success or failure of the role assignments
      */ //TODO2
-    public function process_enrolment_log($enrol, &$logline, $config=NULL, $rolecontextid=NULL) {
+    public function process_enrolment_log($enrol, &$logline, $config=NULL) {
         global $DB;
         $status = true;
         
@@ -3190,27 +2776,22 @@ class enrol_lmb_plugin extends enrol_plugin {
         
         $newcoursedid = enrol_lmb_get_course_id($enrol->coursesourcedid);
         
-        if ($config->xlsmergegroups && $xlist = $DB->get_record('lmb_crosslist', array('status' => 1, 'coursesourcedid' => $enrol->coursesourcedid))) {
+        if ($config->xlsmergegroups && $xlist = $DB->get_record('enrol_lmb_crosslists', array('status' => 1, 'coursesourcedid' => $enrol->coursesourcedid))) {
             $groupid = enrol_lmb_get_crosslist_groupid($enrol->coursesourcedid, $xlist->crosslistsourcedid);
         } else {
             $groupid = false;
         }
         
         
-        if (!$rolecontextid) {
-            $rolecontextid = enrol_lmb_get_course_contextid($enrol->coursesourcedid);
-        }
         
         $enrolup = new object();
         $enrolup->id = $enrol->id;
         
-        if ($rolecontextid) {
+        if ($newcoursedid) {
             if ($userid = $DB->get_field('user', 'id', array('idnumber' => $enrol->personsourcedid))) {
                 if ($roleid = enrol_lmb_get_roleid($enrol->role)) {
                     if ($enrol->status) {
-                        //$status = enrol_lmb_assign_role_log($roleid, $rolecontextid, $userid, &$logline);
                         $status = $this->lmb_assign_role_log($roleid, $newcoursedid, $userid, &$logline);
-                        //print $roleid.";".$rolecontextid.';'.$userid;
                         if ($status && $groupid && !groups_is_member($groupid, $userid)) {
                             global $CFG;
                             require_once($CFG->dirroot.'/group/lib.php');
@@ -3218,8 +2799,7 @@ class enrol_lmb_plugin extends enrol_plugin {
                             $logline .= 'added user to group:';
                         }
                     } else {
-                        //$status = enrol_lmb_unassign_role_log($roleid, $rolecontextid, $userid, &$logline);
-                        $status = $this->lmb_unassign_role_log($newcoursedid, $userid, &$logline);
+                        $status = $this->lmb_unassign_role_log($roleid, $newcoursedid, $userid, &$logline);
                         if ($status && $groupid && groups_is_member($groupid, $userid)) {
                             global $CFG;
                             require_once($CFG->dirroot.'/group/lib.php');
@@ -3236,7 +2816,7 @@ class enrol_lmb_plugin extends enrol_plugin {
                 $status = false;
             }
         } else {
-            $logline .= 'course/role context not found:';
+            $logline .= 'course not found:';
             $status = false;
         }
         
@@ -3247,8 +2827,8 @@ class enrol_lmb_plugin extends enrol_plugin {
         }
         
         if (enrol_lmb_compare_objects($enrolup, $enrol)) {
-            if (!$DB->update_record('lmb_enrolments', $enrolup)) {
-                $logline .= 'error updating in lmb_enrolments:';
+            if (!$DB->update_record('enrol_lmb_enrolments', $enrolup)) {
+                $logline .= 'error updating in enrol_lmb_enrolments:';
                 $status = false;
             } else {
                 $logline .= 'lmb updated:';
@@ -3263,35 +2843,41 @@ class enrol_lmb_plugin extends enrol_plugin {
 
 
     /**
-     * Used to call lmb_assign_role_log() without passing a 
-     * logline variable. See enrol_lmb_assign_role_log()
+     * For a given person id number, run all enrol and unenrol records in
+     * the local lmb database
      * 
-     * @param int $roleid id of the moodle role to assign
-     * @param int $rolecontextid id of the context to assign
-     * @param int $userid id of the moodle user
-     * @param object $config passed plugin config object
-     * @return bool success or failure of the role assignment
-     */ //TODO2
-    function lmb_assign_role($roleid, $courseid, $userid) {
-        $logline = '';
+     * @param string $idnumber the ims/xml id of a person
+     * @return bool success or failure of the enrolments
+     */
+    function restore_user_enrolments($idnumber) {
+        global $DB;
+        $config = $this->get_config();
+    
+        $status = true;
         
-        $status = enrol_lmb_assign_role_log($roleid, $courseid, $userid, &$logline);
         
-        unset($logline);
+    
+        if ($enrols = $DB->get_records('enrol_lmb_enrolments', array('personsourcedid' => $idnumber))) {
+            foreach ($enrols as $enrol) {
+                $logline = '';
+                $status = $this->process_enrolment_log($enrol, $logline, $config) && $status;
+            }
+    
+        }
         
         return $status;
     }
-    
+
     
     /**
-     * Assigns a moodle role to a user in the provided context
+     * Assigns a moodle role to a user in the provided course
      * 
      * @param int $roleid id of the moodle role to assign
-     * @param int $rolecontextid id of the context to assign
+     * @param int $courseid id of the course to assign
      * @param int $userid id of the moodle user
      * @param string $logline passed logline object to append log entries to
      * @return bool success or failure of the role assignment
-     */ //TODO2
+     */
     function lmb_assign_role_log($roleid, $courseid, $userid, &$logline) {
         if (!$courseid) {
             $logline .= 'missing courseid:';
@@ -3299,52 +2885,24 @@ class enrol_lmb_plugin extends enrol_plugin {
         
         $instance = $this->get_instance($courseid);
         
-        
+        //TODO catch exceptions thrown
         $this->enrol_user($instance, $userid, $roleid);
         
         $logline .= 'enrolled:';
         return true;
-        
-        /*if ($this->enrol_user($instance, $userid, $roleid)) {
-            $logline .= 'enrolled:';
-            return true;
-        }
-        
-        $logline .= 'error enrolling:';*/ //TODO catch error?
-        return false;
-    }
-    
-    /**
-     * Used to call lmb_unassign_role_log() without passing a 
-     * logline variable. See enrol_lmb_unassign_role_log()
-     * 
-     * @param int $roleid id of the moodle role to assign
-     * @param int $rolecontextid id of the context to assign
-     * @param int $userid id of the moodle user
-     * @param object $config passed plugin config object
-     * @return bool success or failure of the role assignment
-     */ //TODO2
-    function lmb_unassign_role($userid) {
-        $logline = '';
-        
-        $status = enrol_lmb_unassign_role_log($courseid, $userid, &$logline);
-        
-        unset($logline);
-        
-        return $status;
     }
     
     
     /**
-     * Unassigns a moodle role to a user in the provided context
+     * Unassigns a moodle role to a user in the provided course
      * 
-     * @param int $roleid id of the moodle role to assign
-     * @param int $rolecontextid id of the context to assign
+     * @param int $roleid id of the moodle role to unassign
+     * @param int $courseid id of the course to unassign
      * @param int $userid id of the moodle user
      * @param string $logline passed logline object to append log entries to
      * @return bool success or failure of the role assignment
-     */ //TODO2
-    function lmb_unassign_role_log($courseid, $userid, &$logline) {
+     */
+    function lmb_unassign_role_log($roleid, $courseid, $userid, &$logline) {
         if (!$courseid) {
             $logline .= 'missing courseid:';
             return false;
@@ -3352,18 +2910,12 @@ class enrol_lmb_plugin extends enrol_plugin {
         
         $instance = $this->get_instance($courseid);
         
-        $this->unenrol_user($instance, $userid);
+        //TODO catch exceptions thrown
+        $this->unenrol_user($instance, $userid, $roleid);
         $logline .= 'unenrolled:';
         return true;
-        
-        /*if ($this->unenrol_user($instance, $userid)) {
-            $logline .= 'unenrolled:';
-            return true;
-        }
-        
-        $logline .= 'error unenrolling:';
-        return false;*/ //TODO2 catch error?
     }
+    
     
     /**
      * Returns enrolment instance in given course.
