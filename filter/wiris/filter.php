@@ -149,10 +149,13 @@ class filter_wiris extends moodle_text_filter {
 	}	
 	
 	function WF_filter_math($text,$editor) {
-		
+		global $CFG;
+
+		include $CFG->dirroot . '/lib/editor/tinymce/version.php';
+
 		$text = preg_replace('/<img[^>]*?src="[^"]*?lib\/editor\/tinymce\/jscripts\/tiny_mce\/plugins\/tiny_mce_wiris\/integration\/showimage.php\?formula=([^"]*?)"[^>]*?>/i',
                 '<img align="middle" src="'.$CFG->wwwroot.'/lib/editor/tinymce/tiny_mce/' . $plugin->release . '/plugins/tiny_mce_wiris/integration/showimage.php?formula=$1">', $text);
-		
+
 		$output = ''; 
 		$n0 = 0;
 		// Search for '«math'. If it is not found, the
