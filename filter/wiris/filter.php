@@ -150,14 +150,15 @@ class filter_wiris extends moodle_text_filter {
 	
 	function WF_filter_math($text,$editor) {
 		
+		$text = preg_replace('/<img[^>]*?src="[^"]*?lib\/editor\/tinymce\/jscripts\/tiny_mce\/plugins\/tiny_mce_wiris\/integration\/showimage.php\?formula=([^"]*?)"[^>]*?>/i',
+                '<img align="middle" src="'.$CFG->wwwroot.'/lib/editor/tinymce/tiny_mce/' . $plugin->release . '/plugins/tiny_mce_wiris/integration/showimage.php?formula=$1">', $text);
+		
 		$output = ''; 
 		$n0 = 0;
 		// Search for '«math'. If it is not found, the
 		// content is returned without any modification
 		$n1 = stripos($text, $this->TAGS->in_mathopen);
 		
-		$start = 0;
-		$end = 0;
 		
 		if($n1 === false) {
 			return $text; // directly return the content
@@ -165,38 +166,13 @@ class filter_wiris extends moodle_text_filter {
 		
 		// filtering
 		while($n1 !== false) {
-            $inimg = false;
-            
-            if ($start = strrpos(substr($text, $n0, $n1 - $n0), '<img')) {
-                $inimg = true;
-                if ($endpos = strrpos(substr($text, $n0, $n1 - $n0), '>')) {
-                    if ($endpos > $start) {
-                        $start = false;
-                    }
-                }
-                
-            }
-            if (!$start) {
-                $inimg = false;
-                $start = $n1;
-            } 
-            
-			$output .= substr($text, $end, $start - $end);
-
+			$output .= substr($text, $n0, $n1 - $n0);
 			$n0 = $n1;
 			$n1 = stripos($text, $this->TAGS->in_mathclose, $n0);
 			if(!$n1) {
 				break;
 			}
 			$n1 = $n1 + strlen($this->TAGS->in_mathclose);
-			
-			if ($inimg) {
-                $end = strpos($text, '>', $n1);
-                $end += 1;
-			} else {
-                $end = $n1;
-			}
-			
 			// Getting the substring «math ... «/math»
 			$sub = substr($text, $n0, $n1 - $n0);
 			
@@ -228,7 +204,7 @@ class filter_wiris extends moodle_text_filter {
 			// searching next '«math'
 			$n1 = stripos($text, $this->TAGS->in_mathopen, $n0);
 		}
-		$output .= substr($text, $end);
+		$output .= substr($text, $n0);
 		return $output;
 	}	
 	
@@ -273,3 +249,4 @@ class filter_wiris extends moodle_text_filter {
 		return $output;
 	}
 }
+?>
