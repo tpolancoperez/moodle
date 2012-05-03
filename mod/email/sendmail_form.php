@@ -42,16 +42,32 @@ class mod_email_sendmail_form extends moodleform {
         $tmp.= "</div>";
         $mform->addElement('html', $tmp);
         
+        $attributes = array('disabled'=>true, 'cols'=>'57', 'rows'=>'1');
+        $pa = new popup_action('click', $link, 'post', array("height"=>"570","width"=>"450"));
         $label = get_string('for', 'email');
-        $actionlink = $OUTPUT->action_link($link, $label, new popup_action('click', $link, 'post', array("height"=>"570","width"=>"450")));
-        $attributes = array('disabled'=>true, 'cols'=>'57');
+        $actionlink = $OUTPUT->action_link($link, $label, $pa);
         $mform->addElement('textarea', 'textareato', "<b>".$actionlink."</b>", $attributes);
-        $mform->addElement('html', '<div id="to">');
+        $mform->addElement('html', '<div id="to" style="display:none;">');
         foreach ($selectedusers as $userid ) {
             $mform->addElement('html', '<input type="hidden" name="to[]" value="'.$userid.'"/>');
             $mform->setDefault('textareato', fullname($userid));
     	}
         $mform->addElement('html', '</div>');
+        
+        $mform->addElement('html', '<div id="cc_fields"  style="display:none;">');
+            $label = get_string('cc', 'email');
+            $actionlink = $OUTPUT->action_link($link, $label, $pa);
+            $mform->addElement('textarea', 'textareacc', "<b>".$actionlink."</b>", $attributes);
+            $mform->addElement('html', '<div id="cc"  style="display:none;"></div>');
+        $mform->addElement('html', '</div>');
+        
+        $mform->addElement('html', '<div id="bcc_fields"  style="display:none;">');
+            $label = get_string('bcc', 'email');
+            $actionlink = $OUTPUT->action_link($link, $label, $pa);
+            $mform->addElement('textarea', 'textareabcc', "<b>".$actionlink."</b>", $attributes);
+            $mform->addElement('html', '<div id="bcc"  style="display:none;"></div>');
+        $mform->addElement('html', '</div>');
+        
         
         
         $attributes = array('maxlength'=> 200, 'size'=>'60');

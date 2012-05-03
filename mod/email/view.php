@@ -44,8 +44,8 @@
 
     // This resolv any problems
     if ( $error != 0 ) {
-        $body = $_GET['body'];
-        $subject = $_GET['subject'];
+        $body = isset($_GET['body']) ? $_GET['body'] : '';
+        $subject = isset($_GET['subject']) ? $_GET['subject'] : '';
     }
 
     if ($id) {

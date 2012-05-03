@@ -78,8 +78,7 @@ function addSenders(tipo) {
     } else if ( tipo == 'cc' ) {
 
         if (  document.sendusers.selecteduserscc.options.length > 0 ) {
-            addC(tipo);
-
+            window.opener.document.getElementById("cc_fields").style.display = "inline";
             var field = window.opener.document.sendmail.textareacc;
             var s = document.sendusers.selecteduserscc;
         } else {
@@ -88,8 +87,7 @@ function addSenders(tipo) {
     } else if( tipo == 'bcc' ) {
 
         if (  document.sendusers.selectedusersbcc.options.length > 0 ) {
-            addC(tipo);
-    
+            window.opener.document.getElementById("bcc_fields").style.display = "inline";
             var field = window.opener.document.sendmail.textareabcc;
             var s = document.sendusers.selectedusersbcc;
 
@@ -111,58 +109,6 @@ function addSenders(tipo) {
         contacts.setAttribute("value", s.options[i].value);
         contacts.setAttribute("name", tipo + "[]");
         window.opener.document.getElementById(tipo).appendChild(contacts);
-    }
-
-}
-
-function addC(tipo) {
-
-    if ( ! window.opener.document.getElementById("textarea" + tipo) ) {
-
-        var d = window.opener.document.getElementById("fortextarea"+tipo);
-
-        var d1 = window.opener.document.getElementById("button"+tipo);
-
-        var textarea = window.opener.document.createElement("textarea");
-        textarea.setAttribute("rows", "3");
-        textarea.setAttribute("cols", "65");
-        textarea.setAttribute("name", tipo);
-        textarea.setAttribute("id", "textarea" + tipo);
-        textarea.setAttribute("disabled","true");
-        textarea.setAttribute("class","textareacontacts");
-    
-        var contacts = window.opener.document.createElement("a");
-        var texto = window.opener.document.createTextNode(" <?php print_string('participants', 'email'); ?> ...");
-    
-        contacts.appendChild(texto);
-        contacts.setAttribute("target", "participants");
-        contacts.setAttribute("title", "<?php print_string('participants', 'email');?>");
-        contacts.setAttribute("href", " <?php echo $CFG->wwwroot; ?> /mod/email/participants.php? <?php echo $urlhtml; ?>");
-        contacts.setAttribute("onclick", "return openpopup('/mod/email/participants.php? <?php echo $urlhtml; ?>', 'participants', 'menubar=0,location=0,scrollbars,resizable,width=470,height=520', 0)");
-    
-        d.appendChild(textarea);
-    
-        d1.appendChild(contacts);
-    
-        var b = window.opener.document.createElement("b");
-        var txt;
-        if ( tipo == "cc") {
-            txt = " <?php print_string('cc', 'email'); ?> " ;
-        } else {
-            txt = " <?php print_string('bcc', 'email'); ?> ";
-        }
-        var node = window.opener.document.createTextNode(txt+": ");
-        b.appendChild(node);
-        window.opener.document.getElementById("td"+tipo).appendChild(b);
-    
-        var rm = window.opener.document.getElementById("url"+tipo);
-        window.opener.document.getElementById("url").removeChild(rm);
-    
-        var rm1 = window.opener.document.getElementById("urltxt");
-        if ( rm1 ) {
-            window.opener.document.getElementById("url").removeChild(rm1);
-        }
-
     }
 
 }

@@ -117,8 +117,8 @@ $string['body'] = 'Body';
 $string['folder'] = 'Folder';
 
 $string['addusersto'] = 'To';
-$string['cc'] = 'CC';
-$string['bcc'] = 'BCC';
+$string['cc'] = 'Cc';
+$string['bcc'] = 'Bcc';
 $string['selectedusersremove'] = 'Remove';
 $string['accept'] = 'Accept';
 $string['change'] = 'Change';

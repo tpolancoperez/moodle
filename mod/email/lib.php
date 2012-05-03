@@ -1757,7 +1757,9 @@ function email_replyall($mailid, $options, $context) {
     $selectedusers[] = $userwriter->id;
 
     // Get users sent mail, with option for reply all
-    $selectedusers = array_merge( $selectedusers, email_get_users_sent($mailid, true, $USER) );
+    $arrTo = email_get_users_sent($mailid, "to", array($USER->id));
+    $arrCc = email_get_users_sent($mailid, "cc", array($USER->id));
+    $selectedusers = array_merge( $selectedusers, $arrTo, $arrCc);
     $mail->textareato = "";
     foreach($selectedusers as $k=>$userid){
         $user = $DB->get_record('user',array('id'=>$userid));
@@ -3256,70 +3258,57 @@ function email_get_root_folders($accountid, $draft=true) {
  * This function get users to sent an mail.
  *
  * @param int $mailid Mail ID
- * @param boolean $forreplyall Flag indicates if getting user's for reply all. If true return object contain formated names (Optional)
- * @param object $writer Contain user who write mail (if not null, exclude this user for returned)
- * @param string Type of mail for users
+ * @param string send type of mail to user
+ * @param array $excludedids Contains userids to ignore
  * @return object Contain all users object send mails
  * @todo Finish documenting this function
  **/
-function email_get_users_sent($mailid, $forreplyall=false, $writer=NULL, $type='') {
+function email_get_users_sent($mailid, $type='', $excludedids=array()) {
     global $DB;
     
-	// Get mails with send to my
-	if (! $sends = $DB->get_records('email_send', array('mailid'=>$mailid)) ) {
-		return false;
-	}
+    // Get mails with send to my
+    if (! $sends = $DB->get_records('email_send', array('mailid'=>$mailid)) ) {
+        return false;
+    }
 
-        $users = array();
+    $users = array();
 
-	// Get username
-	foreach ( $sends as $send ) {
-		// Get account
-		if (! $account = $DB->get_record('email_account', array('id'=>$send->accountid))) {
-			return false;
-		}
+    // Get username
+    foreach ( $sends as $send ) {
+        // Get account
+        if (! $account = $DB->get_record('email_account', array('id'=>$send->accountid))) {
+                return false;
+        }
 
-		// Get user
-		if (! $user = $DB->get_record('user', array('id'=>$account->userid))) {
-			return false;
-		}
+        // Get user
+        if (! $user = $DB->get_record('user', array('id'=>$account->userid))) {
+                return false;
+        }
 
-		// Exclude user
-		if ( $writer ) {
-			if ( $user->id != $writer->id) {
-				if (! $forreplyall ) {
-					$users[] = fullname($user);
-				} else {
-					$users[] = $user->id;
-				}
-			}
-		} else {
-			if (! $forreplyall ) {
+        // Exclude user
+        if (in_array($user->id, $excludedids)) {
+            continue;
+        } 
+            
+        // filter by send type
+        if ( $type == 'to') {
+            if ($send->type == 'to' ) {
+                $users[] = fullname($user);
+            }
+        } else if ( $type == 'cc' ) {
+            if ($send->type == 'cc' ) {
+                $users[] = fullname($user);
+            }
+        } else if ( $type == 'bcc' ) {
+            if ($send->type == 'bcc' ) {
+                $users[] = fullname($user);
+            }
+        } else {
+            $users[] = fullname($user);
+        }
+    }
 
-				// Separe type, if it's corresponding
-				if ( $type == 'to') {
-					if ($send->type == 'to' ) {
-						$users[] = fullname($user);
-					}
-				} else if ( $type == 'cc' ) {
-					if ($send->type == 'cc' ) {
-						$users[] = fullname($user);
-					}
-				} else if ( $type == 'bcc' ) {
-					if ($send->type == 'bcc' ) {
-						$users[] = fullname($user);
-					}
-				} else {
-					$users[] = fullname($user);
-				}
-			} else {
-				$users[] = $user->id;
-			}
-		}
-
-	}
-
-	return $users;
+    return $users;
 }
 
 /**
@@ -3766,13 +3755,13 @@ function email_viewmail($mailid, $options, $mails, $cm) {
 	}
 
 	// Here, get users sended mail
-	$userssendto = email_get_users_sent($mail->id, false, NULL, 'to');
+	$userssendto = email_get_users_sent($mail->id, 'to');
 	$userstosendto = email_format_users($userssendto);
 
-	$userssendcc = email_get_users_sent($mail->id, false, NULL, 'cc');
+	$userssendcc = email_get_users_sent($mail->id, 'cc');
 	$userstosendcc = email_format_users($userssendcc, true);
 
-	$userssendbcc = email_get_users_sent($mail->id, false, NULL, 'bcc');
+	$userssendbcc = email_get_users_sent($mail->id, 'bcc');
 	$userstosendbcc = email_format_users($userssendbcc, true);
 
 	// Drop users sending by bcc if user isn't writer

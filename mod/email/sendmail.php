@@ -75,9 +75,15 @@
         $form->body["text"] = file_prepare_draft_area($draftid_editor, $context->id, 'mod_email', 'body', empty($mail->id)?null:$mail->id, $formoptions["bodyoptions"], $form->body["text"]);
 
     
-        //because of the methods used whe sending the To,Cc, & Bcc fields they aren't handled by Moodle Form API
+        //because of the methods used when sending the To,Cc, & Bcc fields they aren't handled by Moodle Form API
         if(isset($_POST["to"])){
             $form->to = $_POST["to"];
+        }
+        if(isset($_POST["cc"])){
+            $form->cc = $_POST["cc"];
+        }
+        if(isset($_POST["bcc"])){
+            $form->bcc = $_POST["bcc"];
         }
         //In this case you process validated data. $mform->get_data() returns data posted in form.
 
