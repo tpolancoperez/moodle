@@ -46,7 +46,7 @@
     if (!$elmuser = $DB->get_record('elluminatelive_users', array('userid'=>$USER->id))) {
     /// If this is a public meeting and the user is a member of this course,
     /// they can join the meeting.
-        if (empty($elluminatelive->private) && has_capability('moodle/course:view', $context)) {
+        if (empty($elluminatelive->private) && is_enrolled($context)) {
             if (!elluminatelive_new_user($USER->id, random_string(10))) {
                error('Could not create new Elluminate Live! user account!');
             }
