@@ -82,6 +82,7 @@ class auth_plugin_cas extends auth_plugin_ldap {
         global $frm;
         global $CFG;
         global $SESSION, $OUTPUT, $PAGE;
+        global $user;
 
         $site = get_site();
         $CASform = get_string('CASform', 'auth_cas');
@@ -95,6 +96,10 @@ class auth_plugin_cas extends auth_plugin_ldap {
             return;
         }
 
+        if (!isset($_SERVER['HTTP_REFERER']) || ((stripos($_SERVER['HTTP_REFERER'], 'https://mysail.oakland.edu') !== 0) && (stripos($_SERVER['HTTP_REFERER'], 'https://mysailtest.oakland.edu') !== 0))) {
+		    return;
+		}
+
         // Return if CAS enabled and settings not specified yet
         if (empty($this->config->hostname)) {
             return;
@@ -105,7 +110,13 @@ class auth_plugin_cas extends auth_plugin_ldap {
 
         if (phpCAS::checkAuthentication()) {
             $frm->username = phpCAS::getUser();
-            $frm->password = 'passwdCas';
+            
+            $user = get_record('user', 'username', $frm->username);
+    		$frm->password = "passwdCas";
+    		session_register('cas', 1);
+    		$_SESSION['cas'] = 1;
+
+            
             return;
         }
 
@@ -114,7 +125,8 @@ class auth_plugin_cas extends auth_plugin_ldap {
             $frm->password = 'guest';
             return;
         }
-
+        return;
+        /*
         if ($this->config->multiauth) {
             $authCAS = optional_param('authCAS', '', PARAM_RAW);
             if ($authCAS == 'NOCAS') {
@@ -140,7 +152,7 @@ class auth_plugin_cas extends auth_plugin_ldap {
         if (!phpCAS::isAuthenticated()) {
             phpCAS::setLang($this->config->language);
             phpCAS::forceAuthentication();
-        }
+        }*/
     }
 
     /**
