@@ -81,7 +81,7 @@ class auth_plugin_cas extends auth_plugin_ldap {
     function loginpage_hook() {
         global $frm;
         global $CFG;
-        global $SESSION, $OUTPUT, $PAGE;
+        global $SESSION, $OUTPUT, $PAGE, $DB;
         global $user;
 
         $site = get_site();
@@ -111,7 +111,7 @@ class auth_plugin_cas extends auth_plugin_ldap {
         if (phpCAS::checkAuthentication()) {
             $frm->username = phpCAS::getUser();
             
-            $user = get_record('user', 'username', $frm->username);
+            $user = $DB->get_record('user', 'username', $frm->username);
     		$frm->password = "passwdCas";
     		session_register('cas', 1);
     		$_SESSION['cas'] = 1;
