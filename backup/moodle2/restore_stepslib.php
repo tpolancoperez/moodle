@@ -1194,7 +1194,7 @@ class restore_course_legacy_files_step extends restore_structure_step {
         $data->id = $this->get_courseid();
 
         // Check if we have legacy files, and enable them if we do.
-        $sql = 'SELECT count(*) AS newitemid, info
+        $sql = 'SELECT count(*) AS newitemid
                   FROM {backup_files_temp}
                  WHERE backupid = ?
                    AND contextid = ?
