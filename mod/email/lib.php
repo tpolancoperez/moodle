@@ -977,7 +977,10 @@ function email_printblocks($userid, $options) {
 	// Get courses associated at this account
 	foreach ($accounts as $account) {
 		$email   = $DB->get_record('email', array('id'=>$account->emailid));
-		$course  = $DB->get_record('course', array('id'=>$email->course));
+		if($email === false){
+                    continue;
+                }
+                $course  = $DB->get_record('course', array('id'=>$email->course));
 
 		// Check if show principal course
 		if ( $CFG->email_display_course_principal ) {
@@ -1259,8 +1262,7 @@ function email_get_form_options($email, $mail, $options, $selectedusers, $contex
     $mail->id = null;  //being set to NULL creates a new entry
     $mail = file_prepare_standard_filemanager($mail, 'attachments', $attachmentoptions, $context, 'mod_email', 'attachments', $mail->id);
     $mail = file_prepare_standard_editor($mail, 'body', $bodyoptions, $context, 'mod_email', 'body', $mail->id);
-    $formoptions = array('mail'=>$mail
-                        , 'email'=>$email
+    $formoptions = array('email'=>$email
                         , 'options'=>$options
                         , 'selectedusers'=>$selectedusers
                         , 'attachmentoptions'=>$attachmentoptions
@@ -1717,6 +1719,7 @@ function email_reply($mailid, $options, $context) {
     $formoptions = email_get_form_options($email, $mail, $options, $selectedusers, $context);
     $mform = new mod_email_sendmail_form('sendmail.php', $formoptions);
     
+    $mail->body = $mail->body_editor;    
     $mform->set_data($mail);
     $mform->display();
     
@@ -1777,6 +1780,7 @@ function email_replyall($mailid, $options, $context) {
     $formoptions = email_get_form_options($email, $mail, $options, $selectedusers, $context);
     $mform = new mod_email_sendmail_form('sendmail.php', $formoptions);
     
+    $mail->body = $mail->body_editor;
     $mform->set_data($mail);
     $mform->display();
     
@@ -1830,6 +1834,7 @@ function email_forward($mailid, $options, $context) {
     $mform = new mod_email_sendmail_form('sendmail.php', $formoptions);
     
     //Form processing and displaying is done here
+    $mail->body = $mail->body_editor;
     $mform->set_data($mail);
     $mform->display();
     
@@ -1868,6 +1873,7 @@ function email_draftmailform($mailid, $options) {
         $mform = new mod_email_sendmail_form('sendmail.php', $formoptions);
 
         //Form processing and displaying is done here
+        $mail->body = $mail->body_editor;
         $mform->set_data($mail);
         $mform->display();
     
