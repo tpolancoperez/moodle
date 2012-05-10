@@ -111,7 +111,7 @@ class auth_plugin_cas extends auth_plugin_ldap {
         if (phpCAS::checkAuthentication()) {
             $frm->username = phpCAS::getUser();
             
-            $user = $DB->get_record('user', 'username', $frm->username);
+            $user = $DB->get_record('user', array('username' => $frm->username));
     		$frm->password = "passwdCas";
     		session_register('cas', 1);
     		$_SESSION['cas'] = 1;
