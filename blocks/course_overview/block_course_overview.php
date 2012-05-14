@@ -72,6 +72,8 @@ class block_course_overview extends block_base {
         $time = time();
         $sql = 'SELECT * FROM {elis_messages} WHERE starttime <= '.$time.' AND endtime >= '.$time;
     
+        $hiddenmessages = array();
+        
         if ($messages = $DB->get_records_sql($sql)) {
         	$sql = 'SELECT id FROM {role_assignments} WHERE userid = '.$USER->id.' AND roleid IN (2, 8, 3) LIMIT 1';
         	if ($DB->count_records_sql($sql)) {
@@ -145,8 +147,7 @@ class block_course_overview extends block_base {
     		if (!is_array($msgs)) {
     	    	$msgs = array();
     	    }
-    	    $mymessages = array();
-    	    $hiddenmessages = array();
+    	    $mymessages = array();   
     	    $started = false;
     	    $hidden = false;
     	    foreach ($messages as $message) {
