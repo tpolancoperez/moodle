@@ -1760,8 +1760,8 @@ function email_replyall($mailid, $options, $context) {
     $selectedusers[] = $userwriter->id;
 
     // Get users sent mail, with option for reply all
-    $arrTo = email_get_users_sent($mailid, "to", array($USER->id));
-    $arrCc = email_get_users_sent($mailid, "cc", array($USER->id));
+    $arrTo = email_get_userids_sent($mailid, "to", array($USER->id));
+    $arrCc = email_get_userids_sent($mailid, "cc", array($USER->id));
     $selectedusers = array_merge( $selectedusers, $arrTo, $arrCc);
     $mail->textareato = "";
     foreach($selectedusers as $k=>$userid){
@@ -3316,6 +3316,66 @@ function email_get_users_sent($mailid, $type='', $excludedids=array()) {
 
     return $users;
 }
+
+
+
+/**
+ * This function get users to sent an mail.
+ *
+ * @param int $mailid Mail ID
+ * @param string send type of mail to user
+ * @param array $excludedids Contains userids to ignore
+ * @return object Contain all users object send mails
+ * @todo Finish documenting this function
+ **/
+function email_get_userids_sent($mailid, $type='', $excludedids=array()) {
+    global $DB;
+    
+    // Get mails with send to my
+    if (! $sends = $DB->get_records('email_send', array('mailid'=>$mailid)) ) {
+        return false;
+    }
+
+    $userids = array();
+
+    // Get username
+    foreach ( $sends as $send ) {
+        // Get account
+        if (! $account = $DB->get_record('email_account', array('id'=>$send->accountid))) {
+            return false;
+        }
+
+        // Get user
+        if (! $user = $DB->get_record('user', array('id'=>$account->userid))) {
+            return false;
+        }
+
+        // Exclude user
+        if (in_array($user->id, $excludedids)) {
+            continue;
+        } 
+            
+        // filter by send type
+        if ( $type == 'to') {
+            if ($send->type == 'to' ) {
+                $userids[] = $user->id;
+            }
+        } else if ( $type == 'cc' ) {
+            if ($send->type == 'cc' ) {
+                $userids[] = $user->id;
+            }
+        } else if ( $type == 'bcc' ) {
+            if ($send->type == 'bcc' ) {
+                $userids[] = $user->id;
+            }
+        } else {
+            $userids[] = $user->id;
+        }
+    }
+
+    return $userids;
+}
+
 
 /**
  * This function get users to send mail. Before you get an mail, and passed

@@ -21,7 +21,7 @@
     $a          = optional_param('a', 0, PARAM_INT);                    // account ID
     $action 	= optional_param('action', '', PARAM_ALPHANUM);         // Action to execute
     $mailid 	= optional_param('mailid', 0, PARAM_INT);               // email ID
-    $selectedmailids 	= optional_param_array('selectedmailids', 0, PARAM_INT);    // email ID
+    $selectedmailids 	= optional_param_array('selectedmailids', array(), PARAM_INT);    // email ID
     $folderid	= optional_param('folderid', 0, PARAM_INT); 		// folder ID
     $filterid	= optional_param('filterid', 0, PARAM_INT);		// filter ID
 
@@ -212,13 +212,17 @@
         case 'removemail':
                 // When remove an mail, this functions only accept array in param, overthere converting this param ...
                 if (! is_array($selectedmailids)) {
-                        $newmailid = array($selectedmailids);
+                        $arrmailid = array($selectedmailids);
                 } else {
-                        $newmailid = $selectedmailids;
+                        $arrmailid = $selectedmailids;
+                }
+                
+                if (empty($arrmailid)) {
+                    $arrmailid[] = $mailid;
                 }
 
                 // Apply this functions
-                email_removemail($newmailid, $a, $options);
+                email_removemail($arrmailid, $a, $options);
 
                 // Now, show mails
                 email_showaccountmails($a, '', $page, $perpage, $options);
