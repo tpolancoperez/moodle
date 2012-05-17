@@ -4061,10 +4061,6 @@ function email_pluginfile($course, $cm, $context, $filearea, $args, $forcedownlo
         return false;
     }
 
-//    if (!$discussion = $DB->get_record('forum_discussions', array('id'=>$post->discussion))) {
-//        return false;
-//    }
-
     if (!$forum = $DB->get_record('email', array('id'=>$cm->instance))) {
         return false;
     }
@@ -4075,24 +4071,6 @@ function email_pluginfile($course, $cm, $context, $filearea, $args, $forcedownlo
     if (!$file = $fs->get_file_by_hash(sha1($fullpath)) or $file->is_directory()) {
         return false;
     }
-
-//    // Make sure groups allow this user to see this file
-//    if ($discussion->groupid > 0 and $groupmode = groups_get_activity_groupmode($cm, $course)) {   // Groups are being used
-//        if (!groups_group_exists($discussion->groupid)) { // Can't find group
-//            return false;                           // Be safe and don't send it to anyone
-//        }
-//
-//        if (!groups_is_member($discussion->groupid) and !has_capability('moodle/site:accessallgroups', $context)) {
-//            // do not send posts from other groups when in SEPARATEGROUPS or VISIBLEGROUPS
-//            return false;
-//        }
-//    }
-
-    // Make sure we're allowed to see it...
-//    if (!forum_user_can_see_post($forum, $discussion, $post, NULL, $cm)) {
-//        return false;
-//    }
-
 
     // finally send the file
     send_stored_file($file, 0, 0, true); // download MUST be forced - security!

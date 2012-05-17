@@ -92,6 +92,11 @@
     	print_error('noaccount','email');
     }
 
+    $modcontext = get_context_instance(CONTEXT_MODULE, $cm->id);
+    if ($cm->visible == 0 && !has_capability('moodle/course:viewhiddenactivities', $modcontext, $USER->id)) { //hide if not visible unless user is teacher
+        print_error('activityiscurrentlyhidden');
+    }
+    
     add_to_log($course->id, "email", "view account", "view.php?id=$cm->id", "$course->shortname");
 
 /// Print the page header
