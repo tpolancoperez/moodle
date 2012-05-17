@@ -329,7 +329,7 @@
 			$depends_on = array($uids);
 			list($usql, $params) = $DB->get_in_or_equal($depends_on);
 			$where = ' WHERE userid $usql ';
-            $sql = "SELECT userid, elm_id FROM {elluminatelive_users}$where"'
+            $sql = "SELECT userid, elm_id FROM {elluminatelive_users}$where";
             if ($euids = $DB->get_records_sql($sql,$params)) {
                 $uids = array_intersect($uids, array_keys($euids));
             }
@@ -374,7 +374,7 @@
 			$depends_on = array($uids);
 			list($usql, $params) = $DB->get_in_or_equal($depends_on);
 			$where = ' WHERE userid $usql ';
-            $sql = "SELECT userid, elm_id FROM {elluminatelive_users}$where"'
+            $sql = "SELECT userid, elm_id FROM {elluminatelive_users}$where";
             if ($euids = $DB->get_records_sql($sql,$params)) {
                 $uids = array_intersect($uids, array_keys($euids));
             }

@@ -70,7 +70,7 @@
                     elluminatelive_update_grades($meeting, $userid);
                 }
             } else {
-                if ($ea = $DB->get_record('elluminatelive_attendance', array("userid"=>$userid,"elluminateliveid"=>$meeting->id)) {
+                if ($ea = $DB->get_record('elluminatelive_attendance', array("userid"=>$userid,"elluminateliveid"=>$meeting->id))) {
                     if (!empty($ea->grade)) {
                         $ea->grade = 0;
 
@@ -131,10 +131,10 @@
         $depends_on = array($userids);
         list($usql, $params) = $DB->get_in_or_equal($depends_on);
 		$where=' WHERE u.id $usql ';
-        sql="$selectfrom$where$order";
+        $sql="$selectfrom$where$order";
         $usersavail = $DB->get_records_sql($sql,$params);
 	} else {
-        sql="$selectfrom$order";
+        $sql="$selectfrom$order";
         $usersavail = $DB->get_records_sql($sql);
     }
 
