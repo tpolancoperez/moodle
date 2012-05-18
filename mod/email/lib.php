@@ -3856,7 +3856,7 @@ function email_viewmail($mailid, $options, $mails, $cm) {
 
 	$urltoremove 	= $baseurl .'&amp;action=\'removemail\'';
 
-	include_once('viewmail.html');
+	include_once('viewmail.php');
 
 	return true;
 }
