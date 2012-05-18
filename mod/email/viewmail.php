@@ -61,7 +61,7 @@ if ( $urlnextmail ) {
 }
 
 echo <<<EOD
-            &nbsp;&nbsp;
+        &nbsp;&nbsp;
         </td>
     </tr>
 EOD;
@@ -118,7 +118,7 @@ if(count($files)>1){
         if($filename != '.'){
             $url = "{$CFG->wwwroot}/pluginfile.php/{$f->get_contextid()}/mod_email/attachments";
             $fileurl = $url.$f->get_filepath().$f->get_itemid().'/'.$filename;
-            $tmp .= "<li>".html_writer::link($fileurl, $filename)."</li>";
+            $tmp .= "<li>".html_writer::link($fileurl, $filename)." &nbsp;".display_size($f->get_filesize())."</li>";
         }
     }
     $tmp.= "</ul>";
