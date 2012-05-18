@@ -110,7 +110,7 @@
                     if($filename != '.'){
                         $url = "{$CFG->wwwroot}/pluginfile.php/{$f->get_contextid()}/mod_email/attachments";
                         $fileurl = $url.$f->get_filepath().$f->get_itemid().'/'.$filename;
-                        $tmp .= html_writer::link($fileurl, $filename);
+                        $tmp .= html_writer::link($fileurl, $filename).", ";
                     }
                 }
                 echo $tmp;
