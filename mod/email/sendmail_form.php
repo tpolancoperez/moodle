@@ -17,7 +17,7 @@ require_once("$CFG->libdir/formslib.php");
 class mod_email_sendmail_form extends moodleform {
     //Add elements to form
     function definition() {
-        global $CFG, $OUTPUT;
+        global $CFG, $OUTPUT, $PAGE;
  
         $mform =& $this->_form; // Don't forget the underscore! 
         $mform->updateAttributes(array('name'=>'sendmail'));
@@ -72,7 +72,7 @@ class mod_email_sendmail_form extends moodleform {
         
         $attributes = array('maxlength'=> 200, 'size'=>'60');
         $mform->addElement('text', 'subject', get_string('subject', 'email'), $attributes);
-        $mform->setDefault('subject', '');        
+        $mform->setDefault('subject', '');
 
         $label = get_string('attachment', 'email') . "<br/>(".get_string('maxsize',null,display_size($email->maxbytes)).")";
         $mform->addElement('filemanager', 'attachments', $label, null, $attachmentoptions);
@@ -80,7 +80,7 @@ class mod_email_sendmail_form extends moodleform {
         
         $mform->addElement('editor', 'body', get_string("body", "email"), null, $bodyoptions);
         $mform->setType('body', PARAM_RAW);
-                
+        
         $mform->addElement('html', $hiddeninputs);
         
         $buttonarray=array();
@@ -89,6 +89,8 @@ class mod_email_sendmail_form extends moodleform {
         $buttonarray[] = &$mform->createElement('cancel');
         $mform->addGroup($buttonarray, 'buttonar', '', array(' '), false);
         $mform->closeHeaderBefore('buttonar'); 
+        
+        $PAGE->requires->js_init_call('M.mod_email.init_sendmail_form');
     }
     
     //Custom validation should be added here

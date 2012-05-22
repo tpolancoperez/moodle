@@ -57,6 +57,7 @@
     
     $context = get_context_instance(CONTEXT_MODULE, $cm->id);
     
+    $mail = new stdClass();
     $formoptions = email_get_form_options($email, $mail, $options, $selectedusers, $context);
     
     $mform = new mod_email_sendmail_form('sendmail.php', $formoptions);
@@ -105,7 +106,7 @@
                 $error = EMAIL_NOSENDERS;
 
                 // Redirect to new mail form, for it's not empty
-                redirect($CFG->wwwroot.'/mod/email/view.php?'.$url.'&action=newmail&subject='.$form->subject.'&body='.$form->body['text'].'&error='.$error);
+                redirect($CFG->wwwroot.'/mod/email/view.php?'.$url.'&action=newmail&error='.$error);
             }
 
             // Check subject
@@ -155,38 +156,22 @@
 
             if(!isset($form->action)){ $form->action = '';}
 
-            // If it's reply's, can attach old attachments
-
-            if ( $form->action == 'reply' or $form->action == 'forward') {
-                $i = 0;
-                $oldattach = "oldattachment$i";
-                if ( $form->$oldattach ) {
-                        while (true) {
-                                $attach = email_strip_attachment($form->$oldattach);
-                                email_copy_attachments($form->$oldattach, $mailid, NULL, $attach);
-                                $i++;
-                                $oldattach = "oldattachment$i";
-                                if ( empty($form->$oldattach ) ) {
-                                        break;
-                                }
-                        }
-                }
-            }
-
+            
             if ( empty($form->draft) ) {
                     $legend = get_string('sendok', 'email');
             } else {
                     $legend = get_string('draftok', 'email');
             }
 
+            //Sent OK
             redirect($CFG->wwwroot.'/mod/email/view.php?id='.$cm->id.'&action=displaymessage&message='.$legend);
 
         } else {
-            //cancelled
+            //Cancelled
             redirect($CFG->wwwroot.'/mod/email/view.php?id='.$cm->id);
         }
 
     } else {
-    	notify('Email data if empty');
+    	notify('Email data is empty');
     }
 ?>
