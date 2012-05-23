@@ -220,14 +220,14 @@ class filter_wiris extends moodle_text_filter {
 		global $DB;
 		
 		
-		include $CFG->dirroot . '/lib/editor/tinymce/version.php';
+		$plugin = new tinymce_texteditor();
 		//include_once $CFG->dirroot . '/lib/editor/tinymce/tiny_mce/' . $plugin->release . '/plugins/tiny_mce_wiris/integration/api.php';
 		
 		
-		if (is_file($CFG->dirroot . '/lib/editor/tinymce/tiny_mce/' . $plugin->release . '/plugins/tiny_mce_wiris/integration/api.php')) { 
-			include_once $CFG->dirroot . '/lib/editor/tinymce/tiny_mce/' . $plugin->release . '/plugins/tiny_mce_wiris/integration/api.php';
+		if (is_file($CFG->dirroot . '/lib/editor/tinymce/tiny_mce/' . $plugin->version . '/plugins/tiny_mce_wiris/integration/api.php')) { 
+			include_once $CFG->dirroot . '/lib/editor/tinymce/tiny_mce/' . $plugin->version . '/plugins/tiny_mce_wiris/integration/api.php';
 			$api = new com_wiris_plugin_PluginAPI;
-			$src = $api->mathml2img($mathml, $CFG->wwwroot . "/lib/editor/tinymce/tiny_mce/" . $plugin->release . "/plugins/tiny_mce_wiris/integration");
+			$src = $api->mathml2img($mathml, $CFG->wwwroot . "/lib/editor/tinymce/tiny_mce/" . $plugin->version . "/plugins/tiny_mce_wiris/integration");
 			$output = '<img align="middle" src="';
 			$output .= $src;
 			$output .= '" />'; 
