@@ -96,9 +96,6 @@
             }
             $mail->accountid = $account->id;
 
-            // Generic URL for send mails errors
-            $baseurl =  $CFG->wwwroot.'/mod/email/view.php?id='.$cm->id.'&amp;mailid='.$mailid.'&amp;subject=\''.$form->subject.'\'&amp;body=\''.$form->body['text'].'\'';
-
             // Check destinataries if no drafting
             if ( !( isset($form->to) or isset($form->cc) or isset($form->bcc) )  and empty($form->draft)) {
 
@@ -116,7 +113,7 @@
                 $error = EMAIL_NOSUBJECT;
 
                 // Redirect to new mail form, for it's not empty
-                redirect($CFG->wwwroot.'/mod/email/view.php?'.$url.'&amp;action=\'newmail\'&amp;body='.$form->body['text'].'&amp;error='.$error.'');
+                redirect($CFG->wwwroot.'/mod/email/view.php?'.$url.'&amp;action=newmail&amp;error='.$error.'');
             } else {
                 // Strip all tags except multilang
                 $mail->subject = clean_param(strip_tags($form->subject, '<lang><span>'), PARAM_CLEAN);
@@ -124,13 +121,11 @@
 
             // For body no checked, because no have problem if is empty
 
-            // Check Moodle Version to use an diferents functions ( only defined in 1.7 )
-            if ($CFG->version >= 2006101000) {
-                if (! $cm = get_coursemodule_from_instance('email', $email->id, $email->course)) {
-                    $cm->id = 0;
-                }
-                $form->body['text'] = trusttext_strip($form->body['text']);
+            if (! $cm = get_coursemodule_from_instance('email', $email->id, $email->course)) {
+                $cm->id = 0;
             }
+            $form->body['text'] = trusttext_strip($form->body['text']);
+            
 
             // Add body
             $mail->body = $form->body;
@@ -165,12 +160,8 @@
 
             //Sent OK
             redirect($CFG->wwwroot.'/mod/email/view.php?id='.$cm->id.'&action=displaymessage&message='.$legend);
-
-        } else {
-            //Cancelled
-            redirect($CFG->wwwroot.'/mod/email/view.php?id='.$cm->id);
         }
-
+        
     } else {
     	notify('Email data is empty');
     }
