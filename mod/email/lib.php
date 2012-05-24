@@ -1259,9 +1259,11 @@ function email_get_form_options($email, $mail, $options, $selectedusers, $contex
     $bodyoptions = array('subdirs'=>0, 'maxfiles'=>50, 'maxbytes'=>$email->maxbytes, 'trusttext'=>true, 'context'=>$context);
     $attachmentoptions = array('subdirs'=>0, 'maxfiles'=>50, 'maxbytes'=>$email->maxbytes, 'context'=>$context);
     
-    $mail->id = null;  //being set to NULL creates a new entry
-    $mail = file_prepare_standard_filemanager($mail, 'attachments', $attachmentoptions, $context, 'mod_email', 'attachments', $mail->id);
-    $mail = file_prepare_standard_editor($mail, 'body', $bodyoptions, $context, 'mod_email', 'body', $mail->id);
+    $itemid = null;  //being set to NULL creates a new entry
+    $mail = file_prepare_standard_filemanager($mail, 'attachments', $attachmentoptions, $context, 'mod_email', 'attachments', $itemid);
+    
+    $itemid = isset($mail->bodyitemid)?$mail->bodyitemid:null;
+    $mail = file_prepare_standard_editor($mail, 'body', $bodyoptions, $context, 'mod_email', 'body', $itemid);
     $formoptions = array('email'=>$email
                         , 'options'=>$options
                         , 'selectedusers'=>$selectedusers
@@ -1282,34 +1284,40 @@ function email_get_form_options($email, $mail, $options, $selectedusers, $contex
  * @return boolean Success/Fail
  * @todo Finish documenting this function
  **/
-function email_newmailform($email, $mail, $options, $selectedusers, $context) {
+function email_newmailform($email, $formdefaults, $options, $selectedusers, $context) {
 
 	global $CFG;
         
 	// Errors
-        $nosenders = '';
-	if ( $mail->error ) {
-		$nosubject = '';
-		if ($mail->error == EMAIL_NOSUBJECT) {
-			$nosubject = get_string('nosubject', 'email');
-		}
+        $errmsg = '';
+	if ( $formdefaults->error!=0 ) {
+            if ($formdefaults->error == EMAIL_NOSUBJECT) {
+                $errmsg = get_string('nosubject', 'email');
+            }
 
-		$nosenders = '';
-		if ($mail->error == EMAIL_NOSENDERS) {
-			$nosenders = get_string('nosenders', 'email');
-		}
+            if ($formdefaults->error == EMAIL_NOSENDERS) {
+                $errmsg = get_string('nosenders', 'email');
+            }
 	}
 
         include_once('sendmail_form.php');
-        $formoptions = email_get_form_options($email, $mail, $options, $selectedusers, $context);
+        $formoptions = email_get_form_options($email, $formdefaults, $options, $selectedusers, $context);
         $mform = new mod_email_sendmail_form('sendmail.php', $formoptions);
         
-        $draftitemid = file_get_submitted_draft_itemid('attachments');
-        file_prepare_draft_area($draftitemid, $context->id, 'mod_email', 'attachments', empty($post->id)?null:$post->id, $formoptions["attachmentoptions"]);
+        $draftid_file = file_get_submitted_draft_itemid('attachments');
+        file_prepare_draft_area($draftid_file, $context->id, 'mod_email', 'attachments', empty($formdefaults->id)?null:$formdefaults->id, $formoptions["attachmentoptions"]);
         
         $draftid_editor = file_get_submitted_draft_itemid('body');
-        $currenttext = file_prepare_draft_area($draftid_editor, $context->id, 'mod_email', 'body', empty($mail->id) ? null : $mail->id, $formoptions["bodyoptions"], $mail->body);
-
+        if ($draftid_editor==0) {
+            $draftid_editor = $formdefaults->bodyitemid;
+        }
+        $formdefaults->body_editor['text'] = file_prepare_draft_area($draftid_editor, $context->id, 'mod_email', 'body', null, $formoptions["bodyoptions"], $formdefaults->body);
+        $formdefaults->body_editor['itemid'] = $formdefaults->bodyitemid;
+        $formdefaults->body_editor['format'] = $formdefaults->bodyformat;
+        $formdefaults->body = $formdefaults->body_editor;
+        $mform->set_data($formdefaults);
+        
+        notify($errmsg);
         $mform->display();
 
 	return true;

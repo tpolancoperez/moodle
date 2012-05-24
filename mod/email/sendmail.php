@@ -62,21 +62,13 @@
     
     $mform = new mod_email_sendmail_form('sendmail.php', $formoptions);
     
-    //Form processing and displaying is done here
+    //Form processing
     if ($mform->is_cancelled()) {
         //Handle form cancel operation, if cancel button is present on form
         redirect($CFG->wwwroot.'/mod/email/view.php?id='.$cm->id);
-    } else if ($form = $mform->get_data()) {
         
-        //Handle File and Content attachments.
-        $draftitemid = file_get_submitted_draft_itemid('attachments');
-        file_prepare_draft_area($draftitemid, $context->id, 'mod_email', 'attachments', empty($mail->id)?null:$mail->id, $formoptions["attachmentoptions"]);
-
-        $draftid_editor = file_get_submitted_draft_itemid('body');
-        $form->body["text"] = file_prepare_draft_area($draftid_editor, $context->id, 'mod_email', 'body', empty($mail->id)?null:$mail->id, $formoptions["bodyoptions"], $form->body["text"]);
-
-    
-        //because of the methods used when sending the To,Cc, & Bcc fields they aren't handled by Moodle Form API
+    } else if ($form = $mform->get_data()) {
+        //get form elements created outside of the forms API
         if(isset($_POST["to"])){
             $form->to = $_POST["to"];
         }
@@ -86,10 +78,15 @@
         if(isset($_POST["bcc"])){
             $form->bcc = $_POST["bcc"];
         }
-        //In this case you process validated data. $mform->get_data() returns data posted in form.
-
         
-        if (! empty($form->send) or ! empty($form->draft)) {
+        //Handle File and Content attachments.
+        $draftitemid = file_get_submitted_draft_itemid('attachments');
+        file_prepare_draft_area($draftitemid, $context->id, 'mod_email', 'attachments', empty($mail->id)?null:$mail->id, $formoptions["attachmentoptions"]);
+
+        $draftid_editor = file_get_submitted_draft_itemid('body');
+        $form->body["text"] = file_prepare_draft_area($draftid_editor, $context->id, 'mod_email', 'body', empty($mail->id)?null:$mail->id, $formoptions["bodyoptions"], $form->body["text"]);
+              
+        if (isset($form->send) or isset($form->draft)) {
             // Associated accountid
             if (! $account = $DB->get_record('email_account', array('emailid'=>$email->id, 'userid'=>$USER->id))) {
                 print_error('noaccount','email');
@@ -102,8 +99,13 @@
                 $url = email_build_url($options);
                 $error = EMAIL_NOSENDERS;
 
-                // Redirect to new mail form, for it's not empty
-                redirect($CFG->wwwroot.'/mod/email/view.php?'.$url.'&action=newmail&error='.$error);
+                // Redirect to new mail form
+                $expire = time() + 120; //expire 2 minutes from now
+                setcookie('moodle_email_subject', $form->subject, $expire);
+                setcookie('moodle_email_bodytext', $form->body['text'], $expire);
+                setcookie('moodle_email_bodyformat', $form->body['format'], $expire);
+                setcookie('moodle_email_bodyitemid', $form->body['itemid'], $expire);
+                redirect($CFG->wwwroot.'/mod/email/view.php?action=newmail&error='.$error.'&'.$url);
             }
 
             // Check subject
@@ -112,7 +114,12 @@
                 $url = email_build_url($options);
                 $error = EMAIL_NOSUBJECT;
 
-                // Redirect to new mail form, for it's not empty
+                // Redirect to new mail form
+                $expire = time() + 120; //expire 2 minutes from now
+                setcookie('moodle_email_subject', $form->subject, $expire);
+                setcookie('moodle_email_bodytext', $form->body['text'], $expire);
+                setcookie('moodle_email_bodyformat', $form->body['format'], $expire);
+                setcookie('moodle_email_bodyitemid', $form->body['itemid'], $expire);
                 redirect($CFG->wwwroot.'/mod/email/view.php?'.$url.'&amp;action=newmail&amp;error='.$error.'');
             } else {
                 // Strip all tags except multilang
