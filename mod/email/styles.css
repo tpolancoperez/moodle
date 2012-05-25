@@ -24,7 +24,7 @@ body#page-mod-email-view .mform .fitem .felement {
 }
 
 body#page-mod-email-view .filemanager-container{
-    width: 589px;
+    width: 512px;
 }
 
 .path-mod-email div.column {
@@ -37,4 +37,13 @@ body#page-mod-email-view .filemanager-container{
 
 .path-mod-email .legendmail {
     width: 180px;
+}
+
+body#page-mod-email-view #region-pre {
+    display:none;
+}
+
+body#page-mod-email-view #region-main {
+    margin-left: 0;
+    margin-right: 0;
 }
