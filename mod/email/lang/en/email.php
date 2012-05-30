@@ -136,14 +136,6 @@ $string['errcopyattach'] = 'Failed when copying attachments';
 $string['nomailid'] = 'Mail id not found.';
 $string['norootfolder'] = 'Root parent folder not found.';
 $string['nofolder'] = 'Folder was not found.';
-$string[''] = '';
-$string[''] = '';
-$string[''] = '';
-$string[''] = '';
-$string[''] = '';
-$string[''] = '';
-$string[''] = '';
-
-
+$string['pluginadministration'] = 'Plugin Administration';
 
 ?>
