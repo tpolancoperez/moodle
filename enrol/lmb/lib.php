@@ -26,6 +26,7 @@
  */
 require_once('enrollib.php');
 require_once($CFG->dirroot.'/course/lib.php');
+require_once($CFG->libdir.'/gradelib.php');
 
 
 
@@ -1806,7 +1807,13 @@ class enrol_lmb_plugin extends enrol_plugin {
 
                 $domain = trim($domain[1]);
 
-                if (!preg_match('/^'.trim($config->createusersemaildomain).'$/', $domain)) {
+                if (isset($CFG->ignoredomaincase) && $CFG->ignoredomaincase) {
+                    $matchappend = 'i';
+                } else {
+                    $matchappend = '';
+                }
+
+                if (!preg_match('/^'.trim($config->createusersemaildomain).'$/'.$matchappend, $domain)) {
                     $logline .= 'no in domain email:';
                     $emailallow = false;
                     if (!$config->donterroremail) {
@@ -1927,7 +1934,13 @@ class enrol_lmb_plugin extends enrol_plugin {
                     // The user appears to not exist at all yet.
                     $moodleuser->firstname = $firstname;
                     $moodleuser->lastname = $lmbperson->familyname;
-                    $moodleuser->email = $lmbperson->email;
+
+                    if (isset($config->ignoreemailcase) && $config->ignoreemailcase) {
+                        $moodleuser->email = strtolower($lmbperson->email);
+                    } else {
+                        $moodleuser->email = $lmbperson->email;
+                    }
+
                     $moodleuser->auth = $config->auth;
                     if ($config->includetelephone) {
                         $moodleuser->phone1 = $lmbperson->telephone;
@@ -2788,13 +2801,17 @@ class enrol_lmb_plugin extends enrol_plugin {
      * @return bool success or failure of the role assignment
      */
     public function lmb_assign_role_log($roleid, $courseid, $userid, &$logline) {
+        $config = $this->get_config();
         if (!$courseid) {
             $logline .= 'missing courseid:';
         }
 
         if ($instance = $this->get_instance($courseid)) {
             // TODO catch exceptions thrown.
-            $this->enrol_user($instance, $userid, $roleid);
+            $this->enrol_user($instance, $userid, $roleid, 0, 0, ENROL_USER_ACTIVE);
+            if ($config->recovergrades) {
+                grade_recover_history_grades($userid, $courseid);
+            }
             $logline .= 'enrolled:';
             return true;
         } else {
@@ -2814,14 +2831,25 @@ class enrol_lmb_plugin extends enrol_plugin {
      * @return bool success or failure of the role assignment
      */
     public function lmb_unassign_role_log($roleid, $courseid, $userid, &$logline) {
+        $config = $this->get_config();
+
         if (!$courseid) {
             $logline .= 'missing courseid:';
             return false;
         }
 
+        if (enrol_lmb_check_enrolled_in_xls_merged($userid, $courseid)) {
+            $logline .= 'xls still enroled:';
+            return true;
+        }
+
         if ($instance = $this->get_instance($courseid)) {
             // TODO catch exceptions thrown.
-            $this->unenrol_user($instance, $userid, $roleid);
+            if (isset($config->disableenrol) && $config->disableenrol) {
+                $this->update_user_enrol($instance, $userid, ENROL_USER_SUSPENDED);
+            } else {
+                $this->unenrol_user($instance, $userid, $roleid);
+            }
             $logline .= 'unenrolled:';
             return true;
         } else {
