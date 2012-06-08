@@ -1,5 +1,5 @@
 Luminis Message Broker enrollment Module.
-Version: 2.1.6
+Version: 2.1.7
 Moodle version: 2.0.6 throught 2.3.x
 Maintainer: Eric Merrill (merrill@oakland.edu)
 
@@ -13,6 +13,16 @@ Documentation at https://github.com/merrill-oakland/Banner-Luminis-Message-Broke
 RECENT CHANGES
 --------------
 View full change log at https://github.com/merrill-oakland/Banner-Luminis-Message-Broker-for-Moodle/wiki/Change-Log
+
+Release 2.1.7
+Significant performance increase when processing on large site. Added indexes to common columns.
+Add option force password, or set it only on user creation.
+Fix to cron file processing (CONTRIB-3702)
+Possible problem with crosslist groupings. (CONTRIB-3698)
+Problem during call process_enrolment_log in enrol_lmb_force_course_to_db. (CONTRIB-3699)
+Removed calls to print_header (depreciated). (CONTRIB-3701)
+Fix various missing variable errors. (CONTRIB-3700)
+
 
 Release 2.1.6
 Option to restore old user grades during re-enrollements.

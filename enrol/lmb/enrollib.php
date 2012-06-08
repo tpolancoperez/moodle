@@ -110,7 +110,7 @@ function enrol_lmb_create_crosslist_group($lmbcrosslist) {
     require_once($CFG->dirroot.'/group/lib.php');
 
     if ($lmbcrosslist->crosslistgroupid) {
-        return $crosslist->crosslistgroupid;
+        return $lmbcrosslist->crosslistgroupid;
     }
 
     if (!$mdlcourse = $DB->get_record('course', array('idnumber' => $lmbcrosslist->crosslistsourcedid))) {
@@ -354,7 +354,7 @@ function enrol_lmb_force_course_to_db($idnumber, $print = false) {
         foreach ($enrols as $enrol) {
             $logline = $enrol->personsourcedid.':';
 
-            $status = $enrolmod->process_enrolment_log($enrol, $logline, $config) && $status;
+            $status = $enrolmod->process_enrolment_log($enrol, $logline) && $status;
 
             $logline .= "<br>\n";
             if ($print) {
