@@ -19,7 +19,7 @@ $string['pluginname'] = 'Banner/Luminis Message Broker';
 $string['description'] = 'This module provides a way to integrate Moodle with Banner. You can either use the Luminis Message Broker to provide realtime updates, in the same way as WebCT, or using Banner export files. <br /><br />This module is not affiliated with, or endorsed by Ellucian in any way.';
 
 $string['header'] = 'You are using Banner/Luminis Message Broker Module version {$a->version}.<br>
-To access the LMB tools, <a href="{$a->toolslink}">click here</a>.';
+LMB Tools have moved to the setting block, under Site Administration>Plugins>Enrolments>Banner/Luminis Message Broker>Tools</a>.';
 
 $string['removelangs'] = '<b><font color=red>Notice:</font> It appears that old Banner/Luminis Message Broker language files are still installed. Please remove the file \'$a/enrol_lmb.php\' and the folder \'$a/help/enrol/lmb\'.</b>';
 
@@ -105,6 +105,7 @@ $string['parseperson'] = 'XML Parse - Person';
 $string['parsepersonxml'] = 'Parse Person XML';
 $string['createnewusers'] = 'Create user accounts for users not yet registered in Moodle';
 $string['createusersemaildomain'] = 'Only create users with email in this domain';
+$string['ignoredomaincase'] = 'Ignore domain capitalization';
 $string['donterroremail'] = 'Don\'t error on skipped user due to email';
 $string['deleteusers'] = 'Delete user accounts when specified in XML';
 $string['usernamesource'] = 'Username source';
@@ -116,10 +117,10 @@ $string['useridtypeemail'] = 'useridtype - Email ID';
 $string['useridtypeother'] = 'useridtype - Other:';
 $string['otheruserid'] = 'Other User ID Source';
 $string['otherpassword'] = 'Other Password Source';
-
+$string['forcepassword'] = 'Force password on update';
 
 $string['ignoreusernamecase'] = 'Ignore username capitalization';
-
+$string['ignoreemailcase'] = 'Ignore email address capitalization';
 
 $string['sourdidfallback'] = 'Fallback to sourcedid if username not found';
 $string['consolidateusers'] = 'Consolidate existing usernames';
@@ -149,7 +150,8 @@ $string['parseenrol'] = 'XML Parse - Enrolment';
 $string['parseenrolxml'] = 'Parse Enrolment XML';
 $string['assignroles'] = 'Assign Roles';
 $string['unenrolmember'] = 'Unenrol members from course when directed';
-
+$string['disableenrol'] = 'Disable Enrolments on Drop';
+$string['recovergrades'] = 'Recover olds grades for re-enrolled users';
 
 
 $string['nomessage'] ='No messages received from Luminis Message Broker';
@@ -272,6 +274,8 @@ $string['xlsmergegroupshelp'] = 'If this option is selected, then users will be 
 $string['parsepersonxmlhelp'] = 'Process person XML records. When unchecked, records will be completely skipped.';
 $string['createnewusershelp'] = 'This setting will allow the LMB module to create new Moodle users as directed by Banner/LMB.';
 $string['createusersemaildomainhelp'] = 'If this setting has a value, only users who have an email address in the given domain will have an account generated for them by the LMB module.';
+$string['ignoredomaincasehelp'] = 'Set the domain comparison to case insensitive.';
+
 $string['donterroremailhelp'] = 'If selected, a user missing an email address will not produce a log error.';
 $string['deleteusershelp'] = 'If this setting it checked, LMB module will delete user records from Moodle when directed.';
 $string['usernamesourcehelp'] = "This determines what will be the username of created users
@@ -285,6 +289,7 @@ $string['usernamesourcehelp'] = "This determines what will be the username of cr
 </ul>";
 $string['otheruseridhelp'] = '';
 $string['ignoreusernamecasehelp'] = 'All usernames will be converted to lowercase when this option is selected.';
+$string['ignoreemailcasehelp'] = 'All email addresses will be converted to lowercase when this option is selected.';
 $string['sourdidfallbackhelp'] = 'Set the userid to the persons sourcedid if a username is not found. In general users will not know this number, so will not be able to login, but it will create the account as a placeholder until more complete data is received.';
 $string['consolidateusershelp'] = 'If user cannot be found with the expected sourcedid(idnumber), but a username match is found, the accounts will be consolidated. Only use this option if you know that usernames are unique and will not collide.';
 $string['authmethodhelp'] = 'Select what authorization method the LMB module should set accounts to.';
@@ -297,6 +302,7 @@ $string['passwordsourcehelp'] = "This determines what will be the password of cr
 <li>useridtype - Other: Use the value supplied in the password field of the userid tag marked as indicated in the text box.
 </ul>";
 $string['otherpasswordhelp'] = '';
+$string['forcepasswordhelp'] = 'When set and when a propper auth type and source are set, the users password is set to the LMB password whenever a message is received. If unchecked, the password will only be set on user creation.';
 $string['nicknamehelp'] = 'If the nickname is included XML, use it instead of the propper name first name.';
 $string['forcenamehelp'] = 'Always force the users name to match the XML, even if it has been manually changed.';
 $string['forceemailhelp'] = 'Always force the users email address to match the XML, even if it has been manually changed.';
@@ -315,4 +321,12 @@ $string['forceadrhelp'] = 'Always force the users address/city to match the XML,
 
 $string['parseenrolxmlhelp'] = 'Process enrolment records. Parse Course and Parse Person must be on. When unchecked, records will be completely skipped.';
 $string['unenrolmemberhelp'] = "Unenrol (or 'drop') members from a course when an appropriate XML message is received.";
+$string['disableenrolhelp'] = 'Disable enrolments instead of unenroling them. Prevents possible data loss in some versions and configurations of Moodle when users are dropped and re-added to a course.';
+$string['recovergradeshelp'] = 'If users are being re-enrolled in a course, try and recover old grades. This was the standard behaviour in Moodle 1.9.x and below.';
 
+$string['page_lmbstatus'] = 'LMB Status';
+$string['page_importnow'] = 'Process File';
+$string['page_extractprocess'] = 'Process Extract';
+$string['page_reprocessenrolments'] = 'Reprocess Enrolments';
+$string['page_prunelmbtables'] = 'Prune Tables';
+$string['tools'] = 'Tools';

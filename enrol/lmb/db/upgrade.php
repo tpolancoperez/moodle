@@ -467,6 +467,17 @@ function xmldb_enrol_lmb_upgrade($oldversion=0) {
     }
 
     if ($oldversion < 2011012501) {
+        $config_bad = get_config('enrol/lmb');
+
+        $objarray = get_object_vars($config_bad);
+
+        foreach ($objarray as $key => $val) {
+            if (get_config('enrol_lmb', $key) === false) {
+                set_config($key, $val, 'enrol_lmb');
+            }
+            unset_config($key, 'enrol/lmb');
+        }
+
         // Changing type of field sourcedidsource on table lmb_terms to char.
         $table = new xmldb_table('lmb_terms');
         $field = new xmldb_field('sourcedidsource', XMLDB_TYPE_CHAR, '128', null, null, null, null, 'sourcedid');
@@ -671,24 +682,6 @@ function xmldb_enrol_lmb_upgrade($oldversion=0) {
         upgrade_plugin_savepoint(true, 2012032901, 'enrol', 'lmb');
     }
 
-    if ($oldversion < 2012033001) {
-        $config = get_config('enrol_lmb');
-
-        if (!isset($config->cathidden)) {
-            set_config('cathidden', 0, 'enrol_lmb');
-        }
-
-        if (!isset($config->computesections)) {
-            set_config('computesections', 0, 'enrol_lmb');
-        }
-
-        if (!isset($config->forcecomputesections)) {
-            set_config('forcecomputesections', 0, 'enrol_lmb');
-        }
-
-        upgrade_plugin_savepoint(true, 2012033001, 'enrol', 'lmb');
-    }
-
     if ($oldversion < 2012033004) {
         $config_bad = get_config('enrol/lmb');
 
@@ -738,6 +731,92 @@ function xmldb_enrol_lmb_upgrade($oldversion=0) {
         }
 
         upgrade_plugin_savepoint(true, 2012040101, 'enrol', 'lmb');
+    }
+
+    if ($oldversion < 2012060702) {
+        // Define index enrolmbcour_sou_ix (not unique) to be added to enrol_lmb_courses
+        $table = new xmldb_table('enrol_lmb_courses');
+        $index = new xmldb_index('enrolmbcour_sou_ix', XMLDB_INDEX_NOTUNIQUE, array('sourcedid'));
+
+        // Conditionally launch add index enrolmbcour_sou_ix
+        if (!$dbman->index_exists($table, $index)) {
+            $dbman->add_index($table, $index);
+        }
+
+        // Define index enrolmbpeop_sou_ix (not unique) to be added to enrol_lmb_people
+        $table = new xmldb_table('enrol_lmb_people');
+        $index = new xmldb_index('enrolmbpeop_sou_ix', XMLDB_INDEX_NOTUNIQUE, array('sourcedid'));
+
+        // Conditionally launch add index enrolmbpeop_sou_ix
+        if (!$dbman->index_exists($table, $index)) {
+            $dbman->add_index($table, $index);
+        }
+
+        // Define index enrolmbcour_per_ix (not unique) to be added to enrol_lmb_enrolments
+        $table = new xmldb_table('enrol_lmb_enrolments');
+        $index = new xmldb_index('enrolmbenro_per_ix', XMLDB_INDEX_NOTUNIQUE, array('personsourcedid'));
+
+        // Conditionally launch add index enrolmbcour_per_ix
+        if (!$dbman->index_exists($table, $index)) {
+            $dbman->add_index($table, $index);
+        }
+
+        // Define index enrolmbcour_cou_ix (not unique) to be added to enrol_lmb_enrolments
+        $table = new xmldb_table('enrol_lmb_enrolments');
+        $index = new xmldb_index('enrolmbenro_cou_ix', XMLDB_INDEX_NOTUNIQUE, array('coursesourcedid'));
+
+        // Conditionally launch add index enrolmbcour_cou_ix
+        if (!$dbman->index_exists($table, $index)) {
+            $dbman->add_index($table, $index);
+        }
+
+        // Define index enrolmbcros_cou_ix (not unique) to be added to enrol_lmb_crosslists
+        $table = new xmldb_table('enrol_lmb_crosslists');
+        $index = new xmldb_index('enrolmbcros_cou_ix', XMLDB_INDEX_NOTUNIQUE, array('coursesourcedid'));
+
+        // Conditionally launch add index enrolmbcros_cou_ix
+        if (!$dbman->index_exists($table, $index)) {
+            $dbman->add_index($table, $index);
+        }
+
+        // Define index enrolmbcros_cro_ix (not unique) to be added to enrol_lmb_crosslists
+        $table = new xmldb_table('enrol_lmb_crosslists');
+        $index = new xmldb_index('enrolmbcros_cro_ix', XMLDB_INDEX_NOTUNIQUE, array('crosslistsourcedid'));
+
+        // Conditionally launch add index enrolmbcros_cro_ix
+        if (!$dbman->index_exists($table, $index)) {
+            $dbman->add_index($table, $index);
+        }
+
+        // Define index enrolmbterm_sou_ix (not unique) to be added to enrol_lmb_terms
+        $table = new xmldb_table('enrol_lmb_terms');
+        $index = new xmldb_index('enrolmbterm_sou_ix', XMLDB_INDEX_NOTUNIQUE, array('sourcedid'));
+
+        // Conditionally launch add index enrolmbterm_sou_ix
+        if (!$dbman->index_exists($table, $index)) {
+            $dbman->add_index($table, $index);
+        }
+
+        // Define index enrolmbcate_ter_ix (not unique) to be added to enrol_lmb_categories
+        $table = new xmldb_table('enrol_lmb_categories');
+        $index = new xmldb_index('enrolmbcate_ter_ix', XMLDB_INDEX_NOTUNIQUE, array('termsourcedid'));
+
+        // Conditionally launch add index enrolmbcate_ter_ix
+        if (!$dbman->index_exists($table, $index)) {
+            $dbman->add_index($table, $index);
+        }
+
+        // Define index enrolmbcate_dep_ix (not unique) to be added to enrol_lmb_categories
+        $table = new xmldb_table('enrol_lmb_categories');
+        $index = new xmldb_index('enrolmbcate_dep_ix', XMLDB_INDEX_NOTUNIQUE, array('dept'));
+
+        // Conditionally launch add index enrolmbcate_dep_ix
+        if (!$dbman->index_exists($table, $index)) {
+            $dbman->add_index($table, $index);
+        }
+
+        // lmb savepoint reached
+        upgrade_plugin_savepoint(true, 2012060702, 'enrol', 'lmb');
     }
 
     return $result;

@@ -26,6 +26,7 @@
  */
 require_once('enrollib.php');
 require_once($CFG->dirroot.'/course/lib.php');
+require_once($CFG->libdir.'/gradelib.php');
 
 
 
@@ -87,7 +88,7 @@ class enrol_lmb_plugin extends enrol_plugin {
         }
 
         if ($config->cronxmlfile) {
-            $this->process_xml_file(null, false);
+            $this->process_file(null, false);
         }
 
         // TODO.
@@ -494,7 +495,7 @@ class enrol_lmb_plugin extends enrol_plugin {
             return true;
         }
 
-        unset($course);
+        $course = new stdClass();
 
         $status = true;
         $deleted = false;
@@ -553,6 +554,8 @@ class enrol_lmb_plugin extends enrol_plugin {
             $logline .= 'org/orgunit not defined:';
         }
 
+        $cat = new stdClass();
+
         $cat->id = $this->get_category_id($course->term, $course->depttitle, $course->dept, $logline, $status);
 
         // Do the LMB tables check/update!
@@ -582,7 +585,7 @@ class enrol_lmb_plugin extends enrol_plugin {
 
         // Do the Course check/update!
 
-        unset($moodlecourse);
+        $moodlecourse = new stdClass();
 
         $moodlecourse->idnumber = $course->sourcedid;
         $moodlecourse->timemodified = time();
@@ -711,7 +714,7 @@ class enrol_lmb_plugin extends enrol_plugin {
         global $CFG, $DB;
         $status = true;
 
-        unset($moodlecourse);
+        $moodlecourse = new stdClass();
 
         $moodlecourse->idnumber = $idnumber;
         $moodlecourse->timemodified = time();
@@ -939,6 +942,8 @@ class enrol_lmb_plugin extends enrol_plugin {
             return $lmbcat->categoryid;
         } else {
             if ($lmbterm = $DB->get_record('enrol_lmb_terms', array('sourcedid' => $term))) {
+                $cat = new stdClass();
+
                 $cat->name = $lmbterm->title;
                 if ($config->cathidden) {
                     $cat->visible = 0;
@@ -1054,6 +1059,9 @@ class enrol_lmb_plugin extends enrol_plugin {
 
         $xlists = array();
 
+        $crosssourcedidsource = false;
+        $term = false;
+
         if (preg_match('{<sourcedid>(.+?)</sourcedid>}is', $tagcontents, $matches)) {
             $source = $matches[1];
 
@@ -1091,6 +1099,7 @@ class enrol_lmb_plugin extends enrol_plugin {
             $members = $matches[1];
             foreach ($members as $member) {
                 unset($xlist);
+                $xlist = new stdClass();
 
                 if (preg_match('{<sourcedid>.*?<source>(.+?)</source>.*?</sourcedid>}is', $member, $matches)) {
                     $xlist->coursesourcedidsource = trim($matches[1]);
@@ -1179,8 +1188,9 @@ class enrol_lmb_plugin extends enrol_plugin {
             }
         }
 
+        $newxlists = array();
+
         if ($status) {
-            $newxlists = array();
             foreach ($xlists as $xlist) {
                 $xlist->type = $type;
                 $params = array('crosslistsourcedid' => $xlist->crosslistsourcedid, 'coursesourcedid' => $xlist->coursesourcedid);
@@ -1231,6 +1241,7 @@ class enrol_lmb_plugin extends enrol_plugin {
             foreach ($xlists as $xlist) {
                 // Setup the course.
                 unset($moodlecourse);
+                $moodlecourse = new stdClass();
 
                 $enddate = $this->get_crosslist_endtime($xlist->crosslistsourcedid);
                 $params = array('idnumber' => $xlist->crosslistsourcedid);
@@ -1555,6 +1566,8 @@ class enrol_lmb_plugin extends enrol_plugin {
         $deleted = false;
         $logline = 'Person:';
 
+        $person = new stdClass();
+
         // Sourcedid Source.
         if (preg_match('{<sourcedid>.*?<source>(.+?)</source>.*?</sourcedid>}is', $tagcontents, $matches)) {
             $person->sourcedidsource = trim($matches[1]);
@@ -1726,7 +1739,7 @@ class enrol_lmb_plugin extends enrol_plugin {
 
         $recstatus = ($this->get_recstatus($tagcontents, 'person'));
 
-        unset($lmbperson);
+        $lmbperson = new stdClass();
 
         if (isset($person->sourcedid)) {
             $lmbperson->sourcedid = $person->sourcedid;
@@ -1806,7 +1819,13 @@ class enrol_lmb_plugin extends enrol_plugin {
 
                 $domain = trim($domain[1]);
 
-                if (!preg_match('/^'.trim($config->createusersemaildomain).'$/', $domain)) {
+                if (isset($CFG->ignoredomaincase) && $CFG->ignoredomaincase) {
+                    $matchappend = 'i';
+                } else {
+                    $matchappend = '';
+                }
+
+                if (!preg_match('/^'.trim($config->createusersemaildomain).'$/'.$matchappend, $domain)) {
                     $logline .= 'no in domain email:';
                     $emailallow = false;
                     if (!$config->donterroremail) {
@@ -1840,9 +1859,11 @@ class enrol_lmb_plugin extends enrol_plugin {
             $firstname = $lmbperson->givenname;
         }
 
+        $newuser = false;
+
         if (isset($lmbperson->email)) {
             if ($emailallow && $lmbperson->recstatus != 3 && trim($lmbperson->username) != '') {
-                unset($moodleuser);
+                $moodleuser = new stdClass();
 
                 $moodleuser->idnumber = $lmbperson->sourcedid;
 
@@ -1927,7 +1948,13 @@ class enrol_lmb_plugin extends enrol_plugin {
                     // The user appears to not exist at all yet.
                     $moodleuser->firstname = $firstname;
                     $moodleuser->lastname = $lmbperson->familyname;
-                    $moodleuser->email = $lmbperson->email;
+
+                    if (isset($config->ignoreemailcase) && $config->ignoreemailcase) {
+                        $moodleuser->email = strtolower($lmbperson->email);
+                    } else {
+                        $moodleuser->email = $lmbperson->email;
+                    }
+
                     $moodleuser->auth = $config->auth;
                     if ($config->includetelephone) {
                         $moodleuser->phone1 = $lmbperson->telephone;
@@ -1966,6 +1993,7 @@ class enrol_lmb_plugin extends enrol_plugin {
                             if ($id = $DB->insert_record('user', $moodleuser, true)) {
                                 $logline .= "created new user:";
                                 $moodleuser->id = $id;
+                                $newuser = true;
 
                                 $status = $status && $this->restore_user_enrolments($lmbperson->sourcedid);
 
@@ -1980,14 +2008,16 @@ class enrol_lmb_plugin extends enrol_plugin {
                 }
 
                 if ($config->passwordnamesource != 'none') {
-                    if ($user = $DB->get_record('user', array('id' => $moodleuser->id))) {
-                        $userauth = get_auth_plugin($user->auth);
-                        if ($userauth->can_change_password() && (!$userauth->change_password_url())) {
-                            // TODO2 - what happens if password is blank?
-                            if (isset($person->password) && ($person->password != '')) {
-                                if (!$userauth->user_update_password($user, $person->password)) {
-                                    $logline .= 'error setting password:';
-                                    $status = false;
+                    if ((!isset($config->forcepassword) || $config->forcepassword) || $newuser) {
+                        if ($user = $DB->get_record('user', array('id' => $moodleuser->id))) {
+                            $userauth = get_auth_plugin($user->auth);
+                            if ($userauth->can_change_password() && (!$userauth->change_password_url())) {
+                                // TODO2 - what happens if password is blank?
+                                if (isset($person->password) && ($person->password != '')) {
+                                    if (!$userauth->user_update_password($user, $person->password)) {
+                                        $logline .= 'error setting password:';
+                                        $status = false;
+                                    }
                                 }
                             }
                         }
@@ -2049,6 +2079,8 @@ class enrol_lmb_plugin extends enrol_plugin {
 
         $status = true;
         $logline = 'Term:';
+
+        $term = new stdClass();
 
         // Sourcedid Source.
         if (preg_match('{<sourcedid>.*?<source>(.+?)</source>.*?</sourcedid>}is', $tagcontents, $matches)) {
@@ -2170,7 +2202,7 @@ class enrol_lmb_plugin extends enrol_plugin {
 
         $status = true;
         $logline = 'Enrolment:';
-        unset($enrolment);
+        $enrolment = new stdClass();
 
         if (preg_match('{<sourcedid>.*?<id>(.+?)</id>.*?</sourcedid>}is', $tagcontents, $matches)) {
             $enrolment->coursesourcedid = trim($matches[1]);
@@ -2460,55 +2492,32 @@ class enrol_lmb_plugin extends enrol_plugin {
 
         // Make up an email address for handling bounces.
         if (!empty($CFG->handlebounces)) {
-            $modargs = 'B'.base64_encode(pack('V', $user->id)).substr(md5($user->email), 0, 16);
+            $modargs = 'B'.base64_encode(pack('V', $adminuser->id)).substr(md5($adminuser->email), 0, 16);
             $mail->Sender = generate_email_processing_address(0, $modargs);
         } else {
             $mail->Sender   = $adminuser->email;
         }
 
-        if (is_string($from)) { // So we can pass whatever we want if there is need.
-            $mail->From     = $CFG->noreplyaddress;
-            $mail->FromName = $from;
-        } else if ($usetrueaddress and $from->maildisplay) {
-            $mail->From     = $from->email;
-            $mail->FromName = fullname($from);
-        } else {
-            $mail->From     = $CFG->noreplyaddress;
-            $mail->FromName = fullname($from);
-            if (empty($replyto)) {
-                $mail->AddReplyTo($CFG->noreplyaddress, get_string('noreplyname'));
-            }
+        $mail->From     = $CFG->noreplyaddress;
+        if (empty($replyto)) {
+            $mail->AddReplyTo($CFG->noreplyaddress, get_string('noreplyname'));
         }
 
         if (!empty($replyto)) {
-            $mail->AddReplyTo($replyto, $replytoname);
+            $mail->AddReplyTo($replyto);
         }
 
         $mail->Subject = $subject;
 
         $mail->AddAddress($emailaddress, "" );
 
-            $mail->WordWrap = 79;                               // Set word wrap.
-
-        if (!empty($from->customheaders)) {                 // Add custom headers.
-            if (is_array($from->customheaders)) {
-                foreach ($from->customheaders as $customheader) {
-                    $mail->AddCustomHeader($customheader);
-                }
-            } else {
-                $mail->AddCustomHeader($from->customheaders);
-            }
-        }
-
-        if (!empty($from->priority)) {
-            $mail->Priority = $from->priority;
-        }
+        $mail->WordWrap = 79;                               // Set word wrap.
 
         $mail->IsHTML(false);
         $mail->Body =  "\n$messagetext\n";
 
         if ($mail->Send()) {
-            set_send_count($user);
+            set_send_count($adminuser);
             return true;
         } else {
             mtrace('ERROR: '. $mail->ErrorInfo);
@@ -2788,13 +2797,17 @@ class enrol_lmb_plugin extends enrol_plugin {
      * @return bool success or failure of the role assignment
      */
     public function lmb_assign_role_log($roleid, $courseid, $userid, &$logline) {
+        $config = $this->get_config();
         if (!$courseid) {
             $logline .= 'missing courseid:';
         }
 
         if ($instance = $this->get_instance($courseid)) {
             // TODO catch exceptions thrown.
-            $this->enrol_user($instance, $userid, $roleid);
+            $this->enrol_user($instance, $userid, $roleid, 0, 0, ENROL_USER_ACTIVE);
+            if ($config->recovergrades) {
+                grade_recover_history_grades($userid, $courseid);
+            }
             $logline .= 'enrolled:';
             return true;
         } else {
@@ -2814,14 +2827,25 @@ class enrol_lmb_plugin extends enrol_plugin {
      * @return bool success or failure of the role assignment
      */
     public function lmb_unassign_role_log($roleid, $courseid, $userid, &$logline) {
+        $config = $this->get_config();
+
         if (!$courseid) {
             $logline .= 'missing courseid:';
             return false;
         }
 
+        if (enrol_lmb_check_enrolled_in_xls_merged($userid, $courseid)) {
+            $logline .= 'xls still enroled:';
+            return true;
+        }
+
         if ($instance = $this->get_instance($courseid)) {
             // TODO catch exceptions thrown.
-            $this->unenrol_user($instance, $userid, $roleid);
+            if (isset($config->disableenrol) && $config->disableenrol) {
+                $this->update_user_enrol($instance, $userid, ENROL_USER_SUSPENDED);
+            } else {
+                $this->unenrol_user($instance, $userid, $roleid);
+            }
             $logline .= 'unenrolled:';
             return true;
         } else {
