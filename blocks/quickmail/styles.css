@@ -56,6 +56,17 @@
    height: 25px;
 }
 
+
 #page-Quickmail .mform input#id_subject {
   width: 75%;
 }
+
+#page-Quickmail .mform .fitem .felement {
+    margin-left: 16%;
+    width: 83%;
+}
+
+#page-Quickmail .mform .fitem .fitemtitle {
+    width: 15%;
+}
+
