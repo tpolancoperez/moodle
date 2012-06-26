@@ -39,7 +39,8 @@ class mod_email_mod_form extends moodleform_mod {
         $mform =& $this->_form;
 
         $email = $DB->record_exists('email', array('course'=>$this->current->course));
-        if(!$email){
+        $update = optional_param('update', 0, PARAM_INT);
+        if(!$email || $update>0){
             //Header
             $mform->addElement('header', 'general', get_string('emailname', 'email'));
 

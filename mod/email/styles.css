@@ -10,6 +10,22 @@
    TODO customize this sample style
    Syntax recommendation http://www.w3.org/TR/REC-CSS2/
 */
+body#page-mod-email-view {
+    min-width: 1000px;
+}
+
+body#page-mod-email-view .mform .fitem .fitemtitle {
+    width: 115px;
+}
+
+body#page-mod-email-view .mform .fitem .felement {
+    margin-left: 118px;
+    width: auto;
+}
+
+body#page-mod-email-view .filemanager-container{
+    width: 432px;
+}
 
 .path-mod-email div.column {
     display: inline-block;
@@ -21,4 +37,13 @@
 
 .path-mod-email .legendmail {
     width: 180px;
+}
+
+body#page-mod-email-view #region-pre {
+    display:none;
+}
+
+body#page-mod-email-view #page-content #region-main {
+    margin-left: 0;
+    margin-right: 0;
 }

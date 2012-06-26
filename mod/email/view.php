@@ -35,18 +35,22 @@
 
     // Other params
     $error      = optional_param('error', 0, PARAM_ALPHANUM);
-
+    
     $mails      = optional_param('mails', '', PARAM_ALPHANUM); 	// Next and previous mails
     $selectedusers = optional_param('selectedusers', '', PARAM_ALPHANUM); // User who send mail
 
     $subject = optional_param('subject', '', PARAM_TEXT); 	// Subject of mail
     $body = optional_param('body', '', PARAM_TEXT);		// Body of mail
-
-    // This resolv any problems
+    $bodyitemid = 0;
+    $bodyformat = 1;
+    
+    // This is a band aid.  This whole module needs a rewrite so that form submission goes through the same file that did the form rendering
     if ( $error != 0 ) {
-        $body = isset($_GET['body']) ? $_GET['body'] : '';
-        $subject = isset($_GET['subject']) ? $_GET['subject'] : '';
-    }
+        $body       = isset($_COOKIE['moodle_email_bodytext']) ? $_COOKIE['moodle_email_bodytext'] : '';
+        $bodyitemid = isset($_COOKIE['moodle_email_bodyitemid']) ? $_COOKIE['moodle_email_bodyitemid'] : '';
+        $bodyformat = isset($_COOKIE['moodle_email_bodyformat']) ? $_COOKIE['moodle_email_bodyformat'] : '';
+        $subject    = isset($_COOKIE['moodle_email_subject']) ? $_COOKIE['moodle_email_subject'] : '';
+    }    
 
     if ($id) {
         if (! $cm = $DB->get_record("course_modules", array("id"=>$id))) {
@@ -132,14 +136,18 @@
     $options->folderoldid = $folderoldid;
     $options->mailid = $mailid;
 
-    // Fields of error mail (only use when created new email and it's insert fail)
-    $fieldsmail->user = '';
-    $fieldsmail->subject = $subject;
-    $fieldsmail->body = $body;
-    $fieldsmail->error = $error;
-
-/// Print the main part of the page
-
+    //formdefaults is used to re-populate a new message form with 
+    $formdefaults = new stdClass();
+    $formdefaults->error = $error;
+    $formdefaults->to = array();
+    $formdefaults->cc = array();
+    $formdefaults->bcc = array();
+    $formdefaults->subject = $subject;
+    $formdefaults->attachments = array();
+    $formdefaults->body = $body;
+    $formdefaults->bodyitemid = $bodyitemid;
+    $formdefaults->bodyformat = $bodyformat;
+    
     // Print principal table. This have 2 columns . . .  and possibility to add right column.
     echo '<table id="layout-table"><tr>';
 
@@ -160,9 +168,6 @@
         $folder->name = get_string('inbox', 'email');
     }
 
-    // Print middle table
-    $output = $OUTPUT->heading(get_string('mailbox', 'email'). ': '. $folder->name, 2, 'headingblock header ');
-
     // Print tabs options
     email_print_tabs_options($options, $action);
 
@@ -178,7 +183,7 @@
             break;
         case 'newmail':
                 // If is new mail, mailid = null or zero.
-                email_newmailform($email, $fieldsmail, $options, $selectedusers, $context);
+                email_newmailform($email, $formdefaults, $options, $selectedusers, $context);
             break;
 
         case 'draftmail':
