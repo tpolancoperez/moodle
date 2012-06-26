@@ -1,0 +1,70 @@
+    <adapter name="moodle" class="com.elluminate.adapter.CommandAdapter">
+      <arguments>
+        <argument name="synonym" value="Moodle" />
+      </arguments>
+      <commands>
+        <command name="getRecordingStream" class="com.elluminate.adapter.command.GetRecordingStreamCommand" />
+        <command name="buildSessionFile" class="com.elluminate.adapter.command.BuildSessionFileCommand" />
+        <command name="resetGroup" class="com.elluminate.adapter.command.ResetGroupCommand" />
+        <command name="seatAvailability" class="com.elluminate.adapter.command.SeatAvailabilityCommand" />
+        <command name="attendanceNotification" class="com.elluminate.adapter.command.AttendanceNotificationCommand" />
+        <command name="updateMeetingParameters" class="com.elluminate.adapter.command.UpdateMeetingParametersCommand" />
+        <command name="resolveRecording" class="com.elluminate.adapter.command.ResolveRecordingCommand" />
+        <command name="updateUser" class="com.elluminate.adapter.command.UpdateUserCommand" />
+        <command name="updateServerParameters" class="com.elluminate.adapter.command.UpdateServerParametersCommand" />
+        <command name="buildRecordingJNLP" class="com.elluminate.adapter.command.SecureTimeoutUseBuildRecordingJNLPCommand" />
+        <command name="getPreload" class="com.elluminate.adapter.command.GetPreloadCommand" />
+        <command name="updateRecording" class="com.elluminate.adapter.command.UpdateRecordingCommand" />
+        <command name="getSeatMaximum" class="com.elluminate.adapter.command.GetMaximumSeatCountCommand" />
+        <command name="streamRecording" class="com.elluminate.adapter.command.StreamRecordingCommand" />
+        <command name="streamPreload" class="com.elluminate.adapter.command.StreamPreloadCommand" />
+        <command name="resetParticipantList" class="com.elluminate.adapter.command.ResetParticipantListCommand" />
+        <command name="resolvePreload" class="com.elluminate.adapter.command.ResolvePreloadCommand" />
+        <command name="saveConfiguration" class="com.elluminate.adapter.command.SaveConfigurationCommand" />
+        <command name="getPreloadStream" class="com.elluminate.adapter.command.GetPreloadStreamCommand" />
+        <command name="addMeetingPreload" class="com.elluminate.adapter.command.AddMeetingPreloadCommand" />
+        <command name="buildMeetingJNLP" class="com.elluminate.elm.moodle.adapter.command.GetAdapterSessionJNLPCommand" />
+        <command name="checkMeetingPreload" class="com.elluminate.adapter.command.CheckMeetingPreloadCommand" />
+        <command name="deleteMeetingParameters" class="com.elluminate.adapter.command.DeleteMeetingParametersCommand" />
+        <command name="getServiceProvider" class="com.elluminate.adapter.command.GetServiceProviderCommand" />
+        <command name="listMeetingPreloads" class="com.elluminate.adapter.command.ListMeetingPreloadsCommand" />
+        <command name="getMeetingParameters" class="com.elluminate.adapter.command.GetMeetingParametersCommand" />
+        <command name="exportPreload" class="com.elluminate.adapter.command.ExportPreloadCommand" />
+        <command name="maxAvailableSeats" class="com.elluminate.adapter.command.GetMaxAvailableSeatsCommand" />
+        <command name="initializeDatastores" class="com.elluminate.adapter.command.InitializeDatastoresCommand" />
+        <command name="deleteParticipant" class="com.elluminate.adapter.command.DeleteParticipantCommand" />
+        <command name="login" class="com.elluminate.adapter.command.LoginCommand" />
+        <command name="createPreload" class="com.elluminate.adapter.command.CreatePreloadCommand" />
+        <command name="deleteGroup" class="com.elluminate.adapter.command.DeleteGroupCommand" />
+        <command name="deleteGroupMember" class="com.elluminate.adapter.command.DeleteGroupMemberCommand" />
+        <command name="deleteRecording" class="com.elluminate.adapter.command.DeleteRecordingCommand" />
+        <command name="deleteUser" class="com.elluminate.adapter.command.DeleteUserCommand" />
+        <command name="listMeetings" class="com.elluminate.adapter.command.ListMeetingsCommand" />
+        <command name="getMeetingCreator" class="com.elluminate.adapter.command.GetMeetingCreatorCommand" />
+        <command name="isParticipant" class="com.elluminate.adapter.command.IsParticipantCommand" />
+        <command name="getRecording" class="com.elluminate.adapter.command.GetRecordingCommand" />
+        <command name="listUsers" class="com.elluminate.adapter.command.ListUsersCommand" />
+        <command name="getServerDetails" class="com.elluminate.adapter.command.GetServerDetailsCommand" />
+        <command name="importPreload" class="com.elluminate.adapter.command.ImportPreloadCommand" />
+        <command name="addGroupMember" class="com.elluminate.adapter.command.AddGroupMemberCommand" />
+        <command name="importRecording" class="com.elluminate.adapter.command.ImportRecordingCommand" />
+        <command name="addParticipant" class="com.elluminate.adapter.command.AddParticipantCommand" />
+        <command name="listParticipants" class="com.elluminate.adapter.command.ListParticipantsCommand" />
+        <command name="getMeeting" class="com.elluminate.adapter.command.GetMeetingCommand" />
+        <command name="getUser" class="com.elluminate.adapter.command.GetUserCommand" />
+        <command name="updateMeeting" class="com.elluminate.adapter.command.UpdateMeetingCommand" />
+        <command name="schedule" class="com.elluminate.adapter.command.ScheduleMeetingCommand" />
+        <command name="deleteMeeting" class="com.elluminate.adapter.command.DeleteMeetingCommand" />
+        <command name="isModerator" class="com.elluminate.adapter.command.IsModeratorCommand" />
+        <command name="listRecordings" class="com.elluminate.adapter.command.ListRecordingsCommand" />
+        <command name="changePassword" class="com.elluminate.adapter.command.ChangePasswordCommand" />
+        <command name="getServerParameters" class="com.elluminate.adapter.command.GetServerParametersCommand" />
+        <command name="createGroup" class="com.elluminate.adapter.command.CreateGroupCommand" />
+        <command name="getGroup" class="com.elluminate.adapter.command.GetGroupCommand" />
+        <command name="listGroups" class="com.elluminate.adapter.command.ListGroupsCommand" />
+        <command name="createUser" class="com.elluminate.adapter.command.CreateUserCommand" />
+        <command name="createRecording" class="com.elluminate.adapter.command.CreateRecordingCommand" />
+        <command name="createMeeting" class="com.elluminate.adapter.command.CreateMeetingCommand" />
+        <command name="getServerConfiguration" class="com.elluminate.elm.moodle.adapter.command.GetServerPropertiesCommand" />
+      </commands>
+    </adapter>

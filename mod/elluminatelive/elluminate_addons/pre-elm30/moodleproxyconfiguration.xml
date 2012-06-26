@@ -1,0 +1,9 @@
+      <adapter>
+        <name>moodle</name>
+        <permissions>
+          <user>
+            <name>moodleadmin</name>
+            <allow>*</allow>
+          </user>
+        </permissions>
+      </adapter>
