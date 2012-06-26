@@ -1,0 +1,142 @@
+<html dir="ltr">
+<head>
+<TITLE>Moodle @ Oakland University - Welcome (Home Page)</TITLE>
+
+<script language="JavaScript">
+var submitted = false;
+function check_fields() {
+  if (submitted) {
+    return false;
+  }
+  if (document.login.WebCT_ID.value == "") {
+    // Edit Grizzly ID alert here. <------------------------------------GRIZZLY ID ALERT
+	alert("Please enter a GRIZZLY ID.");
+    return false;
+  }
+  if (document.login.Password.value == "") {
+    // Edit PIN alert here. <-----------------------------------------PIN ALERT
+	alert("Please enter a PIN.");
+    return false;
+  }
+  submitted = true;
+  return true;
+}
+</SCRIPT>
+
+<SCRIPT TYPE="text/javascript">
+//Makes g00,goo,Goo,gOO,GOO into G00
+function Turn_GID(WebCT_ID){
+  WebCT_ID.value=WebCT_ID.value.replace(/g(00|oo)/gi, 'G00');
+}
+</SCRIPT>
+
+<SCRIPT LANGUAGE="JavaScript">
+function hideOne(number)
+{
+document.getElementById("idForm" + number).style.display = 'none';            
+}
+</SCRIPT>
+
+<SCRIPT LANGUAGE="JavaScript">
+function showOne(number)
+{
+document.getElementById("idForm" + number).style.display = 'block';            
+}
+</SCRIPT>
+
+<SCRIPT LANGUAGE="JavaScript">
+function expandit(itemId)
+{
+	window.setTimeout("toggleSection('" + itemId + "')",10);
+}
+
+function toggleSection(itemId) {
+	var arrowId = itemId.replace("SectionPanel", "ArrowImage");
+	var arrow, item;
+	
+	if (document.all) {
+		item = document.all[itemId];
+		arrow = document.all[arrowId];
+	}
+	
+	if (!document.all && document.getElementById) {
+		item = document.getElementById(itemId);
+		arrow = document.getElementById(arrowId);
+	}
+		
+	if (item.style.display == "none") {
+		arrow.src = arrowDown.src;
+		item.style.display = "inline";
+	}
+	else {
+		arrow.src = arrowRight.src;	
+		item.style.display = "none";		
+	}
+}
+</SCRIPT>
+
+<script id="_ctl1_Menu1_SetupScript" language="JavaScript">
+<!--
+	var sectionCount = 2;
+	var menuId = "_ctl1_Menu1_Menu";
+	var arrowDown = new Image();
+	arrowDown.src = "../pix/help.gif";
+	var arrowRight = new Image();
+	arrowRight.src = "../pix/help.gif";
+
+-->
+</script>
+</head>
+
+<LINK REL="STYLESHEET" HREF="default.css" TITLE="format" TYPE="text/css">
+
+<script type="text/javascript" src="menu/jsmenu_milonic_src.js"></script>
+<param copyright="JavaScript Menu by Milonic" value="http://www.milonic.com/"></param>
+<script	type="text/javascript">
+if(ns4)_d.write("<scr"+"ipt language=JavaScript src=menu/jsmenu_mmenuns4.js><\/scr"+"ipt>");		
+else _d.write("<scr"+"ipt language=JavaScript src=menu/jsmenu_mmenudom.js><\/scr"+"ipt>"); 
+</script>
+<script language=JavaScript src="menu/MDLjsmenu_buttons.js"></script>
+
+<body bgcolor="#FFFFFF" leftmargin="0" topmargin="0" marginwidth="0" marginheight="0" style="margin-top: 0px; margin-left: 0px; margin-right: 0px; margin-bottom: 0px;">
+<TABLE WIDTH="100%" CELLSPACING="0" CELLPADDING="0" BORDER="0" HEIGHT="100%" BGCOLOR="FFFFFF">
+<TR VALIGN=TOP>
+<TD>
+<IMG SRC="images/menu.gif" width="775" height="49" usemap="#Map" border="0" HSPACE=0 VSPACE=0 ALT="OU Navigation Menu"><BR>
+<map name="Map"> 
+  <area shape="rect" coords="7,4,114,20" href="http://www3.oakland.edu/oakland/futurestudents/" alt="Future Students" title="Future Students">
+  <area shape="rect" coords="129,5,232,20" href="http://www3.oakland.edu/oakland/currentstudents/" alt="Current Students" title="Current Students">
+  <area shape="rect" coords="250,4,343,21" href="http://www2.oakland.edu/erd/" alt="Faculty &amp; Staff" title="Faculty &amp; Staff">
+  <area shape="rect" coords="359,3,425,21" href="http://www.oualumni.com" alt="OU Alumni" title="OU Alumni">
+  <area shape="rect" coords="438,4,516,20" href="http://www3.oakland.edu/oakland/visitorfriends/default.htm" alt="Visitors &amp; Friends" title="Visitors &amp; Friends">
+  <area shape="rect" coords="528,5,599,20" href="http://www3.oakland.edu/oakland/sitemap/default.htm" alt="Site Map" title="Site Map">
+  <area shape="rect" coords="613,4,769,21" href="http://www3.oakland.edu" alt="OU Home page" title="OU Home page">
+  <area shape="rect" coords="9,27,78,44" href="http://www3.oakland.edu/oakland/aboutou/default.htm" alt="About OU" title="About OU">
+  <area shape="rect" coords="168,28,234,44" href="http://www2.oakland.edu/research/web/" alt="Research" title="Research">
+  <area shape="rect" coords="248,27,317,44" href="http://www3.oakland.edu/oakland/arts/default.htm" alt="Arts" title="Arts">
+  <area shape="rect" coords="328,27,394,46" href="http://www.ougrizzlies.com" alt="OU Athletics" title="OU Athletics">
+  <area shape="rect" coords="411,28,474,45" href="http://www.kl.oakland.edu" alt="OU Library" title="OU Library">
+  <area shape="rect" coords="485,28,509,46" href="http://www3.oakland.edu/oakland/infotech/default.htm" alt="IT" title="IT">
+  <area shape="rect" coords="520,28,617,45" href="http://www3.oakland.edu/oakland/adminoffices/default.htm" alt="Administration" title="Administration">
+  <area shape="rect" coords="634,28,690,46" href="http://www3.oakland.edu/oakland/jobs/" alt="Jobs" title="Jobs">
+  <area shape="rect" coords="704,29,763,43" href="http://www3.oakland.edu/oakland/newsinfo/" alt="News &amp; Info" title="News &amp; Info">
+  <area shape="rect" coords="86,29,160,46" href="http://www3.oakland.edu/oakland/academics/default.htm" alt="Academics" title="Academics">
+</map>
+
+<TABLE BORDER=0 CELLPADDING=0 CELLSPACING=0 BGCOLOR="FFFFFF">
+<TR VALIGN="TOP">
+<TD COLSPAN=2><IMG SRC="images/header.gif" ALT="Moodle at Oakland University"></TD>
+</TR>
+<TR VALIGN="TOP">
+<TD WIDTH="215">
+<TABLE CELLPADDING=0 CELLSPACING=0 BACKGROUND="images/TableBG.gif" WIDTH=215>
+<TR><TD>
+
+<script language=JavaScript src="menu/jsmenu_main.js"></script>
+
+</TD></TR>
+</TABLE>
+
+<img name="Address" src="images/address.gif" width="215" height="93" border="0" ALT="e-Learning Address"><BR>
+</TD>
+<TD VALIGN="TOP" WIDTH="560"><FONT FACE="ARIAL" SIZE="-1">

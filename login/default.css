@@ -1,0 +1,30 @@
+table#loginlayouttable td{
+    padding: 0;
+    border: 0;
+}
+
+.navbar {
+    display: none;
+}
+
+body#page-login-index {
+    padding: 0;
+}
+
+.region-content {
+    background: url("images/hdark.png") repeat-x scroll center top #FFFFFF;
+
+}
+
+form#login p {
+    margin-top: 1em;
+}
+
+table#loginlayouttable table {
+    margin-bottom: 0;
+}
+
+#page-header {
+    display: none;
+}
+

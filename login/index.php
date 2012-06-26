@@ -334,9 +334,11 @@ foreach($authsequence as $authname) {
 $PAGE->set_title("$site->fullname: $loginsite");
 $PAGE->set_heading("$site->fullname");
 
-echo $OUTPUT->header();
+//echo $OUTPUT->header();
 
 if (isloggedin() and !isguestuser()) {
+    echo $OUTPUT->header();
+    
     // prevent logging when already logged in, we do not want them to relogin by accident because sesskey would be changed
     echo $OUTPUT->box_start();
     $logout = new single_button(new moodle_url($CFG->httpswwwroot.'/login/logout.php', array('sesskey'=>sesskey(),'loginpage'=>1)), get_string('logout'), 'post');
@@ -344,11 +346,26 @@ if (isloggedin() and !isguestuser()) {
     echo $OUTPUT->confirm(get_string('alreadyloggedin', 'error', fullname($USER)), $logout, $continue);
     echo $OUTPUT->box_end();
 } else {
-    include("index_form.html");
+    //include("index_form.html");
+    
+    // The following is statement outputs the login page differently, depending on what the "wantsurl" value is (this is kind of like the referer).
+    // If the wants URL indicates that the request to login is coming from Panopto, then output the simplified panopto login screen. Otherwise, output
+    // the normal login screen. We do this because the normal login screen is too wide, long, and complex to be displayed in the panopto recorder.
+    if (isset($SESSION->wantsurl) && (strpos($SESSION->wantsurl,"/blocks/panopto/SSO.php"))) {
+        print "<html><head><title>Panopto / Moodle Login</title></head><body>";
+        include("panopto_form.php");
+        print "</body></html>";
+    } else {
+        include("elis_template_header.php");
+        //print_header('', '', '', $focus, '', '', '');
+        include("elis_template_form.php");
+        include("elis_template_footer.php");
+    }
+    
     if (!empty($CFG->loginpageautofocus)) {
         //focus username or password
         $PAGE->requires->js_init_call('M.util.focus_login_form', null, true);
     }
 }
 
-echo $OUTPUT->footer();
+//echo $OUTPUT->footer();
