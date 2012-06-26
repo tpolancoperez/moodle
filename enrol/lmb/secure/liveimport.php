@@ -24,6 +24,10 @@
  * @package enrol_lmb
  * Based on enrol_imsenterprise from Dan Stowell.
  */
+
+//This is a hack for our load balancer
+$_SERVER['HTTP_HOST'] = 'moodle.oakland.edu';
+
 require_once(dirname(dirname(dirname(dirname(__FILE__)))) . '/config.php');
 require_once('../lib.php');
 
