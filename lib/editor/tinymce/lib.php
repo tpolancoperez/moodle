@@ -188,6 +188,10 @@ class tinymce_texteditor extends texteditor {
         if (!empty($options['required'])) {
             $params['init_instance_callback'] = 'M.editor_tinymce.onblur_event';
         }
+        
+        $params['plugins'] .= ",tiny_mce_wiris";
+        $params['theme_advanced_buttons3'] = "tiny_mce_wiris_formulaEditor,tiny_mce_wiris_CAS,|," . $params['theme_advanced_buttons3'];
+        
         return $params;
     }
 }
