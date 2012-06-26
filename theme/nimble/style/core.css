@@ -22,23 +22,7 @@ h1,h2,h3,h4,h5,h6 {
 
 
 
-.headermenu {
-	float: right;
-	color: #ddd;
-}
 
-.headermenu a {
-	color: #aaa;
-}
-
-.headermenu a:hover {
-	color: #fff;
-}
-
-#custommenu {
-	float: left;
-	margin-top: 40px;
-}
 
 h1.headermain {
 	margin: 0 20px 25px 0;
@@ -59,6 +43,23 @@ h1.headermain {
 	color: #333;
 	font-family: Georgia, Times, "Times New Roman", serif;
 	text-shadow: 0.1em 0.1em 0 #fff;		
+}
+.headermenu {
+	float: right;
+	color: #ddd;
+}
+
+.headermenu a {
+	color: #aaa;
+}
+
+.headermenu a:hover {
+	color: #fff;
+}
+
+#custommenu {
+	float: left;
+	margin-top: 40px;
 }
 
 .navbar {

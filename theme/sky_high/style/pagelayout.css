@@ -20,6 +20,7 @@ body {
     overflow: hidden;
     position: relative;
     width: 100%;
+    float:none;
 }
 
 /* @group Pre and Post */
@@ -34,10 +35,9 @@ body {
 
 #page-content #region-post-box {
     float: left;
-    margin-left: -[[setting:regionwidth]];
+    /*margin-left: -[[setting:regionwidth]];*/
     width: 100%;
-    border-right: 2px solid #98bcd6;
-    background: url([[pix:theme|top_bg]]) repeat-x top #fff;
+    
 }
 
 #page-content #region-main-wrap {
@@ -46,16 +46,20 @@ body {
 }
 
 #page-content #region-main {
-    overflow: hidden;
+    overflow: auto;
     position: relative;
-    margin-left: [[setting:regionwidthdouble]];
-    left: 100%;
+    margin-left: [[setting:regionwidth]];
+    margin-right: [[setting:regionwidth]];
+    width: auto;
+    border-right: 2px solid #98bcd6;
+    border-left: 2px solid #98bcd6;
+    background: url([[pix:theme|top_bg]]) repeat-x top #fff;
 }
 
 #page-content #region-pre {
-    float: right;
+    float: left;
     position: relative;
-    left: [[setting:leftregionwidthmargin]];
+    /*left: [[setting:leftregionwidthmargin]];*/
     width: [[setting:regionwidth]];
     background: transparent;
 }
@@ -63,20 +67,20 @@ body {
 #page-content #region-post {
     float: right;
     position: relative;
-    left: [[setting:rightregionwidthmargin]];
+    /*left: [[setting:rightregionwidthmargin]];*/
     width: [[setting:regionwidth]];
     background: transparent;
 }
 
 #page-content #region-main .region-content {
-    overflow: hidden;
+    overflow: auto;
     margin: 20px;
     padding-bottom: 20px;
 }
 
 #page-content #region-pre .region-content,
 #page-content #region-post .region-content {
-    overflow: hidden;
+    overflow: auto;
     padding: 20px 10px;
 }
 
@@ -95,16 +99,18 @@ body {
 }
 
 .side-pre-only #page-content #region-post-box {
-    margin-left: -[[setting:regionwidth]];
+    /*margin-left: -[[setting:regionwidth]];*/
 }
 
 .side-pre-only #page-content #region-main {
-    margin-left: [[setting:regionwidth]];
+    /*margin-left: [[setting:regionwidthdouble]];
+    margin-right: 0px;*/
+    border-right: none;
 }
 
 .side-pre-only #page-content #region-pre {
-    left: [[setting:regionwidth]];
-    width: [[setting:regionwidth]];
+    /*left: [[setting:regionwidth]];
+    width: [[setting:regionwidth]];*/
 }
 
 .side-pre-only #page-content #region-post {
@@ -217,5 +223,6 @@ body {
     overflow: auto;
 }
 .pagelayout-report #page-content #region-main .region-content {
-    overflow: visible;
+    overflow: auto;
 }
+

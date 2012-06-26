@@ -28,12 +28,17 @@ body,h1,h2,h3,h4,h5,h6,p,ul,ol,dl,input,textarea {
     border: 1px solid #c1bc9d;
 }
 
-a { 
+a:link { 
     color: #336699;
 }
 
 a:hover { 
+    color: orange;
     text-decoration: underline;
+}
+a:visited { 
+    color: purple;
+    text-decoration: none;
 }
 
 .pagelayout-frontpage #page-content #region-main-box #region-post-box { 

@@ -84,3 +84,7 @@ body.splash-orange {
     border-top:1px solid #b6916a;
     border-bottom:1px solid #5f564c;
 }
+
+/* Splash Theme Specific settings for Administrators to customise css.
+---------------------------*/
+[[setting:customcss]]
