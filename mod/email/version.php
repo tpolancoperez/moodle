@@ -14,7 +14,7 @@
  *          AFFERO GENERAL PUBLIC LICENSE is also included in the file called "COPYING".
  **/
 
-$module->version  = 2011100600;  // The current module version (Date: YYYYMMDDXX)
+$module->version  = 2011100601;  // The current module version (Date: YYYYMMDDXX)
 $module->cron     = 60;           // Period for cron to check this module (secs)
 
 ?>
