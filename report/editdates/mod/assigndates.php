@@ -27,18 +27,18 @@ extends report_editdates_mod_date_extractor {
 
     //overriden abstract method
     public function get_settings(cm_info $cm) {
-        $ass = $this->mods[$cm->instance];
-        //availability and due date settings for an assignment
-        return array('allowsubmissionsfromdate' => new report_editdates_date_setting(
-        get_string('availabledate', 'assignment'),
-        $ass->allowsubmissionsfromdate,
-        self::DATETIME, true, 5),
-
-                      'duedate' => new report_editdates_date_setting(
-        get_string('duedate', 'assignment'),
-        $ass->duedate,
-        self::DATETIME, true, 5)
-        );
+        $assign = $this->mods[$cm->instance];
+        // Availability and due date settings for a mod_assign.
+        return array(
+                'allowsubmissionsfromdate' => new report_editdates_date_setting(
+                        get_string('availabledate', 'assignment'),
+                        $assign->allowsubmissionsfromdate,
+                        self::DATETIME, true, 5),
+                'duedate' => new report_editdates_date_setting(
+                        get_string('duedate', 'assignment'),
+                        $assign->duedate,
+                        self::DATETIME, true, 5)
+                );
     }
 
     //overriden abstract method
@@ -55,27 +55,6 @@ extends report_editdates_mod_date_extractor {
     public function save_dates(cm_info $cm, array $dates) {
         global $DB, $COURSE;
 
-        //fetch module instance from $mods array
-        /*$assign = $this->mods[$cm->instance];
-
-        $assign->instance = $cm->instance;
-        $assign->coursemodule = $cm->id;
-        $assign->cmidnumber = $cm->id;
-	
-        //updating date values
-        foreach ($dates as $datetype => $datevalue) {
-            $assign->$datetype = $datevalue;
-        }*/
-
-//print "<pre>";print_r($assign);print "</pre>";
-
-        // Instantiate new instance and save changes
-        //$module = new assign(context_module::instance($cm->id), null, null);
-
-//$d = new stdClass();
-//$module->plugin_data_preprocessing($d);
-//print "<pre>";print_r($d);print "</pre>";
-
         $update = new stdClass();
         $update->id = $cm->instance;
         $update->duedate = $dates['duedate'];
@@ -85,12 +64,9 @@ extends report_editdates_mod_date_extractor {
 
         $module = new assign(context_module::instance($cm->id), null, null);
 
-        // update all the calendar events
+        // Update the calendar and grades.
         $module->update_calendar($cm->id);
 
         $module->update_gradebook(false, $cm->id);
-
-
-        //$module->update_instance($assign);
     }
 }
