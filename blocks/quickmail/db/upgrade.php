@@ -39,13 +39,15 @@ function xmldb_block_quickmail_upgrade($oldversion) {
 
         $table->addKey($key);
 
-        $dbman->create_table($table);
+        if (!$dbman->table_exists($table)) {
+            $dbman->create_table($table);
+        }
 
         foreach (array('log', 'drafts') as $table) {
             // Define field alternateid to be added to block_quickmail_log
             $table = new xmldb_table('block_quickmail_' . $table);
             $field = new xmldb_field('alternateid', XMLDB_TYPE_INTEGER, '10',
-                XMLDB_UNSIGNED, null, null, 'NULL', 'userid');
+                XMLDB_UNSIGNED, null, null, null, 'userid');
 
             // Conditionally launch add field alternateid
             if (!$dbman->field_exists($table, $field)) {
@@ -55,6 +57,27 @@ function xmldb_block_quickmail_upgrade($oldversion) {
 
         // quickmail savepoint reached
         upgrade_block_savepoint($result, 2012021014, 'quickmail');
+    }
+
+    if ($oldversion < 2012061112) {
+        // Restructure database references to the new filearea locations
+        foreach (array('log', 'drafts') as $type) {
+            $params = array(
+                'component' => 'block_quickmail_' . $type,
+                'filearea' => 'attachment'
+            );
+
+            $attachments = $DB->get_records('files', $params);
+
+            foreach ($attachments as $attachment) {
+                $attachment->filearea = 'attachment_' . $type;
+                $attachment->component = 'block_quickmail';
+
+                $result = $result && $DB->update_record('files', $attachment);
+            }
+        }
+
+        upgrade_block_savepoint($result, 2012061112, 'quickmail');
     }
 
     return $result;

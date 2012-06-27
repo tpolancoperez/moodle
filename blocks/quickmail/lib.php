@@ -2,63 +2,44 @@
 
 // Written at Louisiana State University
 
-abstract class lsu_dev {
-    abstract static function pluginname();
-
-    static function is_lsu() {
-        global $CFG;
-        return isset($CFG->is_lsu) and $CFG->is_lsu;
-    }
-
+abstract class quickmail {
     public static function _s($key, $a = null) {
-        $class = get_called_class();
-
-        return get_string($key, $class::pluginname(), $a);
-    }
-
-    /**
-     * Shorten locally called string even more
-     */
-    public static function gen_str() {
-        $class = get_called_class();
-
-        return function ($key, $a = null) use ($class) {
-            return get_string($key, $class::pluginname(), $a);
-        };
-    }
-}
-
-abstract class quickmail extends lsu_dev {
-    static function pluginname() {
-        return 'block_quickmail';
+        return get_string($key, 'block_quickmail', $a);
     }
 
     static function format_time($time) {
-        return date("l, d F Y, h:i A", $time);
+        return userdate($time, '%A, %d %B %Y, %I:%M %P');
     }
 
-    static function cleanup($table, $itemid) {
+    static function cleanup($table, $contextid, $itemid) {
         global $DB;
 
         // Clean up the files associated with this email
         // Fortunately, they are only db references, but
         // they shouldn't be there, nonetheless.
-        $params = array('component' => $table, 'itemid' => $itemid);
+        $filearea = end(explode('_', $table));
 
-        $result = (
-            $DB->delete_records('files', $params) and
-            $DB->delete_records($table, array('id' => $itemid))
+        $fs = get_file_storage();
+
+        $fs->delete_area_files(
+            $contextid, 'block_quickmail',
+            'attachment_' . $filearea, $itemid
         );
 
-        return $result;
+        $fs->delete_area_files(
+            $contextid, 'block_quickmail',
+            $filearea, $itemid
+        );
+
+        return $DB->delete_records($table, array('id' => $itemid));
     }
 
-    static function history_cleanup($itemid) {
-        return quickmail::cleanup('block_quickmail_log', $itemid);
+    static function history_cleanup($contextid, $itemid) {
+        return quickmail::cleanup('block_quickmail_log', $contextid, $itemid);
     }
 
-    static function draft_cleanup($itemid) {
-        return quickmail::cleanup('block_quickmail_drafts', $itemid);
+    static function draft_cleanup($contextid, $itemid) {
+        return quickmail::cleanup('block_quickmail_drafts', $contextid, $itemid);
     }
 
     static function process_attachments($context, $email, $table, $id) {
@@ -75,16 +56,18 @@ abstract class quickmail extends lsu_dev {
 
         if (!empty($email->attachment)) {
             $zipname = "attachment.zip";
-            $zip = "$base_path/$zipname";
             $actual_zip = "$moodle_base/$zipname";
+
+            $safe_path = preg_replace('/\//', "\\/", $CFG->dataroot);
+            $zip = preg_replace("/$safe_path\\//", '', $actual_zip);
 
             $packer = get_file_packer();
             $fs = get_file_storage();
 
             $files = $fs->get_area_files(
                 $context->id,
-                'block_quickmail_'.$table,
-                'attachment',
+                'block_quickmail',
+                'attachment_' . $table,
                 $id,
                 'id'
             );
@@ -243,10 +226,13 @@ abstract class quickmail extends lsu_dev {
             $actions[] = $open_link;
 
             if ($can_delete) {
+                $delete_params = $params + array(
+                    'userid' => $userid,
+                    'action' => 'delete'
+                );
+
                 $delete_link = html_writer::link (
-                    new moodle_url('/blocks/quickmail/emaillog.php',
-                        $params + array('action' => 'delete')
-                    ),
+                    new moodle_url('/blocks/quickmail/emaillog.php', $delete_params),
                     $OUTPUT->pix_icon("i/cross_red_big", "Delete Email")
                 );
 
@@ -259,7 +245,7 @@ abstract class quickmail extends lsu_dev {
         }
 
         $paging = $OUTPUT->paging_bar($count, $page, $perpage,
-            '/blocks/quickmail/emaillog.php?courseid='.$courseid);
+            '/blocks/quickmail/emaillog.php?type='.$type.'&amp;courseid='.$courseid);
 
         $html = $paging;
         $html .= html_writer::table($table);
