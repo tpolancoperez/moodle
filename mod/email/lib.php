@@ -74,7 +74,7 @@ function email_add_instance($email) {
             }
 
             //Create users accounts for this instance.
-            if (! email_add_accounts($emailid) ) {
+            if (! email_add_all_accounts($emailid) ) {
                 print_error("failcreatingnewaccounts", "email");
             }
 
@@ -92,7 +92,7 @@ function email_add_instance($email) {
 
             if($DB->count_records('email', array('course'=>$email->course)) != 1) {
                 print_error("noenable","email");
-            }else if (! email_add_accounts($emailid) ) {
+            }else if (! email_add_all_accounts($emailid) ) {
                 print_error("failcreatingnewaccounts", "email");
             }
             
@@ -298,7 +298,7 @@ function email_print_recent_activity($course, $isteacher, $timestart) {
  * @todo Finish documenting this function
  **/
 function email_cron () {
-
+    // Cron create missing accounts for courses with Internal Email.
     global $CFG,$DB;
 
     @set_time_limit(0);
@@ -306,44 +306,38 @@ function email_cron () {
 
     $starttime = time();
 
-    /// Cron create all accounts for course.
+    // Get all courses with Internal Email
+    $emails  = $DB->get_records('email', array('active'=>1), 'id, course');
+   
+    $msg = "\n\t".count($emails) . " courses with Internal Email active.\n";
 
-    // Create message to send administrator
-    $msg = get_string('information', 'email') . "\n\n";
+    $nCreated = 0;
+    
+    foreach($emails as $email) {
+        //compare Users versus Accounts
+        $context = get_context_instance(CONTEXT_COURSE, $email->course);
+        $users = get_users_by_capability($context, 'moodle/course:viewparticipants', 'u.id', '', '','','','', false, true);
 
-    // Get all courses (only id's for don't create overhead)
-    if (! $courses = get_courses("all", "c.sortorder ASC", "c.id, c.fullname, c.shortname") ) {
-        $msg .= "Don't get courses\n\n";
-    }
+        $accounts = $DB->get_records('email_account', array('emailid'=>$email->id));
+        
+        // compare
+        foreach($users as $user) {
+            $found = false;
+            foreach($accounts as $account){
+                if($user->id == $account->userid){
+                    $found = true;
+                    break;
+                }
+            }
 
-    // State if sending or not mail to admin
-    $sendmail = false;
-
-    // Processing this ...
-    foreach ( $courses as $course ) {
-
-        // Module has enabled in this course
-        if ( $email = $DB->get_record('email', array('course'=>$course->id))) { 
-            // Compare if add or deleting accounts ...
-            //$users = get_course_users($course->id);
-            $context = get_context_instance(CONTEXT_COURSE, $course->id);
-            $fields = 'u.id, u.username, u.firstname, u.lastname, u.maildisplay, u.mailformat, u.maildigest, u.emailstop, u.imagealt, u.email, u.city, u.country, u.lastaccess, u.lastlogin, u.picture, u.timezone, u.theme, u.lang, u.trackforums, u.mnethostid';
-            $users = get_users_by_capability($context, 'moodle/course:viewparticipants', $fields, '', '','','','', false, true);
-
-            email_compare_accounts_participants($course->id, $email->id, $users);
+            if (!$found) {
+                email_add_account($email->id, $user->id);
+                $nCreated++;
+            }
         }
     }
-
-    $msg .= "\n\n" . get_string('finishcreatingnewaccounts', 'email') . ' ' . count($courses) . " courses.\n\n\n";
-
-    $timeelapsed = time() - $starttime;
-    $msg .= 'Process has completed. Time taken: '.$timeelapsed.' seconds.';
-
-
-    if ( $sendmail ) {
-        $site = get_site();
-        email_to_user(get_admin(), get_admin(), 'Email module create new accounts '.$site->fullname, $msg);
-    }
+    $msg .= "\t".$nCreated." email accounts created.\n";
+    echo $msg;
 
     return true;
 }
@@ -405,23 +399,6 @@ function email_scale_used_anywhere($scaleid) {
 }
 
 /**
- * This function add accounts to one instance of email
- * Add teachers and students of this course.
- *
- * @param int $emailid email ID to add accounts
- * @return boolean Success/Fail
- * @todo Finish documenting this function
- **/
-function email_add_accounts($emailid) {
-
-	$status = true;
-
-	$status = email_add_all_accounts($emailid);
-	
-	return $status;
-}
-
-/**
  * This function delete account.
  *
  * @param int $accountid account ID to add accounts
@@ -479,6 +456,7 @@ function email_delete_account($accountid) {
 }
 
 /**
+<<<<<<< HEAD
  * This function deleting accounts to one instance of email
  * Add teachers and students of this course.
  *
@@ -556,43 +534,27 @@ function email_compare_accounts_participants($courseid, $emailid, $users) {
 }
 
 /**
+=======
+>>>>>>> 42e42f8... OUMoodle internal_email : optimized email_cron().  removed useless functions that dealt with account creation and removal that were not being called anywhere.
  * This function insert new account for any new users
  * of one course.
  *
- * @param object $email Email of course
- * @param array $users Users to add.
- * @return int Number of accounts created
- * @todo Finish documenting this function
+ * @param int $emailid Id of the courses Email activity
+ * @param int $userid Id of the User to add.
+ * @return boolean Success of account creation.
  **/
-function email_create_new_accounts($email, $users) {
+function email_add_account($emailid, $userid) {
     global $DB;
-    $status = 0;
+    $status = false;
 
-    //If nothing teachers
-    if( $users ) {
-
-            $account->emailid = $email->id;
-            foreach($users as $user) {
-                    $account->userid = $user->id;
-
-                    //If record don't exist
-                    if (! $DB->record_exists('email_account', array('userid'=>$account->userid, 'emailid'=>$account->emailid)) ) {
-
-                            // Add account
-                            if (! $account->id = $DB->insert_record('email_account', $account)) {
-                                    //Failed insert account
-                                    return -1;
-                            }
-
-                            // Add parents folders
-                            if (! email_create_parents_folders($account->id)) {
-                                    return -1;
-                            }
-                            $status++;
-                    }
-            }
+    $account = new stdClass();
+    $account->userid = $userid;
+    $account->emailid = $emailid;
+    $account->id = $DB->insert_record('email_account', $account);
+    if($account->id > 0){
+        $status = true;
+        email_create_parents_folders($account->id);
     }
-
     return $status;
 }
 
@@ -660,6 +622,12 @@ function email_get_account_by_id($accountid) {
 
 }
 
+/**
+ * This function adds all accounts for a given emailid
+ *
+ * @param int $emailid Email ID
+ * @return boolean Success/Fail
+ **/
 function email_add_all_accounts($emailid) {
     global $CFG,$DB;
 
@@ -717,120 +685,6 @@ function email_add_all_accounts($emailid) {
     }
 
     return true;
-}
-
-/**
- * This function insert new account for alls teachers course.
- * Only return false when fail an insert record.
- * When noting teachers course, don't insert record.
- *
- * @param int $emailid email ID to add accounts
- * @return boolean Success/Fail
- * @todo Finish documenting this function
- **/
-function email_add_account_teachers($emailid) {
-    global $DB;
-
-    //Get all record of this email instance
-    $email = $DB->get_record('email', array('id'=>$emailid));
-
-    //Process all teachers of course associated at this instance.
-    if ( $teachers = get_course_teachers($email->course) ) {
-
-            //If nothing teachers
-            if(! empty($teachers)) {
-
-                    $account->emailid = $emailid;
-                    foreach($teachers as $teacher) {
-                            $account->userid = $teacher->id;
-
-                            //If record don't exist
-                            if (! $DB->record_exists('email_account', array('userid'=>$account->userid, 'emailid'=>$account->emailid)) ) {
-
-                                    // Add account
-                                    if (! $account->id = $DB->insert_record('email_account', $account)) {
-                                            //Failed insert account
-                                            return false;
-                                    }
-
-                                    // Add parents folders
-                                    if (! email_create_parents_folders($account->id)) {
-                                            return false;
-                                    }
-                            }
-                    }
-            }
-    }
-
-    return true;
-}
-
-/**
- * This function insert new account for alls students course.
- * Only return false when fail an insert record.
- * When noting teachers course, don't insert record.
- *
- * @uses $CFG
- * @param int $emailid email ID to add accounts
- * @return boolean Success/Fail
- * @todo Finish documenting this function
- **/
-function email_add_account_students($emailid) {
-
-	global $CFG,$DB;
-
-	//Get all record of this email instance
-	$email = $DB->get_record('email', array('id'=>$emailid));
-
-	// Get users. Not use get_course_students, because if user not access never, not get this, and per default create an account of all students.
-	// Thus it corresponds with the participants.
-	if(SITEID == $email->course) {
-        $select = 'SELECT u.id, u.username ';
-        $from   = 'FROM {user} u ';
-        $where  = 'WHERE u.deleted = 0 ';
-    }
-    else {
-        $select = 'SELECT u.id, u.username ';
-        $from   = 'FROM {user} u ';
-        $from  .= 'LEFT JOIN {user_students} s ON s.userid = u.id ';
-        $where  = 'WHERE s.course = '.$email->course.' AND u.deleted = 0 ';
-    }
-
-    $sort = '';
-    $limit = '';
-
-    $students = $DB->get_records_sql($select.$from.$where.$sort.$limit);
-
-
-	// Process all students of course associated at this instance.
-	if ( $students ) {
-
-		//If there're students
-		if(! empty($students)) {
-
-			$account->emailid = $emailid;
-			foreach($students as $student) {
-				$account->userid = $student->id;
-
-				//If record don't exist
-				if (! $DB->record_exists('email_account', array('userid'=>$account->userid, 'emailid'=>$account->emailid)) ) {
-
-					// Add account
-					if (! $account->id = $DB->insert_record('email_account', $account)) {
-						//Failed insert account
-						return false;
-					}
-
-					// Add parents folders
-					if (! email_create_parents_folders($account->id)) {
-						return false;
-					}
-				}
-			}
-		}
-	}
-
-	return true;
 }
 
 /**
