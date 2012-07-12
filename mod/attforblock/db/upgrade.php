@@ -218,6 +218,10 @@ function xmldb_attforblock_upgrade($oldversion=0) {
         $result = $result && $dbman->drop_field($table, $field);
         
     } 
+
+    if ($oldversion < 2011111701 and $result) {
+        update_capabilities();
+    }
     return $result;
 }
 

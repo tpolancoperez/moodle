@@ -1,3 +1,36 @@
+## v1.2.8
+
+- Russian translation [7a5ccc][7a5ccc] (Sergey Zolotykhin)
+- Backing up and restoring of quickmail hostory [#39][39]
+- Fixes broken delete link for admins [4166c8][4166c8]
+- Improved attachment filearea [#40][40]
+- Type needs to be included in pagination [3333e6][3333e6]
+- Fix upgrade failure point [#41][41] ([mackensen][mackensen])
+- Use correct user time in history and drafts [#42][42]
+
+[7a5ccc]: https://github.com/lsuits/quickmail/commit/7a5cccdff8a1b9d9db7a0a2c3c8e3055a8519e75
+[4166c8]: https://github.com/lsuits/quickmail/commit/4166c828d531e4ef2538fbae2f156c49bb627cdb
+[3333e6]: https://github.com/lsuits/quickmail/commit/3333e643606947254b5cb1cdf5beeb33b7ea1bb7
+[40]: https://github.com/lsuits/quickmail/issues/40
+[41]: https://github.com/lsuits/quickmail/pull/41
+[42]: https://github.com/lsuits/quickmail/issues/42
+[39]: https://github.com/lsuits/quickmail/pull/39
+
+## v1.2.7
+
+- Removed dprecated code [#35][35] ([mackensen][mackensen])
+- Install fields were causing problems on install [#34][34] ([mackensen][mackensen])
+- Javascript was blocking Cancel [#33][33]
+- Block now uses icons correctly [213ed0][213ed0]
+- Uses the correct zip in attachments [200fb2][200fb2]
+
+[mackensen]: https://github.com/mackensen
+[213ed0]: https://github.com/lsuits/quickmail/commit/213ed09b58a065608d81df83005dccd4f8b6714d
+[200fb2]: https://github.com/lsuits/quickmail/commit/200fb2e07d01c052a398c799d11607eed3f5ac64
+[33]: https://github.com/lsuits/quickmail/issues/33
+[34]: https://github.com/lsuits/quickmail/issues/34
+[35]: https://github.com/lsuits/quickmail/issues/35
+
 ## v1.2.6
 
 - Now uses $CFG->tempdir for the temp directory [741a64][741a64]
@@ -10,7 +43,7 @@
 
 - Receive copy default setting [#31][31]
 - Empty Signature defaults [#30][30]
-- Increase Subject line [45a80cf][45a80cf] 
+- Increase Subject line [45a80cf][45a80cf]
 
 [31]: https://github.com/lsuits/quickmail/issues/31
 [30]: https://github.com/lsuits/quickmail/issues/30
