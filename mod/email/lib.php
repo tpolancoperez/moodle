@@ -316,8 +316,8 @@ function email_cron () {
     foreach($emails as $email) {
         //compare Users versus Accounts
         $context = get_context_instance(CONTEXT_COURSE, $email->course);
-        $users = get_users_by_capability($context, 'moodle/course:viewparticipants', 'u.id', '', '','','','', false, true);
-
+        $users = get_enrolled_users($context, '', 0 , "u.id");
+        
         $accounts = $DB->get_records('email_account', array('emailid'=>$email->id));
         
         // compare
@@ -384,12 +384,6 @@ function email_get_participants($emailid) {
  **/
 function email_scale_used ($emailid,$scaleid) {
     $return = false;
-
-    //$rec = get_record("email", array("id"=>$emailid, "scale"=>"-$scaleid"));
-    //
-    //if (!empty($rec)  && !empty($scaleid)) {
-    //    $return = true;
-    //}
 
     return $return;
 }
@@ -1329,41 +1323,14 @@ function email_choose_users_to_send($email, $options) {
 
     // Get teachers, use standard of group to set teacher/s.
     $context = get_context_instance(CONTEXT_COURSE, $email->course);
-    $teachers = get_users_by_capability($context, 'moodle/course:manageactivities', 'u.id, u.lastname, u.firstname', 'u.lastname, u.firstname');
-    if ($teachers) {
-        $prefix = '# ';
-        foreach ($teachers as $teacher) {
-            if ( ! email_contains(fullname($teacher, true), $selectedusers) ) {
-            	$unselectedusers[$teacher->id] = fullname($teacher, true);
+    $enrolled_users = get_enrolled_users($context);
+    if ($enrolled_users) {
+        foreach ($enrolled_users as $user) {
+            if ( ! email_contains(fullname($user, true), $selectedusers) ) {
+            	$unselectedusers[$user->id] = fullname($user, true);
             }
         }
-        unset($teachers);
-    }
-
-
-    
-    $tas = get_users_by_capability($context, 'moodle/course:viewhiddenactivities', 'u.id, u.lastname, u.firstname', 'u.lastname, u.firstname');
-    if ($tas) {
-        $prefix = '* ';
-        foreach ($tas as $ta) {
-            if ( ! email_contains(fullname($ta, true), $selectedusers) ) {
-            	$unselectedusers[$ta->id] = $prefix.fullname($ta, true);
-            }
-        }
-        unset($tas);
-    }
-    
-    
-
-    // Get students
-    $students =  get_users_by_capability($context, 'moodle/course:viewparticipants', 'u.id, u.lastname, u.firstname', 'u.lastname, u.firstname');
-    if ($students) {
-        foreach ($students as $student) {
-            if ( ! email_contains(fullname($student, true), $selectedusers) ) {
-            	$unselectedusers[$student->id] = fullname($student, true);
-            }
-        }
-        unset($students);
+        unset($enrolled_users);
     }
 
     // Prepare tags
@@ -2903,7 +2870,7 @@ function email_add_new_mail($mail, $usersto, $userscc, $usersbcc, $mailid, $cont
                         }
                     } else {
                             // This user no has account in this course
-                            notify(get_string('noaccount', 'email', fullname(get_record('user', array('id'=>$userid)))));
+                            notify(get_string('noaccount', 'email', fullname($DB->get_record('user', array('id'=>$userid)))));
                             return false;
                     }
             }
@@ -2938,7 +2905,7 @@ function email_add_new_mail($mail, $usersto, $userscc, $usersbcc, $mailid, $cont
                         }
                     } else {
                             // This user no has account in this course
-                            notify(get_string('noaccount', 'email', fullname(get_record('user', array('id', $userid)))));
+                            notify(get_string('noaccount', 'email', fullname($DB->get_record('user', array('id'=>$userid)))));
                             return false;
                     }
             }
@@ -2972,7 +2939,7 @@ function email_add_new_mail($mail, $usersto, $userscc, $usersbcc, $mailid, $cont
                         }
                     } else {
                             // This user no has account in this course
-                            notify(get_string('noaccount', 'email', fullname(get_record('user', array('id'=>$userid)))));
+                            notify(get_string('noaccount', 'email', fullname($DB->get_record('user', array('id'=>$userid)))));
                             return false;
                     }
             }
