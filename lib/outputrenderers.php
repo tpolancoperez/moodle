@@ -228,12 +228,12 @@ class plugin_renderer_base extends renderer_base {
      */
     public function __call($method, $arguments) {
         if (method_exists('renderer_base', $method)) {
-            throw new coding_exception('Protected method called against '.__CLASS__.' :: '.$method);
+            throw new coding_exception('Protected method called against '.get_class($this).' :: '.$method);
         }
         if (method_exists($this->output, $method)) {
             return call_user_func_array(array($this->output, $method), $arguments);
         } else {
-            throw new coding_exception('Unknown method called against '.__CLASS__.' :: '.$method);
+            throw new coding_exception('Unknown method called against '.get_class($this).' :: '.$method);
         }
     }
 }
@@ -468,7 +468,7 @@ class core_renderer extends renderer_base {
                 $link= '<a title="' . $title . '" href="' . $url . '">' . $txt . '</a>';
                 $output .= '<div class="profilingfooter">' . $link . '</div>';
             }
-            $output .= '<div class="purgecaches"><a href="'.$CFG->wwwroot.'/admin/purgecaches.php?confirm=1&amp;sesskey='.sesskey().'">'.get_string('purgecaches', 'admin').'</a></div>';
+            $output .= '<div class="purgecaches"><a href="'.$CFG->wwwroot.'/'.$CFG->admin.'/purgecaches.php?confirm=1&amp;sesskey='.sesskey().'">'.get_string('purgecaches', 'admin').'</a></div>';
         }
         if (!empty($CFG->debugvalidators)) {
             // NOTE: this is not a nice hack, $PAGE->url is not always accurate and $FULLME neither, it is not a bug if it fails. --skodak
