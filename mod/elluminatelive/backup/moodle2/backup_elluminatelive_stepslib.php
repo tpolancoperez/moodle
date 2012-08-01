@@ -35,7 +35,7 @@ class backup_elluminatelive_activity_structure_step extends backup_activity_stru
 
         $sessions = new backup_nested_element('sessions');
         $session = new backup_nested_element('elluminatelive_session', array('id'), array(
-            'groupid','elluminateliveid', 'meetingid', 'timemodified'));
+            'groupid','elluminatelive', 'meetingid', 'timemodified'));
 
         $recordings = new backup_nested_element('recordings');
         $recording = new backup_nested_element('elluminatelive_recordings', array('id'), array(
@@ -57,12 +57,12 @@ class backup_elluminatelive_activity_structure_step extends backup_activity_stru
         // Only happen if we are including user info
         if ($userinfo) {
             $attendance->set_source_table('elluminatelive_attendance', array('elluminateliveid'=>backup::VAR_PARENTID));
-            $sessions->set_source_table('elluminatelive_session', array('elluminateliveid'=>backup::VAR_PARENTID));
+            $sessions->set_source_table('elluminatelive_session', array('elluminatelive'=>backup::VAR_PARENTID));
             $recordings->set_source_sql("SELECT er.*
                     FROM {elluminatelive_recordings} er
                     INNER JOIN {elluminatelive_session} es ON es.meetingid = er.meetingid
                     INNER JOIN {elluminatelive} e ON e.id = es.elluminatelive
-                    WHERE e.course = ?", backup::VAR_COURSEID);
+                    WHERE e.course = ?", array(backup::VAR_COURSEID));
         }
 
         // Define id annotations

@@ -118,6 +118,7 @@
  */
 function elluminatelive_supports($feature) {
     switch($feature) {
+        case FEATURE_MOD_INTRO:               return false;
         case FEATURE_BACKUP_MOODLE2:          return true;
         default: return null;
     }
