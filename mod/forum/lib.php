@@ -27,6 +27,7 @@ defined('MOODLE_INTERNAL') || die();
 require_once($CFG->libdir.'/filelib.php');
 require_once($CFG->libdir.'/eventslib.php');
 require_once($CFG->dirroot.'/user/selector/lib.php');
+require_once($CFG->dirroot.'/mod/forum/post_form.php');
 
 /// CONSTANTS ///////////////////////////////////////////////////////////
 
@@ -99,7 +100,8 @@ function forum_add_instance($forum, $mform = null) {
             $discussion = $DB->get_record('forum_discussions', array('id'=>$discussion->id), '*', MUST_EXIST);
             $post = $DB->get_record('forum_posts', array('id'=>$discussion->firstpost), '*', MUST_EXIST);
 
-            $post->message = file_save_draft_area_files($draftid, $modcontext->id, 'mod_forum', 'post', $post->id, array('subdirs'=>true), $post->message);
+            $post->message = file_save_draft_area_files($draftid, $modcontext->id, 'mod_forum', 'post', $post->id,
+                    mod_forum_post_form::attachment_options($forum), $post->message);
             $DB->set_field('forum_posts', 'message', $post->message, array('id'=>$post->id));
         }
     }
@@ -196,7 +198,8 @@ function forum_update_instance($forum, $mform) {
             $discussion = $DB->get_record('forum_discussions', array('id'=>$discussion->id), '*', MUST_EXIST);
             $post = $DB->get_record('forum_posts', array('id'=>$discussion->firstpost), '*', MUST_EXIST);
 
-            $post->message = file_save_draft_area_files($draftid, $modcontext->id, 'mod_forum', 'post', $post->id, array('subdirs'=>true), $post->message);
+            $post->message = file_save_draft_area_files($draftid, $modcontext->id, 'mod_forum', 'post', $post->id,
+                    mod_forum_post_form::editor_options(), $post->message);
         }
 
         $post->subject       = $forum->name;
@@ -380,7 +383,7 @@ WHERE
  * @return string A unique message-id
  */
 function forum_get_email_message_id($postid, $usertoid, $hostname) {
-    return '<'.hash('sha256',$postid.'to'.$usertoid.'@'.$hostname).'>';
+    return '<'.hash('sha256',$postid.'to'.$usertoid).'@'.$hostname.'>';
 }
 
 /**
@@ -3174,6 +3177,14 @@ function forum_print_post($post, $discussion, $forum, &$cm, $course, $ownpost=fa
     $post->course = $course->id;
     $post->forum  = $forum->id;
     $post->message = file_rewrite_pluginfile_urls($post->message, 'pluginfile.php', $modcontext->id, 'mod_forum', 'post', $post->id);
+    if (!empty($CFG->enableplagiarism)) {
+        require_once($CFG->libdir.'/plagiarismlib.php');
+        $post->message .= plagiarism_get_links(array('userid' => $post->userid,
+            'content' => $post->message,
+            'cmid' => $cm->id,
+            'course' => $post->course,
+            'forum' => $post->forum));
+    }
 
     // caching
     if (!isset($cm->cache)) {
@@ -4019,6 +4030,16 @@ function forum_print_attachments($post, $cm, $type) {
                     $output .= '<br />';
                 }
             }
+
+            if (!empty($CFG->enableplagiarism)) {
+                require_once($CFG->libdir.'/plagiarismlib.php');
+                $output .= plagiarism_get_links(array('userid' => $post->userid,
+                    'file' => $file,
+                    'cmid' => $cm->id,
+                    'course' => $post->course,
+                    'forum' => $post->forum));
+                $output .= '<br />';
+            }
         }
     }
 
@@ -4230,7 +4251,8 @@ function forum_add_attachment($post, $forum, $cm, $mform=null, &$message=null) {
 
     $info = file_get_draft_area_info($post->attachments);
     $present = ($info['filecount']>0) ? '1' : '';
-    file_save_draft_area_files($post->attachments, $context->id, 'mod_forum', 'attachment', $post->id);
+    file_save_draft_area_files($post->attachments, $context->id, 'mod_forum', 'attachment', $post->id,
+            mod_forum_post_form::attachment_options($forum));
 
     $DB->set_field('forum_posts', 'attachment', $present, array('id'=>$post->id));
 
@@ -4262,7 +4284,8 @@ function forum_add_new_post($post, $mform, &$message) {
     $post->attachment = "";
 
     $post->id = $DB->insert_record("forum_posts", $post);
-    $post->message = file_save_draft_area_files($post->itemid, $context->id, 'mod_forum', 'post', $post->id, array('subdirs'=>true), $post->message);
+    $post->message = file_save_draft_area_files($post->itemid, $context->id, 'mod_forum', 'post', $post->id,
+            mod_forum_post_form::editor_options(), $post->message);
     $DB->set_field('forum_posts', 'message', $post->message, array('id'=>$post->id));
     forum_add_attachment($post, $forum, $cm, $mform, $message);
 
@@ -4273,6 +4296,9 @@ function forum_add_new_post($post, $mform, &$message) {
     if (forum_tp_can_track_forums($forum) && forum_tp_is_tracked($forum)) {
         forum_tp_mark_post_read($post->userid, $post, $post->forum);
     }
+
+    // Let Moodle know that assessable content is uploaded (eg for plagiarism detection)
+    forum_trigger_content_uploaded_event($post, $cm, 'forum_add_new_post');
 
     return $post->id;
 }
@@ -4308,7 +4334,8 @@ function forum_update_post($post, $mform, &$message) {
         $discussion->timestart = $post->timestart;
         $discussion->timeend   = $post->timeend;
     }
-    $post->message = file_save_draft_area_files($post->itemid, $context->id, 'mod_forum', 'post', $post->id, array('subdirs'=>true), $post->message);
+    $post->message = file_save_draft_area_files($post->itemid, $context->id, 'mod_forum', 'post', $post->id,
+            mod_forum_post_form::editor_options(), $post->message);
     $DB->set_field('forum_posts', 'message', $post->message, array('id'=>$post->id));
 
     $DB->update_record('forum_discussions', $discussion);
@@ -4318,6 +4345,9 @@ function forum_update_post($post, $mform, &$message) {
     if (forum_tp_can_track_forums($forum) && forum_tp_is_tracked($forum)) {
         forum_tp_mark_post_read($post->userid, $post, $post->forum);
     }
+
+    // Let Moodle know that assessable content is uploaded (eg for plagiarism detection)
+    forum_trigger_content_uploaded_event($post, $cm, 'forum_update_post');
 
     return true;
 }
@@ -4371,7 +4401,8 @@ function forum_add_discussion($discussion, $mform=null, &$message=null, $userid=
     // TODO: Fix the calling code so that there always is a $cm when this function is called
     if (!empty($cm->id) && !empty($discussion->itemid)) {   // In "single simple discussions" this may not exist yet
         $context = get_context_instance(CONTEXT_MODULE, $cm->id);
-        $text = file_save_draft_area_files($discussion->itemid, $context->id, 'mod_forum', 'post', $post->id, array('subdirs'=>true), $post->message);
+        $text = file_save_draft_area_files($discussion->itemid, $context->id, 'mod_forum', 'post', $post->id,
+                mod_forum_post_form::editor_options(), $post->message);
         $DB->set_field('forum_posts', 'message', $text, array('id'=>$post->id));
     }
 
@@ -4394,6 +4425,9 @@ function forum_add_discussion($discussion, $mform=null, &$message=null, $userid=
     if (forum_tp_can_track_forums($forum) && forum_tp_is_tracked($forum)) {
         forum_tp_mark_post_read($post->userid, $post, $post->forum);
     }
+
+    // Let Moodle know that assessable content is uploaded (eg for plagiarism detection)
+    forum_trigger_content_uploaded_event($post, $cm, 'forum_add_discussion');
 
     return $post->discussion;
 }
@@ -4515,6 +4549,33 @@ function forum_delete_post($post, $children, $course, $cm, $forum, $skipcompleti
         return true;
     }
     return false;
+}
+
+/**
+ * Sends post content to plagiarism plugin
+ * @param object $post Forum post object
+ * @param object $cm Course-module
+ * @param string $name
+ * @return bool
+*/
+function forum_trigger_content_uploaded_event($post, $cm, $name) {
+    $context = context_module::instance($cm->id);
+    $fs = get_file_storage();
+    $files = $fs->get_area_files($context->id, 'mod_forum', 'attachment', $post->id, "timemodified", false);
+    $eventdata = new stdClass();
+    $eventdata->modulename   = 'forum';
+    $eventdata->name         = $name;
+    $eventdata->cmid         = $cm->id;
+    $eventdata->itemid       = $post->id;
+    $eventdata->courseid     = $post->course;
+    $eventdata->userid       = $post->userid;
+    $eventdata->content      = $post->message;
+    if ($files) {
+        $eventdata->pathnamehashes = array_keys($files);
+    }
+    events_trigger('assessable_content_uploaded', $eventdata);
+
+    return true;
 }
 
 /**

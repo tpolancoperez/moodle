@@ -228,12 +228,12 @@ class plugin_renderer_base extends renderer_base {
      */
     public function __call($method, $arguments) {
         if (method_exists('renderer_base', $method)) {
-            throw new coding_exception('Protected method called against '.__CLASS__.' :: '.$method);
+            throw new coding_exception('Protected method called against '.get_class($this).' :: '.$method);
         }
         if (method_exists($this->output, $method)) {
             return call_user_func_array(array($this->output, $method), $arguments);
         } else {
-            throw new coding_exception('Unknown method called against '.__CLASS__.' :: '.$method);
+            throw new coding_exception('Unknown method called against '.get_class($this).' :: '.$method);
         }
     }
 }
@@ -304,34 +304,22 @@ class core_renderer extends renderer_base {
      * Get the DOCTYPE declaration that should be used with this page. Designed to
      * be called in theme layout.php files.
      *
-     * @return string the DOCTYPE declaration (and any XML prologue) that should be used.
+     * @return string the DOCTYPE declaration that should be used.
      */
     public function doctype() {
-        global $CFG;
+        if ($this->page->theme->doctype === 'html5') {
+            $this->contenttype = 'text/html; charset=utf-8';
+            return "<!DOCTYPE html>\n";
 
-        $doctype = '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">' . "\n";
-        $this->contenttype = 'text/html; charset=utf-8';
-
-        if (empty($CFG->xmlstrictheaders)) {
-            return $doctype;
-        }
-
-        // We want to serve the page with an XML content type, to force well-formedness errors to be reported.
-        $prolog = '<?xml version="1.0" encoding="utf-8"?>' . "\n";
-        if (isset($_SERVER['HTTP_ACCEPT']) && strpos($_SERVER['HTTP_ACCEPT'], 'application/xhtml+xml') !== false) {
-            // Firefox and other browsers that can cope natively with XHTML.
+        } else if ($this->page->theme->doctype === 'xhtml5') {
             $this->contenttype = 'application/xhtml+xml; charset=utf-8';
-
-        } else if (preg_match('/MSIE.*Windows NT/', $_SERVER['HTTP_USER_AGENT'])) {
-            // IE can't cope with application/xhtml+xml, but it will cope if we send application/xml with an XSL stylesheet.
-            $this->contenttype = 'application/xml; charset=utf-8';
-            $prolog .= '<?xml-stylesheet type="text/xsl" href="' . $CFG->httpswwwroot . '/lib/xhtml.xsl"?>' . "\n";
+            return "<!DOCTYPE html>\n";
 
         } else {
-            $prolog = '';
+            // legacy xhtml 1.0
+            $this->contenttype = 'text/html; charset=utf-8';
+            return ('<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">' . "\n");
         }
-
-        return $prolog . $doctype;
     }
 
     /**
@@ -341,7 +329,11 @@ class core_renderer extends renderer_base {
      * @return string HTML fragment.
      */
     public function htmlattributes() {
-        return get_html_lang(true) . ' xmlns="http://www.w3.org/1999/xhtml"';
+        $return = get_html_lang(true);
+        if ($this->page->theme->doctype !== 'html5') {
+            $return .= ' xmlns="http://www.w3.org/1999/xhtml"';
+        }
+        return $return;
     }
 
     /**
@@ -354,6 +346,12 @@ class core_renderer extends renderer_base {
     public function standard_head_html() {
         global $CFG, $SESSION;
         $output = '';
+        if ($this->page->theme->doctype === 'html5' or $this->page->theme->doctype === 'xhtml5') {
+            // Make sure we set 'X-UA-Compatible' only if script did not request something else (such as MDL-29213).
+            if (empty($CFG->additionalhtmlhead) or stripos($CFG->additionalhtmlhead, 'X-UA-Compatible') === false) {
+                $output .= '<meta http-equiv="X-UA-Compatible" content="IE=edge" />' . "\n";
+            }
+        }
         $output .= '<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />' . "\n";
         $output .= '<meta name="keywords" content="moodle, ' . $this->page->title . '" />' . "\n";
         if (!$this->page->cacheable) {
@@ -468,7 +466,7 @@ class core_renderer extends renderer_base {
                 $link= '<a title="' . $title . '" href="' . $url . '">' . $txt . '</a>';
                 $output .= '<div class="profilingfooter">' . $link . '</div>';
             }
-            $output .= '<div class="purgecaches"><a href="'.$CFG->wwwroot.'/admin/purgecaches.php?confirm=1&amp;sesskey='.sesskey().'">'.get_string('purgecaches', 'admin').'</a></div>';
+            $output .= '<div class="purgecaches"><a href="'.$CFG->wwwroot.'/'.$CFG->admin.'/purgecaches.php?confirm=1&amp;sesskey='.sesskey().'">'.get_string('purgecaches', 'admin').'</a></div>';
         }
         if (!empty($CFG->debugvalidators)) {
             // NOTE: this is not a nice hack, $PAGE->url is not always accurate and $FULLME neither, it is not a bug if it fails. --skodak
@@ -2050,7 +2048,7 @@ $icon_progress
 </div>
 <div id="filepicker-wrapper-{$client_id}" class="mdl-left" style="display:none">
     <div>
-        <input type="button" id="filepicker-button-{$client_id}" value="{$straddfile}"{$buttonname}/>
+        <input type="button" class="fp-btn-choose" id="filepicker-button-{$client_id}" value="{$straddfile}"{$buttonname}/>
         <span> $maxsize </span>
     </div>
 EOD;

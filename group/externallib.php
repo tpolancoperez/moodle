@@ -53,7 +53,7 @@ class core_group_external extends external_api {
                             'name' => new external_value(PARAM_TEXT, 'multilang compatible name, course unique'),
                             'description' => new external_value(PARAM_RAW, 'group description text'),
                             'descriptionformat' => new external_format_value('description', VALUE_DEFAULT),
-                            'enrolmentkey' => new external_value(PARAM_RAW, 'group enrol secret phrase'),
+                            'enrolmentkey' => new external_value(PARAM_RAW, 'group enrol secret phrase', VALUE_OPTIONAL),
                         )
                     ), 'List of group object. A group has a courseid, a name, a description and an enrolment key.'
                 )
@@ -105,6 +105,9 @@ class core_group_external extends external_api {
 
             // finally create the group
             $group->id = groups_create_group($group, false);
+            if (!isset($group->enrolmentkey)) {
+                $group->enrolmentkey = '';
+            }
             $groups[] = (array)$group;
         }
 
@@ -308,7 +311,7 @@ class core_group_external extends external_api {
 
         foreach ($params['groupids'] as $groupid) {
             // validate params
-            $groupid = validate_param($groupid, PARAM_INTEGER);
+            $groupid = validate_param($groupid, PARAM_INT);
             if (!$group = groups_get_group($groupid, 'id, courseid', IGNORE_MISSING)) {
                 // silently ignore attempts to delete nonexisting groups
                 continue;

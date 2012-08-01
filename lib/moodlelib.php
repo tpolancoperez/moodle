@@ -254,28 +254,33 @@ define('PARAM_CLEAN',    'clean');
 
 /**
  * PARAM_INTEGER - deprecated alias for PARAM_INT
+ * @deprecated since 2.0
  */
 define('PARAM_INTEGER',  'int');
 
 /**
  * PARAM_NUMBER - deprecated alias of PARAM_FLOAT
+ * @deprecated since 2.0
  */
 define('PARAM_NUMBER',  'float');
 
 /**
  * PARAM_ACTION - deprecated alias for PARAM_ALPHANUMEXT, use for various actions in forms and urls
  * NOTE: originally alias for PARAM_APLHA
+ * @deprecated since 2.0
  */
 define('PARAM_ACTION',   'alphanumext');
 
 /**
  * PARAM_FORMAT - deprecated alias for PARAM_ALPHANUMEXT, use for names of plugins, formats, etc.
  * NOTE: originally alias for PARAM_APLHA
+ * @deprecated since 2.0
  */
 define('PARAM_FORMAT',   'alphanumext');
 
 /**
  * PARAM_MULTILANG - deprecated alias of PARAM_TEXT.
+ * @deprecated since 2.0
  */
 define('PARAM_MULTILANG',  'text');
 
@@ -385,6 +390,8 @@ define('FEATURE_GRADE_HAS_GRADE', 'grade_has_grade');
 define('FEATURE_GRADE_OUTCOMES', 'outcomes');
 /** True if module supports advanced grading methods */
 define('FEATURE_ADVANCED_GRADING', 'grade_advanced_grading');
+/** True if module controls the grade visibility over the gradebook */
+define('FEATURE_CONTROLS_GRADE_VISIBILITY', 'controlsgradevisbility');
 
 /** True if module has code to track whether somebody viewed it */
 define('FEATURE_COMPLETION_TRACKS_VIEWS', 'completion_tracks_views');
@@ -763,7 +770,6 @@ function clean_param($param, $type) {
             return (int)$param;  // Convert to integer
 
         case PARAM_FLOAT:
-        case PARAM_NUMBER:
             return (float)$param;  // Convert to float
 
         case PARAM_ALPHA:        // Remove everything not a-z
@@ -3581,6 +3587,12 @@ function get_user_field_name($field) {
     // Some fields have language strings which are not the same as field name
     switch ($field) {
         case 'phone1' : return get_string('phone');
+        case 'url' : return get_string('webpage');
+        case 'icq' : return get_string('icqnumber');
+        case 'skype' : return get_string('skypeid');
+        case 'aim' : return get_string('aimid');
+        case 'yahoo' : return get_string('yahooid');
+        case 'msn' : return get_string('msnid');
     }
     // Otherwise just use the same lang string
     return get_string($field);
@@ -4037,9 +4049,16 @@ function authenticate_user_login($username, $password) {
         $auths = array($auth);
 
     } else {
-        // check if there's a deleted record (cheaply)
-        if ($DB->get_field('user', 'id', array('username'=>$username, 'deleted'=>1))) {
+        // Check if there's a deleted record (cheaply), this should not happen because we mangle usernames in delete_user().
+        if ($DB->get_field('user', 'id', array('username'=>$username, 'mnethostid'=>$CFG->mnet_localhost_id,  'deleted'=>1))) {
             error_log('[client '.getremoteaddr()."]  $CFG->wwwroot  Deleted Login:  $username  ".$_SERVER['HTTP_USER_AGENT']);
+            return false;
+        }
+
+        // Do not try to authenticate non-existent accounts when user creation is not disabled.
+        if (!empty($CFG->authpreventaccountcreation)) {
+            add_to_log(SITEID, 'login', 'error', 'index.php', $username);
+            error_log('[client '.getremoteaddr()."]  $CFG->wwwroot  Unknown user, can not create new accounts:  $username  ".$_SERVER['HTTP_USER_AGENT']);
             return false;
         }
 
@@ -4074,12 +4093,8 @@ function authenticate_user_login($username, $password) {
                 $user = update_user_record($username);
             }
         } else {
-            // if user not found and user creation is not disabled, create it
-            if (empty($CFG->authpreventaccountcreation)) {
-                $user = create_user_record($username, $password, $auth);
-            } else {
-                continue;
-            }
+            // Create account, we verified above that user creation is allowed.
+            $user = create_user_record($username, $password, $auth);
         }
 
         $authplugin->sync_roles($user);
@@ -4584,6 +4599,9 @@ function remove_course_contents($courseid, $showfeedback = true, array $options 
     $DB->delete_records_select('course_modules_availability',
            'coursemoduleid IN (SELECT id from {course_modules} WHERE course=?)',
            array($courseid));
+    $DB->delete_records_select('course_modules_avail_fields',
+           'coursemoduleid IN (SELECT id from {course_modules} WHERE course=?)',
+           array($courseid));
 
     // Remove course-module data.
     $cms = $DB->get_records('course_modules', array('course'=>$course->id));
@@ -4692,6 +4710,9 @@ function remove_course_contents($courseid, $showfeedback = true, array $options 
 
     // Delete course sections and availability options.
     $DB->delete_records_select('course_sections_availability',
+           'coursesectionid IN (SELECT id from {course_sections} WHERE course=?)',
+           array($course->id));
+    $DB->delete_records_select('course_sections_avail_fields',
            'coursesectionid IN (SELECT id from {course_sections} WHERE course=?)',
            array($course->id));
     $DB->delete_records('course_sections', array('course'=>$course->id));
@@ -7179,7 +7200,7 @@ function get_string($identifier, $component = '', $a = NULL, $lazyload = false) 
 
     $identifier = clean_param($identifier, PARAM_STRINGID);
     if (empty($identifier)) {
-        throw new coding_exception('Invalid string identifier. Most probably some illegal character is part of the string identifier. Please fix your get_string() call and string definition');
+        throw new coding_exception('Invalid string identifier. The identifier cannot be empty. Please fix your get_string() call.');
     }
 
     // There is now a forth argument again, this time it is a boolean however so

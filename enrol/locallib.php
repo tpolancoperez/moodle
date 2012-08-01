@@ -112,7 +112,7 @@ class course_enrolment_manager {
      */
     public function __construct(moodle_page $moodlepage, $course, $instancefilter = null) {
         $this->moodlepage = $moodlepage;
-        $this->context = get_context_instance(CONTEXT_COURSE, $course->id);
+        $this->context = context_course::instance($course->id);
         $this->course = $course;
         $this->instancefilter = $instancefilter;
     }
@@ -450,7 +450,7 @@ class course_enrolment_manager {
      */
     public function get_all_roles() {
         if ($this->_roles === null) {
-            $this->_roles = role_fix_names(get_all_roles(), $this->context);
+            $this->_roles = role_fix_names(get_all_roles($this->context), $this->context);
         }
         return $this->_roles;
     }

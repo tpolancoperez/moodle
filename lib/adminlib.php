@@ -452,7 +452,7 @@ function get_used_table_names() {
 
         if ($loaded and $tables = $structure->getTables()) {
             foreach($tables as $table) {
-                $table_names[] = strtolower($table->name);
+                $table_names[] = strtolower($table->getName());
             }
         }
     }
@@ -3243,7 +3243,7 @@ class admin_setting_sitesettext extends admin_setting_configtext {
      * @return mixed true or message string
      */
     public function validate($data) {
-        $cleaned = clean_param($data, PARAM_MULTILANG);
+        $cleaned = clean_param($data, PARAM_TEXT);
         if ($cleaned === '') {
             return get_string('required');
         }
@@ -3880,10 +3880,7 @@ class admin_setting_pickroles extends admin_setting_configmulticheckbox {
             return true;
         }
         if ($roles = get_all_roles()) {
-            $this->choices = array();
-            foreach($roles as $role) {
-                $this->choices[$role->id] = format_string($role->name);
-            }
+            $this->choices = role_fix_names($roles, null, ROLENAME_ORIGINAL, true);
             return true;
         } else {
             return false;
