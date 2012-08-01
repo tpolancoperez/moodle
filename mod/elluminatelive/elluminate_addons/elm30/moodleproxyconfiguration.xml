@@ -1,0 +1,7 @@
+      <security adapter-name="moodle">
+        <permissions>
+          <user name="moodleadmin">
+            <allow command="*" />
+          </user>
+        </permissions>
+      </security>

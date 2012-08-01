@@ -134,7 +134,7 @@ $THEME->layouts = array(
     'mypublic' => array(
         'file' => 'general.php',
         'regions' => array('side-pre', 'side-post'),
-        'defaultregion' => 'side-post',
+        'defaultregion' => 'side-pre',
     ),
     'login' => array(
         'file' => 'general.php',

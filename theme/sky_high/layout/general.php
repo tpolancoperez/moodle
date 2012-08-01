@@ -91,17 +91,7 @@ echo $OUTPUT->doctype() ?>
 
 <div id="page-content-wrapper">
     <div id="page-content">
-        <div id="region-main-box">
             <div id="region-post-box">
-
-                <div id="region-main-wrap">
-                    <div id="region-main">
-                        <div class="region-content">
-                            <?php echo $OUTPUT->main_content() ?>
-                        </div>
-                    </div>
-                </div>
-
                 <?php if ($hassidepre) { ?>
                 <div id="region-pre" class="block-region">
                     <div class="region-content">
@@ -109,7 +99,7 @@ echo $OUTPUT->doctype() ?>
                     </div>
                 </div>
                 <?php } ?>
-
+                
                 <?php if ($hassidepost) { ?>
                 <div id="region-post" class="block-region">
                     <div class="region-content">
@@ -118,9 +108,17 @@ echo $OUTPUT->doctype() ?>
                 </div>
                 <?php } ?>
 
+                    <div id="region-main">
+                        <div class="region-content">
+                            <?php echo $OUTPUT->main_content() ?>
+                        </div>
+                    </div>
+
+               
+                
+
             </div>
         </div>
-    </div>
 </div>
 
 <!-- END OF CONTENT -->

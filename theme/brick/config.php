@@ -29,6 +29,8 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+$THEME->hidefromselector = true;
+
 $THEME->name = 'brick';
 
 ////////////////////////////////////////////////////
@@ -102,8 +104,8 @@ $THEME->layouts = array(
     ),
     'course' => array(
         'file' => 'general.php',
-        'regions' => array('side-post'),
-        'defaultregion' => 'side-post'
+        'regions' => array('side-pre', 'side-post'),
+        'defaultregion' => 'side-pre'
     ),
     'coursecategory' => array(
         'file' => 'general.php',

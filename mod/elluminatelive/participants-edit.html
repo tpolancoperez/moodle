@@ -1,0 +1,44 @@
+<form method="post" action="<?php echo $CFG->wwwroot; ?>/mod/elluminatelive/participants.php">
+    <input type="hidden" name="id" value="<?php echo $id;?>" />
+    <input type="hidden" name="sesskey" value="<?php echo $sesskey; ?>" />
+    <center>
+        <table align="center" border="0" cellpadding="5" cellspacing="0">
+            <tr align="center">
+                <td><?php echo $struserscur; ?></td>
+                <td><?php echo $strusersavail; ?></td>
+            </tr>
+            <tr align="center">
+                <td>
+                    <select name="userscur[]" size="15" multiple>
+<?php
+
+    if (!empty($curusers)) {
+        foreach($curusers as $curuser) {
+            echo '<option value="' . $curuser->id . '">' . fullname($curuser) . ' (' . $curuser->username . ')</option>' . "\n";
+        }
+    }
+
+?>
+                    </select>
+                </td>
+                <td>
+                    <select name="usersavail[]" size="15" multiple>
+<?php
+
+    if (!empty($availusers)) {
+        foreach($availusers as $availuser) {
+            echo '<option value="' . $availuser->id . '">' . fullname($availuser) . ' (' . $availuser->username . ')</option>' . "\n";
+        }
+    }
+
+?>
+                    </select>
+                </td>
+            </tr>
+            <tr align="center">
+                <td><input type="submit" value="<?php echo get_string('removeparticipants', 'elluminatelive'). ' -&gt;'; ?>" /></td>
+                <td><input type="submit" value="<?php echo '&lt;- ' . get_string('addparticipants', 'elluminatelive'); ?>" /></td>
+            </tr>
+        </table>
+    </center>
+</form>

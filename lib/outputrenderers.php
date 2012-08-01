@@ -591,6 +591,8 @@ class core_renderer extends renderer_base {
             }
         }
 
+        $loggedinas .= '<div class="logininfo"><a target="_blank" href="http://www2.oakland.edu/elis/help.cfm?LMS=2">Get Help</a></div>';
+
         return $loggedinas;
     }
 

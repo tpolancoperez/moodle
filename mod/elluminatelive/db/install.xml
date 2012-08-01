@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<XMLDB PATH="mod/elluminatelive/db" VERSION="2006062102" COMMENT="XMLDB file for the Moodle Elluminate Live! module"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="../../lib/xmldb/xmldb.xsd"
+>
+  <TABLES>
+    <TABLE NAME="elluminatelive" COMMENT="Contains Elluminate Live! meeting data for each course module" NEXT="elluminatelive_session">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" NEXT="course"/>
+        <FIELD NAME="course" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="id" NEXT="creator"/>
+        <FIELD NAME="creator" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="course" NEXT="name"/>
+        <FIELD NAME="name" TYPE="char" LENGTH="64" NOTNULL="false" UNSIGNED="false" SEQUENCE="false" PREVIOUS="creator" NEXT="sessionname"/>
+        <FIELD NAME="sessionname" TYPE="char" LENGTH="64" NOTNULL="false" UNSIGNED="false" SEQUENCE="false" PREVIOUS="name" NEXT="description"/>
+        <FIELD NAME="description" TYPE="text" NOTNULL="true" UNSIGNED="false" SEQUENCE="false" PREVIOUS="sessionname" NEXT="customname"/>
+        <FIELD NAME="customname" TYPE="int" LENGTH="1" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" PREVIOUS="description" NEXT="customdescription"/>
+        <FIELD NAME="customdescription" TYPE="int" LENGTH="1" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" PREVIOUS="customname" NEXT="timestart"/>
+        <FIELD NAME="timestart" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="customdescription" NEXT="timeend"/>
+        <FIELD NAME="timeend" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="timestart" NEXT="recordingmode"/>
+        <FIELD NAME="recordingmode" TYPE="char" LENGTH="10" NOTNULL="false" UNSIGNED="false" SEQUENCE="false" PREVIOUS="timeend" NEXT="boundarytime"/>
+        <FIELD NAME="boundarytime" TYPE="int" LENGTH="3" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="recordingmode" NEXT="boundarytimedisplay"/>
+        <FIELD NAME="boundarytimedisplay" TYPE="int" LENGTH="1" NOTNULL="true" UNSIGNED="false" DEFAULT="1" SEQUENCE="false" PREVIOUS="boundarytime" NEXT="seats"/>
+        <FIELD NAME="seats" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="boundarytimedisplay" NEXT="private"/>
+        <FIELD NAME="private" TYPE="int" LENGTH="1" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="seats" NEXT="grade"/>
+        <FIELD NAME="grade" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" PREVIOUS="private" NEXT="timemodified"/>
+        <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="grade"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="Primary key for elluminatelive"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="course" UNIQUE="false" FIELDS="course" NEXT="creator"/>
+        <INDEX NAME="creator" UNIQUE="false" FIELDS="creator" PREVIOUS="course"/>
+      </INDEXES>
+    </TABLE>
+    <TABLE NAME="elluminatelive_session" COMMENT="Information about group specific meeting sessions" PREVIOUS="elluminatelive" NEXT="elluminatelive_recordings">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" NEXT="elluminatelive"/>
+        <FIELD NAME="elluminatelive" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="id" NEXT="groupid"/>
+        <FIELD NAME="groupid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="elluminatelive" NEXT="meetingid"/>
+        <FIELD NAME="meetingid" TYPE="char" LENGTH="20" NOTNULL="false" UNSIGNED="false" SEQUENCE="false" PREVIOUS="groupid" NEXT="timemodified"/>
+        <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="meetingid"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="Primary key for elluminatelive_group_meeting"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="elluminatelive_groupid" UNIQUE="true" FIELDS="elluminatelive, groupid" NEXT="meetingid"/>
+        <INDEX NAME="meetingid" UNIQUE="true" FIELDS="meetingid" PREVIOUS="elluminatelive_groupid"/>
+      </INDEXES>
+    </TABLE>
+    <TABLE NAME="elluminatelive_recordings" COMMENT="Contains Elluminate Live! info about recorded meetings" PREVIOUS="elluminatelive_session" NEXT="elluminatelive_users">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" NEXT="meetingid"/>
+        <FIELD NAME="meetingid" TYPE="char" LENGTH="20" NOTNULL="false" UNSIGNED="false" SEQUENCE="false" PREVIOUS="id" NEXT="recordingid"/>
+        <FIELD NAME="recordingid" TYPE="char" LENGTH="30" NOTNULL="false" UNSIGNED="false" SEQUENCE="false" PREVIOUS="meetingid" NEXT="description"/>
+        <FIELD NAME="description" TYPE="char" LENGTH="255" NOTNULL="false" UNSIGNED="false" SEQUENCE="false" PREVIOUS="recordingid" NEXT="visible"/>
+        <FIELD NAME="visible" TYPE="int" LENGTH="1" NOTNULL="true" UNSIGNED="true" DEFAULT="1" SEQUENCE="false" PREVIOUS="description" NEXT="groupvisible"/>
+        <FIELD NAME="groupvisible" TYPE="int" LENGTH="1" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="visible" NEXT="created"/>
+        <FIELD NAME="created" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="groupvisible" NEXT="size"/>
+        <FIELD NAME="size" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="created"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="Primary key for elluminatelive_recordings"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="meetingid_recordingid" UNIQUE="true" FIELDS="meetingid, recordingid"/>
+      </INDEXES>
+    </TABLE>
+    <TABLE NAME="elluminatelive_users" COMMENT="Contains Elluminate Live! mapping between ELM users and Moodle users" PREVIOUS="elluminatelive_recordings" NEXT="elluminatelive_attendance">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" NEXT="userid"/>
+        <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="id" NEXT="elm_id"/>
+        <FIELD NAME="elm_id" TYPE="char" LENGTH="20" NOTNULL="false" UNSIGNED="false" SEQUENCE="false" PREVIOUS="userid" NEXT="elm_username"/>
+        <FIELD NAME="elm_username" TYPE="char" LENGTH="50" NOTNULL="false" UNSIGNED="false" SEQUENCE="false" PREVIOUS="elm_id" NEXT="elm_password"/>
+        <FIELD NAME="elm_password" TYPE="char" LENGTH="10" NOTNULL="false" UNSIGNED="false" SEQUENCE="false" PREVIOUS="elm_username" NEXT="timecreated"/>
+        <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="elm_password"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="Primary key for elluminatelive_users"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="userid" UNIQUE="true" FIELDS="userid" NEXT="elm_user"/>
+        <INDEX NAME="elm_user" UNIQUE="true" FIELDS="elm_id, elm_username" PREVIOUS="userid"/>
+      </INDEXES>
+    </TABLE>
+    <TABLE NAME="elluminatelive_attendance" COMMENT="Contains Elluminate Live! attendance data for meetings keeping track of attendance" PREVIOUS="elluminatelive_users">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" NEXT="userid"/>
+        <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="id" NEXT="elluminateliveid"/>
+        <FIELD NAME="elluminateliveid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="userid" NEXT="grade"/>
+        <FIELD NAME="grade" TYPE="int" LENGTH="11" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" PREVIOUS="elluminateliveid" NEXT="timemodified"/>
+        <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="grade"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="Primary key for elluminatelive_attendance"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="userid_elluminateliveid" UNIQUE="true" FIELDS="userid, elluminateliveid"/>
+      </INDEXES>
+    </TABLE>
+  </TABLES>
+</XMLDB>
