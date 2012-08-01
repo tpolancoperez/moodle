@@ -64,6 +64,11 @@ class page_requirements_manager {
     protected $stringsforjs = array();
 
     /**
+     * @var array List of get_string $a parameters - used for validation only.
+     */
+    protected $stringsforjs_as = array();
+
+    /**
      * @var array List of JS variables to be initialised
      */
     protected $jsinitvariables = array('head'=>array(), 'footer'=>array());
@@ -152,7 +157,8 @@ class page_requirements_manager {
     public function __construct() {
         global $CFG;
 
-        $sep = empty($CFG->slasharguments) ? '?' : '/';
+        // You may need to set up URL rewrite rule because oversized URLs might not be allowed by web server.
+        $sep = empty($CFG->yuislasharguments) ? '?' : '/';
 
         require_once("$CFG->libdir/yui/phploader/phploader/loader.php");
 
@@ -325,7 +331,6 @@ class page_requirements_manager {
         );
         if (debugging('', DEBUG_DEVELOPER)) {
             $this->M_cfg['developerdebug'] = true;
-            $this->yui2_lib('logger');
         }
 
         // accessibility stuff
@@ -399,6 +404,12 @@ class page_requirements_manager {
         if ($url instanceof moodle_url) {
             return $url;
         } else if (strpos($url, '/') === 0) {
+            // Fix the admin links if needed.
+            if ($CFG->admin !== 'admin') {
+                if (strpos($url, "/admin/") === 0) {
+                    $url = preg_replace("|^/admin/|", "/$CFG->admin/", $url);
+                }
+            }
             if (debugging()) {
                 // check file existence only when in debug mode
                 if (!file_exists($CFG->dirroot . strtok($url, '?'))) {
@@ -499,8 +510,8 @@ class page_requirements_manager {
                 case 'core_dndupload':
                     $module = array('name'     => 'core_dndupload',
                                     'fullpath' => '/lib/form/dndupload.js',
-                                    'requires' => array('node', 'event', 'json'),
-                                    'strings'  => array(array('uploadformlimit', 'moodle'), array('droptoupload', 'moodle'), array('maxfilesreached', 'moodle'), array('dndenabled_inbox', 'moodle')));
+                                    'requires' => array('node', 'event', 'json', 'core_filepicker'),
+                                    'strings'  => array(array('uploadformlimit', 'moodle'), array('droptoupload', 'moodle'), array('maxfilesreached', 'moodle'), array('dndenabled_inbox', 'moodle'), array('fileexists', 'moodle')));
                     break;
             }
 
@@ -748,7 +759,7 @@ class page_requirements_manager {
         if (!is_array($modules)) {
             $modules = array($modules);
         }
-        if (empty($CFG->useexternalyui) || true) {
+        if (empty($CFG->useexternalyui)) {
             // We need to set the M.yui.galleryversion to the correct version
             $jscode = 'M.yui.galleryversion='.json_encode($galleryversion).';';
         } else {
@@ -861,15 +872,17 @@ class page_requirements_manager {
      * @param mixed $a any extra data to add into the string (optional).
      */
     public function string_for_js($identifier, $component, $a = NULL) {
-        $string = get_string($identifier, $component, $a);
         if (!$component) {
-            throw new coding_exception('The $module parameter is required for page_requirements_manager::string_for_js.');
+            throw new coding_exception('The $component parameter is required for page_requirements_manager::string_for_js().');
         }
-        if (isset($this->stringsforjs[$component][$identifier]) && $this->stringsforjs[$component][$identifier] !== $string) {
+        if (isset($this->stringsforjs_as[$component][$identifier]) and $this->stringsforjs_as[$component][$identifier] !== $a) {
             throw new coding_exception("Attempt to re-define already required string '$identifier' " .
-                    "from lang file '$component'. Did you already ask for it with a different \$a? {$this->stringsforjs[$component][$identifier]} !== $string");
+                    "from lang file '$component' with different \$a parameter?");
         }
-        $this->stringsforjs[$component][$identifier] = $string;
+        if (!isset($this->stringsforjs[$component][$identifier])) {
+            $this->stringsforjs[$component][$identifier] = new lang_string($identifier, $component, $a);
+            $this->stringsforjs_as[$component][$identifier] = $a;
+        }
     }
 
     /**
@@ -1212,7 +1225,13 @@ class page_requirements_manager {
 
         // add all needed strings
         if (!empty($this->stringsforjs)) {
-            $output .= html_writer::script(js_writer::set_variable('M.str', $this->stringsforjs));
+            $strings = array();
+            foreach ($this->stringsforjs as $component=>$v) {
+                foreach($v as $indentifier => $langstring) {
+                    $strings[$component][$indentifier] = $langstring->out();
+                }
+            }
+            $output .= html_writer::script(js_writer::set_variable('M.str', $strings));
         }
 
         // add variables

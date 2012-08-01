@@ -1090,6 +1090,7 @@ function format_text($text, $format = FORMAT_MOODLE, $options = NULL, $courseid_
 
     if ($options['filter']) {
         $filtermanager = filter_manager::instance();
+        $filtermanager->setup_page_for_filters($PAGE, $context); // Setup global stuff filters may have.
     } else {
         $filtermanager = new null_filter_manager();
     }
@@ -1301,7 +1302,9 @@ function format_string($string, $striplinks = true, $options = NULL) {
     $string = replace_ampersands_not_followed_by_entity($string);
 
     if (!empty($CFG->filterall)) {
-        $string = filter_manager::instance()->filter_string($string, $options['context']);
+        $filtermanager = filter_manager::instance();
+        $filtermanager->setup_page_for_filters($PAGE, $options['context']); // Setup global stuff filters may have.
+        $string = $filtermanager->filter_string($string, $options['context']);
     }
 
     // If the site requires it, strip ALL tags from this string
@@ -2811,7 +2814,7 @@ function convert_tabrows_to_tree($tabrows, $selected, $inactive, $activated) {
  * @return bool
  */
 function debugging($message = '', $level = DEBUG_NORMAL, $backtrace = null) {
-    global $CFG, $USER, $UNITTEST;
+    global $CFG, $USER;
 
     $forcedebug = false;
     if (!empty($CFG->debugusers) && $USER) {
@@ -2834,14 +2837,6 @@ function debugging($message = '', $level = DEBUG_NORMAL, $backtrace = null) {
         $from = format_backtrace($backtrace, CLI_SCRIPT);
         if (PHPUNIT_TEST) {
             echo 'Debugging: ' . $message . "\n" . $from;
-
-        } else if (!empty($UNITTEST->running)) {
-            // When the unit tests are running, any call to trigger_error
-            // is intercepted by the test framework and reported as an exception.
-            // Therefore, we cannot use trigger_error during unit tests.
-            // At the same time I do not think we should just discard those messages,
-            // so displaying them on-screen seems like the only option. (MDL-20398)
-            echo '<div class="notifytiny">' . $message . $from . '</div>';
 
         } else if (NO_DEBUG_DISPLAY) {
             // script does not want any errors or debugging in output,

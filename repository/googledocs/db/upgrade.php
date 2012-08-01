@@ -42,6 +42,10 @@ function xmldb_repository_googledocs_upgrade($oldversion) {
         upgrade_plugin_savepoint(true, 2012053000, 'repository', 'googledocs');
     }
 
+    // Moodle v2.3.0 release upgrade line
+    // Put any upgrade step following this
+
+
     return true;
 }
 
@@ -53,6 +57,8 @@ function repository_googledocs_admin_upgrade_notification() {
     }
     $mainadmin = reset($admins);
 
+    $a = new stdClass;
+    $a->docsurl = get_docs_url('Google_OAuth_2.0_setup');
     foreach ($admins as $admin) {
         $message = new stdClass();
         $message->component         = 'moodle';
@@ -61,8 +67,8 @@ function repository_googledocs_admin_upgrade_notification() {
         $message->userto            = $admin;
         $message->smallmessage      = get_string('oauth2upgrade_message_small', 'repository_googledocs');
         $message->subject           = get_string('oauth2upgrade_message_subject', 'repository_googledocs');
-        $message->fullmessage       = get_string('oauth2upgrade_message_content', 'repository_googledocs');
-        $message->fullmessagehtml   = get_string('oauth2upgrade_message_content', 'repository_googledocs');
+        $message->fullmessage       = get_string('oauth2upgrade_message_content', 'repository_googledocs', $a);
+        $message->fullmessagehtml   = get_string('oauth2upgrade_message_content', 'repository_googledocs', $a);
         $message->fullmessageformat = FORMAT_PLAIN;
         $message->notification      = 1;
         message_send($message);

@@ -99,8 +99,18 @@
     $infoid = $course->id;
     if(!empty($section)) {
         $loglabel = 'view section';
-        $sectionparams = array('course' => $course->id, 'section' => $section);
-        $coursesections = $DB->get_record('course_sections', $sectionparams, 'id', MUST_EXIST);
+
+        // Get section details and check it exists.
+        $modinfo = get_fast_modinfo($course);
+        $coursesections = $modinfo->get_section_info($section, MUST_EXIST);
+
+        // Check user is allowed to see it.
+        if (!$coursesections->uservisible) {
+            // Note: We actually already know they don't have this capability
+            // or uservisible would have been true; this is just to get the
+            // correct error message shown.
+            require_capability('moodle/course:viewhiddensections', $context);
+        }
         $infoid = $coursesections->id;
         $logparam .= '&sectionid='. $infoid;
     }
@@ -130,7 +140,7 @@
             if ($course->id == SITEID) {
                 redirect($CFG->wwwroot .'/?redirect=0');
             } else {
-                $url = new moodle_url($PAGE->url, array('editingenabled' => 1));
+                $url = new moodle_url($PAGE->url, array('notifyeditingon' => 1));
                 redirect($url);
             }
         } else if (($edit == 0) and confirm_sesskey()) {
@@ -270,7 +280,7 @@
     if (include_course_ajax($course, $modnamesused)) {
         // Add the module chooser
         $renderer = $PAGE->get_renderer('core', 'course');
-        echo $renderer->course_modchooser(get_module_metadata($course, $modnames), $course);
+        echo $renderer->course_modchooser(get_module_metadata($course, $modnames, $displaysection), $course);
     }
 
     echo $OUTPUT->footer();

@@ -365,6 +365,8 @@ class assign_header implements renderable {
     var $coursemoduleid = 0;
     /** @var string $subpage optional subpage (extra level in the breadcrumbs) */
     var $subpage = '';
+    /** @var string $preface optional preface (text to show before the heading) */
+    var $preface = '';
 
     /**
      * Constructor
@@ -374,13 +376,15 @@ class assign_header implements renderable {
      * @param bool $showintro  - show or hide the intro
      * @param int $coursemoduleid  - the course module id
      * @param string $subpage  - an optional sub page in the navigation
+     * @param string $preface  - an optional preface to show before the heading
      */
-    public function __construct(stdClass $assign, $context, $showintro, $coursemoduleid, $subpage='') {
+    public function __construct(stdClass $assign, $context, $showintro, $coursemoduleid, $subpage='', $preface='') {
         $this->assign = $assign;
         $this->context = $context;
         $this->showintro = $showintro;
         $this->coursemoduleid = $coursemoduleid;
         $this->subpage = $subpage;
+        $this->preface = $preface;
     }
 }
 
@@ -401,6 +405,8 @@ class assign_grading_summary implements renderable {
     var $submissionsenabled = false;
     /** @var int submissionssubmittedcount - The number of submissions in submitted status */
     var $submissionssubmittedcount = 0;
+    /** @var int submissionsneedgradingcount - The number of submissions that need grading */
+    var $submissionsneedgradingcount = 0;
     /** @var int duedate - The assignment due date (if one is set) */
     var $duedate = 0;
     /** @var int coursemoduleid - The assignment course module id */
@@ -417,7 +423,9 @@ class assign_grading_summary implements renderable {
      * @param int $duedate
      * @param int $coursemoduleid
      */
-    public function __construct($participantcount, $submissiondraftsenabled, $submissiondraftscount, $submissionsenabled, $submissionssubmittedcount, $duedate, $coursemoduleid) {
+    public function __construct($participantcount, $submissiondraftsenabled, $submissiondraftscount,
+                                $submissionsenabled, $submissionssubmittedcount,
+                                $duedate, $coursemoduleid, $submissionsneedgradingcount) {
         $this->participantcount = $participantcount;
         $this->submissiondraftsenabled = $submissiondraftsenabled;
         $this->submissiondraftscount = $submissiondraftscount;
@@ -425,6 +433,7 @@ class assign_grading_summary implements renderable {
         $this->submissionssubmittedcount = $submissionssubmittedcount;
         $this->duedate = $duedate;
         $this->coursemoduleid = $coursemoduleid;
+        $this->submissionsneedgradingcount = $submissionsneedgradingcount;
     }
 
 

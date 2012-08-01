@@ -1005,7 +1005,7 @@ class question_type {
         $form->penalty = 0.3333333;
         $form->generalfeedback = "Well done";
 
-        $context = get_context_instance(CONTEXT_COURSE, $courseid);
+        $context = context_course::instance($courseid);
         $newcategory = question_make_default_categories(array($context));
         $form->category = $newcategory->id . ',1';
 
@@ -1247,8 +1247,10 @@ class question_possible_response {
      * {@link question_type::get_possible_responses()}.
      */
     public $responseclass;
-    /** @var string the actual response the student gave to this part. */
+
+    /** @var string the (partial) credit awarded for this responses. */
     public $fraction;
+
     /**
      * Constructor, just an easy way to set the fields.
      * @param string $responseclassid see the field descriptions above.

@@ -299,7 +299,7 @@ class zip_packer extends file_packer {
         global $CFG;
 
         if (!is_string($archivefile)) {
-            return $archivefile->extract_to_pathname($this, $contextid, $component, $filearea, $itemid, $pathbase, $userid);
+            return $archivefile->extract_to_storage($this, $contextid, $component, $filearea, $itemid, $pathbase, $userid);
         }
 
         check_dir_exists($CFG->tempdir.'/zip');
@@ -435,7 +435,7 @@ class zip_packer extends file_packer {
     /**
      * Returns array of info about all files in archive
      *
-     * @param file_archive $archivefile
+     * @param string|file_archive $archivefile
      * @return array of file infos
      */
     public function list_files($archivefile) {

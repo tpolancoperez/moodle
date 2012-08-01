@@ -115,11 +115,11 @@ A history of previous versions of each page in the wiki is kept, listing the edi
 
 Wikis have many uses, such as
 
-* For group lecture notes
+* For group lecture notes or study guides
 * For members of a faculty to plan a scheme of work or meeting agenda together
 * For students to collaboratively author an online book, creating content on a topic set by their tutor
 * For collaborative storytelling or poetry creation, where each participant writes a line or verse
-* As a personal journal for examination notes or revision (individual wiki)';
+* As a personal journal for examination notes or revision (using an individual wiki)';
 $string['modulename_link'] = 'mod/wiki/view';
 $string['modulenameplural'] = 'Wikis';
 $string['navigation'] = 'Navigation';
@@ -195,6 +195,7 @@ $string['searchcontent'] = 'Search in page content';
 $string['searchresult'] = 'Search results:';
 $string['searchwikis'] = 'Search wikis';
 $string['special'] = 'Special';
+$string['tableofcontents'] = 'Table of contents';
 $string['tagsdeleted'] = 'Wiki tags have been deleted';
 $string['tagtitle'] = 'See the "{$a}" tag';
 $string['teacherrating'] = 'Teacher rating';

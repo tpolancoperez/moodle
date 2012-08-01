@@ -25,6 +25,7 @@
 
 $string['accessnoticesheader'] = 'You can preview this quiz, but if this were a real attempt, you would be blocked because:';
 $string['action'] = 'Action';
+$string['activityoverview'] = 'You have quizzes that are due';
 $string['adaptive'] = 'Adaptive mode';
 $string['adaptive_help'] = 'If enabled, multiple responses to a question are allowed within the same attempt at the quiz. So for example if a response is marked as incorrect, the student will be allowed to try again immediately. However, depending on the "Apply penalties" setting, a penalty will usually be subtracted for each wrong attempt.';
 $string['addaquestion'] = 'Add a question ...';
@@ -246,6 +247,7 @@ $string['editingquiz_help'] = 'When creating a quiz, the main concepts are:
 * The question bank, which stores copies of all questions organised into categories
 * Random questions -  A student gets different questions each time they attempt the quiz and different students can get different questions';
 $string['editingquiz_link'] = 'mod/quiz/edit';
+$string['editingquizx'] = 'Editing quiz: {$a}';
 $string['editoverride'] = 'Edit override';
 $string['editqcats'] = 'Edit questions categories';
 $string['editquestions'] = 'Edit questions';
@@ -426,19 +428,20 @@ $string['missingcorrectanswer'] = 'Correct answer must be specified';
 $string['missingitemtypename'] = 'Missing name';
 $string['missingquestion'] = 'This question no longer seems to exist';
 $string['modulename'] = 'Quiz';
-$string['modulename_help'] = 'The quiz activity module enables a teacher to design and set quizzes consisting of a variety of question types, including multiple choice, true-false, matching, short-answer and calculated.
+$string['modulename_help'] = 'The quiz activity enables a teacher to create quizzes comprising questions of various types, including multiple choice, matching, short-answer and numerical.
 
-A teacher can allow the quiz to be attempted multiple times with the order of questions randomly shuffled. A time limit for the quiz may be set if desired.
+The teacher can allow the quiz to be attempted multiple times, with the questions shuffled or randomly selected from the question bank. A time limit may be set.
 
-Each attempt is automatically marked, with the grade recorded in the gradebook. The teacher can choose whether to give feedback and/or show correct answers to the student during the attempt, immediately after the attempt or after the quiz is closed.
+Each attempt is marked automatically, with the exception of essay questions, and the grade is recorded in the gradebook.
 
-A teacher can choose from a variety of question behaviours, including adaptive mode (providing hints before allowing the student to try again) and immediate feedback with certainty-based marking (where the student must indicate how sure they are of the answer).
+The teacher can choose when and if hints, feedback and correct answers are shown to students.
 
 Quizzes may be used
 
+* As course exams
 * As mini tests for reading assignments or at the end of a topic
-* As exam practice using questions from previous years’ exams
-* To provide feedback about performance
+* As exam practice using questions from past exams
+* To deliver immediate feedback about performance
 * For self-assessment';
 $string['modulename_link'] = 'mod/quiz/view';
 $string['modulenameplural'] = 'Quizzes';
@@ -514,6 +517,7 @@ To add page breaks after particular questions, tick the checkboxes next to the q
 
 To arrange the questions over a number of pages, click the Repaginate button and select the desired number of questions per page.';
 $string['orderingquiz'] = 'Order and paging';
+$string['orderingquizx'] = 'Order and paging: {$a}';
 $string['outof'] = '{$a->grade} out of a maximum of {$a->maxgrade}';
 $string['outofpercent'] = '{$a->grade} out of a maximum of {$a->maxgrade} ({$a->percent}%)';
 $string['outofshort'] = '{$a->grade}/{$a->maxgrade}';
@@ -522,9 +526,11 @@ $string['overallfeedback_help'] = 'Overall feedback is text that is shown after 
 $string['overdue'] = 'Overdue';
 $string['overduehandling'] = 'When time expires';
 $string['overduehandling_desc'] = 'What should happen by default if a student does not submit the quiz before time expires.';
-$string['overduehandlingautosubmit'] = 'the attempt is submitted automatically';
-$string['overduehandlinggraceperiod'] = 'there is a grace period in which to submit the attempt, but not answer more questions';
-$string['overduehandlingautoabandon'] = 'that is it. The attempt must be submitted before time expires, or it is not counted';
+$string['overduehandling_help'] = 'This setting controls what happens if the Student fails to submit their quiz attempt before time expires. If the student is actively working on the quiz at the time, then the countdown timer will always automatically submit the attempt for them, but if they have logged out, then this setting controls what happens.';
+$string['overduehandling_link'] = 'mod/quiz/timing';
+$string['overduehandlingautosubmit'] = 'Open attempts are submitted automatically';
+$string['overduehandlinggraceperiod'] = 'There is a grace period when open attempts can be submitted, but no more questions answered';
+$string['overduehandlingautoabandon'] = 'Attempts must be submitted before time expires, or they are not counted';
 $string['overduemustbesubmittedby'] = 'This attempt is now overdue. It should already have been submitted. If you would like this quiz to be graded, you must submit it by {$a}. If you do not submit it by then, no marks from this attempt will be counted.';
 $string['override'] = 'Override';
 $string['overridedeletegroupsure'] = 'Are you sure you want to delete the override for group {$a}?';
@@ -609,6 +615,7 @@ $string['quiznavigation'] = 'Quiz navigation';
 $string['quizopen'] = 'Open the quiz';
 $string['quizopenclose'] = 'Open and close dates';
 $string['quizopenclose_help'] = 'Students can only start their attempt(s) after the open time and they must complete their attempts before the close time.';
+$string['quizopenclose_link'] = 'mod/quiz/timing';
 $string['quizopened'] = 'This quiz is open.';
 $string['quizopenedon'] = 'This quiz opened at {$a}';
 $string['quizopens'] = 'Quiz opens';
@@ -810,6 +817,7 @@ $string['timedelay'] = 'You are not allowed to do the quiz since you have not pa
 $string['timeleft'] = 'Time left';
 $string['timelimit'] = 'Time limit';
 $string['timelimit_help'] = 'If enabled, the time limit is stated on the initial quiz page and a countdown timer is displayed in the quiz navigation block.';
+$string['timelimit_link'] = 'mod/quiz/timing';
 $string['timelimitexeeded'] = 'Sorry! Quiz time limit exceeded!';
 $string['timelimitmin'] = 'Time limit (minutes)';
 $string['timelimitsec'] = 'Time limit (seconds)';

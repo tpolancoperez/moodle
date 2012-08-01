@@ -52,7 +52,8 @@ class MoodleQuickForm_editor extends HTML_QuickForm_element {
 
     /** @var array options provided to initalize filepicker */
     protected $_options    = array('subdirs'=>0, 'maxbytes'=>0, 'maxfiles'=>0, 'changeformat'=>0,
-                                   'context'=>null, 'noclean'=>0, 'trusttext'=>0);
+                                   'context'=>null, 'noclean'=>0, 'trusttext'=>0, 'return_types'=>7);
+    // $_options['return_types'] = FILE_INTERNAL | FILE_EXTERNAL | FILE_REFERENCE
 
     /** @var array values for editor */
     protected $_values     = array('text'=>null, 'format'=>null, 'itemid'=>null);
@@ -207,10 +208,11 @@ class MoodleQuickForm_editor extends HTML_QuickForm_element {
      * @param mixed $_helpbuttonargs arguments to create help button
      * @param string $function name of the callback function
      * @deprecated since Moodle 2.0. Please do not call this function any more.
-     * @todo MDL-31047 this api will be removed.
-     * @see MoodleQuickForm::setHelpButton()
+     * @todo MDL-34508 this api will be removed.
+     * @see MoodleQuickForm::addHelpButton()
      */
     function setHelpButton($_helpbuttonargs, $function='_helpbutton') {
+        debugging('setHelpButton() is deprecated, please use $mform->addHelpButton() instead');
         if (!is_array($_helpbuttonargs)) {
             $_helpbuttonargs = array($_helpbuttonargs);
         } else {
@@ -303,7 +305,7 @@ class MoodleQuickForm_editor extends HTML_QuickForm_element {
             $args = new stdClass();
             // need these three to filter repositories list
             $args->accepted_types = array('web_image');
-            $args->return_types = (FILE_INTERNAL | FILE_EXTERNAL | FILE_REFERENCE);
+            $args->return_types = $this->_options['return_types'];
             $args->context = $ctx;
             $args->env = 'filepicker';
             // advimage plugin

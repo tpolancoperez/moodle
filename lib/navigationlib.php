@@ -1423,14 +1423,16 @@ class global_navigation extends navigation_node {
         }
 
         // Give the local plugins a chance to include some navigation if they want.
-        foreach (get_list_of_plugins('local') as $plugin) {
-            if (!file_exists($CFG->dirroot.'/local/'.$plugin.'/lib.php')) {
-                continue;
-            }
-            require_once($CFG->dirroot.'/local/'.$plugin.'/lib.php');
-            $function = $plugin.'_extends_navigation';
+        foreach (get_plugin_list_with_file('local', 'lib.php', true) as $plugin => $file) {
+            $function = "local_{$plugin}_extends_navigation";
+            $oldfunction = "{$plugin}_extends_navigation";
             if (function_exists($function)) {
+                // This is the preferred function name as there is less chance of conflicts
                 $function($this);
+            } else if (function_exists($oldfunction)) {
+                // We continue to support the old function name to ensure backwards compatability
+                debugging("Deprecated local plugin navigation callback: Please rename '{$oldfunction}' to '{$function}'. Support for the old callback will be dropped after the release of 2.4", DEBUG_DEVELOPER);
+                $oldfunction($this);
             }
         }
 
@@ -1923,6 +1925,9 @@ class global_navigation extends navigation_node {
         $activities = array();
 
         foreach ($sections as $key => $section) {
+            // Clone and unset summary to prevent $SESSION bloat (MDL-31802).
+            $sections[$key] = clone($section);
+            unset($sections[$key]->summary);
             $sections[$key]->hasactivites = false;
             if (!array_key_exists($section->section, $modinfo->sections)) {
                 continue;
@@ -3569,7 +3574,7 @@ class settings_navigation extends navigation_node {
             // Add the module chooser toggle
             $modchoosertoggleurl = clone($baseurl);
             if ($this->page->user_is_editing() && course_ajax_enabled($course)) {
-                if ($usemodchooser = get_user_preferences('usemodchooser', 1)) {
+                if ($usemodchooser = get_user_preferences('usemodchooser', $CFG->modchooserdefault)) {
                     $modchoosertogglestring = get_string('modchooserdisable', 'moodle');
                     $modchoosertoggleurl->param('modchooser', 'off');
                 } else {

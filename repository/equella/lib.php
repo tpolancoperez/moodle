@@ -85,7 +85,7 @@ class repository_equella extends repository {
                 . '&returnprefix=tle'
                 . '&template=standard'
                 . '&token='.urlencode($this->getssotoken('write'))
-                . '&courseId='.urlencode($COURSE->id)
+                . '&courseId='.urlencode($COURSE->idnumber)
                 . '&courseCode='.urlencode($COURSE->shortname)
                 . '&action=searchThin'
                 . '&forcePost=true'
@@ -119,7 +119,7 @@ class repository_equella extends repository {
      * @return string file referece
      */
     public function get_file_reference($source) {
-        return base64_encode($source);
+        return $source;
     }
 
     /**
@@ -146,20 +146,22 @@ class repository_equella extends repository {
     }
 
     /**
-     * Get file from external repository by reference
+     * Returns information about file in this repository by reference
      * {@link repository::get_file_reference()}
      * {@link repository::get_file()}
      *
+     * Returns null if file not found or can not be accessed
+     *
      * @param stdClass $reference file reference db record
-     * @return stdClass|null|false
+     * @return null|stdClass containing attribute 'filepath'
      */
     public function get_file_by_reference($reference) {
-        $ref = base64_decode($reference->reference);
-        $url = $this->appendtoken($ref);
+        $ref = unserialize(base64_decode($reference->reference));
+        $url = $this->appendtoken($ref->url);
 
         if (!$url) {
             // Occurs when the user isn't known..
-            return false;
+            return null;
         }
 
         // We use this cache to get the correct file size.
@@ -170,24 +172,29 @@ class repository_equella extends repository {
             $cachedfilepath = cache_file::create_from_file($url, $path['path']);
         }
 
-        $fileinfo = new stdClass;
-        $fileinfo->filepath = $cachedfilepath;
-
-        return $fileinfo;
+        if ($cachedfilepath && is_readable($cachedfilepath)) {
+            return (object)array('filepath' => $cachedfilepath);
+        }
+        return null;
     }
 
     /**
-     * Send equella file to browser
+     * Repository method to serve the referenced file
      *
-     * @param stored_file $stored_file
+     * @param stored_file $storedfile the file that contains the reference
+     * @param int $lifetime Number of seconds before the file should expire from caches (default 24 hours)
+     * @param int $filter 0 (default)=no filtering, 1=all files, 2=html files only
+     * @param bool $forcedownload If true (default false), forces download of file rather than view in browser/plugin
+     * @param array $options additional options affecting the file serving
      */
     public function send_file($stored_file, $lifetime=86400 , $filter=0, $forcedownload=false, array $options = null) {
-        $reference = base64_decode($stored_file->get_reference());
-        $url = $this->appendtoken($reference);
+        $reference  = unserialize(base64_decode($stored_file->get_reference()));
+        $url = $this->appendtoken($reference->url);
         if ($url) {
             header('Location: ' . $url);
+        } else {
+            send_file_not_found();
         }
-        die;
     }
 
     /**
@@ -195,7 +202,7 @@ class repository_equella extends repository {
      *
      * @param moodleform $mform
      */
-    public function instance_config_form($mform) {
+    public static function instance_config_form($mform) {
         $mform->addElement('text', 'equella_url', get_string('equellaurl', 'repository_equella'));
         $mform->setType('equella_url', PARAM_URL);
 
@@ -329,5 +336,33 @@ class repository_equella extends repository {
      */
     private static function to_mime_type($value) {
         return mimeinfo('type', $value);
+    }
+
+    /**
+     * Return the source information
+     *
+     * @param stdClass $url
+     * @return string|null
+     */
+    public function get_file_source_info($url) {
+        $ref = unserialize(base64_decode($url));
+        return 'EQUELLA: ' . $ref->filename;
+    }
+
+    /**
+     * Return human readable reference information
+     * {@link stored_file::get_reference()}
+     *
+     * @param string $reference
+     * @param int $filestatus status of the file, 0 - ok, 666 - source missing
+     * @return string
+     */
+    public function get_reference_details($reference, $filestatus = 0) {
+        if (!$filestatus) {
+            $ref = unserialize(base64_decode($reference));
+            return $this->get_name(). ': '. $ref->filename;
+        } else {
+            return get_string('lostsource', 'repository', '');
+        }
     }
 }

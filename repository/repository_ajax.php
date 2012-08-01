@@ -70,19 +70,16 @@ if (!confirm_sesskey()) {
 }
 
 // Get repository instance information
-$sql = 'SELECT i.name, i.typeid, r.type FROM {repository} r, {repository_instances} i WHERE i.id=? AND i.typeid=r.id';
-
-if (!$repository = $DB->get_record_sql($sql, array($repo_id))) {
-    $err->error = get_string('invalidrepositoryid', 'repository');
-    die(json_encode($err));
-} else {
-    $type = $repository->type;
-}
+$repooptions = array(
+    'ajax' => true,
+    'mimetypes' => $accepted_types
+);
+$repo = repository::get_repository_by_id($repo_id, $contextid, $repooptions);
 
 // Check permissions
-repository::check_capability($contextid, $repository);
+$repo->check_capability();
 
-$moodle_maxbytes = get_max_upload_file_size();
+$moodle_maxbytes = get_user_max_upload_file_size($context);
 // to prevent maxbytes greater than moodle maxbytes setting
 if ($maxbytes == 0 || $maxbytes>=$moodle_maxbytes) {
     $maxbytes = $moodle_maxbytes;
@@ -119,21 +116,6 @@ switch ($action) {
         $cache->refresh();
         $action = 'list';
         break;
-}
-
-if (file_exists($CFG->dirroot.'/repository/'.$type.'/lib.php')) {
-    require_once($CFG->dirroot.'/repository/'.$type.'/lib.php');
-    $classname = 'repository_' . $type;
-    $repooptions = array(
-        'ajax' => true,
-        'name' => $repository->name,
-        'type' => $type,
-        'mimetypes' => $accepted_types
-    );
-    $repo = new $classname($repo_id, $contextid, $repooptions);
-} else {
-    $err->error = get_string('invalidplugin', 'repository', $type);
-    die(json_encode($err));
 }
 
 // These actions all occur on the currently active repository instance
@@ -224,12 +206,34 @@ switch ($action) {
                 $record->filepath = trim($record->filepath, '/');
                 $record->filepath = '/'.$record->filepath.'/';
             }
-            $usercontext = get_context_instance(CONTEXT_USER, $USER->id);
+            $usercontext = context_user::instance($USER->id);
             $now = time();
             $record->contextid = $usercontext->id;
             $record->timecreated = $now;
             $record->timemodified = $now;
             $record->userid = $USER->id;
+            $record->sortorder = 0;
+
+            // Check that user has permission to access this file
+            if (!$repo->file_is_accessible($source)) {
+                throw new file_exception('storedfilecannotread');
+            }
+
+            // If file is already a reference, set $source = file source, $repo = file repository
+            // note that in this case user may not have permission to access the source file directly
+            // so no file_browser/file_info can be used below
+            if ($repo->has_moodle_files()) {
+                $file = repository::get_moodle_file($source);
+                if ($file && $file->is_external_file()) {
+                    $source = $file->get_reference();
+                    $repo_id = $file->get_repository_id();
+                    $repo = repository::get_repository_by_id($repo_id, $contextid, $repooptions);
+                }
+            }
+
+            // {@link repository::build_source_field()}
+            $sourcefield = $repo->get_file_source_info($source);
+            $record->source = $repo::build_source_field($sourcefield);
 
             if ($usefilereference) {
                 $reference = $repo->get_file_reference($source);
@@ -255,6 +259,7 @@ switch ($action) {
                     $event['existingfile']->filename = $saveas_filename;
                     $event['existingfile']->url      = moodle_url::make_draftfile_url($itemid, $saveas_path, $saveas_filename)->out();;
                 } else {
+
                     $storedfile = $fs->create_file_from_reference($record, $repo_id, $reference);
                     $event = array(
                         'url'=>moodle_url::make_draftfile_url($storedfile->get_itemid(), $storedfile->get_filepath(), $storedfile->get_filename())->out(),
@@ -282,24 +287,15 @@ switch ($action) {
             } else {
                 // Download file to moodle.
                 $downloadedfile = $repo->get_file($source, $saveas_filename);
-                if ($downloadedfile['path'] === false) {
+                if (empty($downloadedfile['path'])) {
                     $err->error = get_string('cannotdownload', 'repository');
                     die(json_encode($err));
                 }
 
                 // Check if exceed maxbytes.
-                if (($maxbytes!==-1) && (filesize($downloadedfile['path']) > $maxbytes)) {
+                if ($maxbytes != -1 && filesize($downloadedfile['path']) > $maxbytes) {
                     throw new file_exception('maxbytes');
                 }
-
-                // {@link file_restore_source_field_from_draft_file()}
-                $sourcefield = '';
-                if (!empty($downloadedfile['url'])) {
-                    $source = new stdClass;
-                    $source->source = $downloadedfile['url'];
-                    $sourcefield = serialize($source);
-                }
-                $record->source = $sourcefield;
 
                 $info = repository::move_to_filepool($downloadedfile['path'], $record);
                 if (empty($info)) {

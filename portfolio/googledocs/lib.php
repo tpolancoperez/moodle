@@ -100,15 +100,17 @@ class portfolio_plugin_googledocs extends portfolio_plugin_push_base {
         return array('clientid', 'secret');
     }
 
-    public function admin_config_form(&$mform) {
+    public static function admin_config_form(&$mform) {
         $a = new stdClass;
-        $a->docsurl = get_docs_url('Google_OAuth2_Setup');
+        $a->docsurl = get_docs_url('Google_OAuth_2.0_setup');
         $a->callbackurl = google_oauth::callback_url()->out(false);
 
         $mform->addElement('static', null, '', get_string('oauthinfo', 'portfolio_googledocs', $a));
 
         $mform->addElement('text', 'clientid', get_string('clientid', 'portfolio_googledocs'));
+        $mform->setType('clientid', PARAM_RAW_TRIMMED);
         $mform->addElement('text', 'secret', get_string('secret', 'portfolio_googledocs'));
+        $mform->setType('secret', PARAM_RAW_TRIMMED);
 
         $strrequired = get_string('required');
         $mform->addRule('clientid', $strrequired, 'required', null, 'client');

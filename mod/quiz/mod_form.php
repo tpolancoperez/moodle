@@ -94,6 +94,7 @@ class mod_quiz_mod_form extends moodleform_mod {
         // What to do with overdue attempts.
         $mform->addElement('select', 'overduehandling', get_string('overduehandling', 'quiz'),
                 quiz_get_overdue_handling_options());
+        $mform->addHelpButton('overduehandling', 'overduehandling', 'quiz');
         $mform->setAdvanced('overduehandling', $quizconfig->overduehandling_adv);
         $mform->setDefault('overduehandling', $quizconfig->overduehandling);
         // TODO Formslib does OR logic on disableif, and we need AND logic here.
@@ -114,7 +115,7 @@ class mod_quiz_mod_form extends moodleform_mod {
 
         $mform->removeElement('grade');
         $mform->addElement('hidden', 'grade', $quizconfig->maximumgrade);
-        $mform->setType('grade', PARAM_NUMBER);
+        $mform->setType('grade', PARAM_FLOAT);
 
         // Number of attempts.
         $attemptoptions = array('0' => get_string('unlimited'));

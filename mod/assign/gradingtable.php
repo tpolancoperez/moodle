@@ -105,7 +105,7 @@ class assign_grading_table extends table_sql implements renderable {
             $where .= ' AND s.timecreated > 0 ';
         }
         if ($filter == ASSIGN_FILTER_REQUIRE_GRADING) {
-            $where .= ' AND (s.timemodified > g.timemodified OR g.timemodified IS NULL)';
+            $where .= ' AND (s.timemodified > g.timemodified OR (s.timemodified IS NOT NULL AND g.timemodified IS NULL))';
         }
         if (strpos($filter, ASSIGN_FILTER_SINGLE_USER) === 0) {
             $userfilter = (int) array_pop(explode('=', $filter));
@@ -119,7 +119,7 @@ class assign_grading_table extends table_sql implements renderable {
 
         // Select
         $columns[] = 'select';
-        $headers[] = get_string('select') . '<div class="selectall"><input type="checkbox" class="ignoredirty" name="selectall" title="' . get_string('selectall') . '"/></div>';
+        $headers[] = get_string('select') . '<div class="selectall"><input type="checkbox" name="selectall" title="' . get_string('selectall') . '"/></div>';
 
         // Edit links
         if (!$this->is_downloading()) {
@@ -303,7 +303,7 @@ class assign_grading_table extends table_sql implements renderable {
      * @return string
      */
     function col_select(stdClass $row) {
-        return '<input type="checkbox" name="selectedusers" value="' . $row->userid . '" class="ignoredirty"/>';
+        return '<input type="checkbox" name="selectedusers" value="' . $row->userid . '"/>';
     }
 
     /**
@@ -340,8 +340,8 @@ class assign_grading_table extends table_sql implements renderable {
             $link = $this->output->action_link($url, $icon);
             $separator = $this->output->spacer(array(), true);
         }
-
-        $grade = $this->display_grade($row->grade, $this->quickgrading, $row->userid, $row->timemarked);
+        $gradingdisabled = $this->assignment->grading_disabled($row->id);
+        $grade = $this->display_grade($row->grade, $this->quickgrading && !$gradingdisabled, $row->userid, $row->timemarked);
 
         //return $grade . $separator . $link;
         return $link . $separator . $grade;
@@ -373,7 +373,7 @@ class assign_grading_table extends table_sql implements renderable {
     function col_timemarked(stdClass $row) {
         $o = '-';
 
-        if ($row->timemarked) {
+        if ($row->timemarked && $row->grade !== NULL && $row->grade >= 0) {
             $o = userdate($row->timemarked);
         }
 
@@ -414,7 +414,7 @@ class assign_grading_table extends table_sql implements renderable {
             if ($row->locked) {
                 $o .= $this->output->container(get_string('submissionslockedshort', 'assign'), 'lockedsubmission');
             }
-            if ($row->grade) {
+            if ($row->grade !== NULL && $row->grade >= 0) {
                 $o .= $this->output->container(get_string('graded', 'assign'), 'submissiongraded');
             }
         }

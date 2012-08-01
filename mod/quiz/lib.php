@@ -839,7 +839,7 @@ function quiz_get_recent_mod_activity(&$activities, &$index, $timestart,
         return;
     }
 
-    $context         = get_context_instance(CONTEXT_MODULE, $cm->id);
+    $context         = context_module::instance($cm->id);
     $accessallgroups = has_capability('moodle/site:accessallgroups', $context);
     $viewfullnames   = has_capability('moodle/site:viewfullnames', $context);
     $grader          = has_capability('mod/quiz:viewreports', $context);
@@ -1075,7 +1075,7 @@ function quiz_after_add_or_update($quiz) {
 
     // We need to use context now, so we need to make sure all needed info is already in db.
     $DB->set_field('course_modules', 'instance', $quiz->id, array('id'=>$cmid));
-    $context = get_context_instance(CONTEXT_MODULE, $cmid);
+    $context = context_module::instance($cmid);
 
     // Save the feedback.
     $DB->delete_records('quiz_feedback', array('quizid' => $quiz->id));
@@ -1378,7 +1378,7 @@ function quiz_check_file_access($attemptuniqueid, $questionid, $context = null) 
     if ($context === null) {
         $quiz = $DB->get_record('quiz', array('id' => $attempt->quiz));
         $cm = get_coursemodule_from_id('quiz', $quiz->id);
-        $context = get_context_instance(CONTEXT_MODULE, $cm->id);
+        $context = context_module::instance($cm->id);
     }
 
     // Load those questions and the associated states.
@@ -1439,7 +1439,7 @@ function quiz_print_overview($courses, &$htmlarray) {
                     userdate($quiz->timeclose)) . '</div>';
 
             // Now provide more information depending on the uers's role.
-            $context = get_context_instance(CONTEXT_MODULE, $quiz->coursemodule);
+            $context = context_module::instance($quiz->coursemodule);
             if (has_capability('mod/quiz:viewreports', $context)) {
                 // For teacher-like people, show a summary of the number of student attempts.
                 // The $quiz objects returned by get_all_instances_in_course have the necessary $cm
@@ -1550,15 +1550,16 @@ function quiz_attempt_summary_link_to_reports($quiz, $cm, $context, $returnzero 
  */
 function quiz_supports($feature) {
     switch($feature) {
-        case FEATURE_GROUPS:                  return true;
-        case FEATURE_GROUPINGS:               return true;
-        case FEATURE_GROUPMEMBERSONLY:        return true;
-        case FEATURE_MOD_INTRO:               return true;
-        case FEATURE_COMPLETION_TRACKS_VIEWS: return true;
-        case FEATURE_GRADE_HAS_GRADE:         return true;
-        case FEATURE_GRADE_OUTCOMES:          return false;
-        case FEATURE_BACKUP_MOODLE2:          return true;
-        case FEATURE_SHOW_DESCRIPTION:        return true;
+        case FEATURE_GROUPS:                    return true;
+        case FEATURE_GROUPINGS:                 return true;
+        case FEATURE_GROUPMEMBERSONLY:          return true;
+        case FEATURE_MOD_INTRO:                 return true;
+        case FEATURE_COMPLETION_TRACKS_VIEWS:   return true;
+        case FEATURE_GRADE_HAS_GRADE:           return true;
+        case FEATURE_GRADE_OUTCOMES:            return false;
+        case FEATURE_BACKUP_MOODLE2:            return true;
+        case FEATURE_SHOW_DESCRIPTION:          return true;
+        case FEATURE_CONTROLS_GRADE_VISIBILITY: return true;
 
         default: return null;
     }
@@ -1589,7 +1590,7 @@ function quiz_get_extra_capabilities() {
 function quiz_extend_navigation($quiznode, $course, $module, $cm) {
     global $CFG;
 
-    $context = get_context_instance(CONTEXT_MODULE, $cm->id);
+    $context = context_module::instance($cm->id);
 
     if (has_capability('mod/quiz:view', $context)) {
         $url = new moodle_url('/mod/quiz/view.php', array('id'=>$cm->id));
@@ -1741,7 +1742,7 @@ function quiz_pluginfile($course, $cm, $context, $filearea, $args, $forcedownloa
  * @param array $options additional options affecting the file serving
  * @return bool false if file not found, does not return if found - justsend the file
  */
-function mod_quiz_question_pluginfile($course, $context, $component,
+function quiz_question_pluginfile($course, $context, $component,
         $filearea, $qubaid, $slot, $args, $forcedownload, array $options=array()) {
     global $CFG;
     require_once($CFG->dirroot . '/mod/quiz/locallib.php');

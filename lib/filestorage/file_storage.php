@@ -1033,6 +1033,7 @@ class file_storage {
         $newrecord->source       = empty($filerecord->source) ? null : $filerecord->source;
         $newrecord->author       = empty($filerecord->author) ? null : $filerecord->author;
         $newrecord->license      = empty($filerecord->license) ? null : $filerecord->license;
+        $newrecord->status       = empty($filerecord->status) ? 0 : $filerecord->status;
         $newrecord->sortorder    = $filerecord->sortorder;
 
         list($newrecord->contenthash, $newrecord->filesize, $newfile) = $this->add_file_to_pool($pathname);
@@ -1149,6 +1150,7 @@ class file_storage {
         $newrecord->source       = empty($filerecord->source) ? null : $filerecord->source;
         $newrecord->author       = empty($filerecord->author) ? null : $filerecord->author;
         $newrecord->license      = empty($filerecord->license) ? null : $filerecord->license;
+        $newrecord->status       = empty($filerecord->status) ? 0 : $filerecord->status;
         $newrecord->sortorder    = $filerecord->sortorder;
 
         list($newrecord->contenthash, $newrecord->filesize, $newfile) = $this->add_string_to_pool($content);
@@ -1223,6 +1225,7 @@ class file_storage {
         $filerecord->source            = empty($filerecord->source) ? null : $filerecord->source;
         $filerecord->author            = empty($filerecord->author) ? null : $filerecord->author;
         $filerecord->license           = empty($filerecord->license) ? null : $filerecord->license;
+        $filerecord->status            = empty($filerecord->status) ? 0 : $filerecord->status;
         $filerecord->filepath          = clean_param($filerecord->filepath, PARAM_PATH);
         if (strpos($filerecord->filepath, '/') !== 0 or strrpos($filerecord->filepath, '/') !== strlen($filerecord->filepath)-1) {
             // Path must start and end with '/'.
@@ -1652,14 +1655,40 @@ class file_storage {
      * Unpack reference field
      *
      * @param string $str
+     * @param bool $cleanparams if set to true, array elements will be passed through {@link clean_param()}
+     * @throws file_reference_exception if the $str does not have the expected format
      * @return array
      */
-    public static function unpack_reference($str) {
-        return unserialize(base64_decode($str));
+    public static function unpack_reference($str, $cleanparams = false) {
+        $decoded = base64_decode($str, true);
+        if ($decoded === false) {
+            throw new file_reference_exception(null, $str, null, null, 'Invalid base64 format');
+        }
+        $params = @unserialize($decoded); // hide E_NOTICE
+        if ($params === false) {
+            throw new file_reference_exception(null, $decoded, null, null, 'Not an unserializeable value');
+        }
+        if (is_array($params) && $cleanparams) {
+            $params = array(
+                'component' => is_null($params['component']) ? ''   : clean_param($params['component'], PARAM_COMPONENT),
+                'filearea'  => is_null($params['filearea'])  ? ''   : clean_param($params['filearea'], PARAM_AREA),
+                'itemid'    => is_null($params['itemid'])    ? 0    : clean_param($params['itemid'], PARAM_INT),
+                'filename'  => is_null($params['filename'])  ? null : clean_param($params['filename'], PARAM_FILE),
+                'filepath'  => is_null($params['filepath'])  ? null : clean_param($params['filepath'], PARAM_PATH),
+                'contextid' => is_null($params['contextid']) ? null : clean_param($params['contextid'], PARAM_INT)
+            );
+        }
+        return $params;
     }
 
     /**
-     * Returns all aliases that link to an external file identified by the given reference
+     * Returns all aliases that refer to some stored_file via the given reference
+     *
+     * All repositories that provide access to a stored_file are expected to use
+     * {@link self::pack_reference()}. This method can't be used if the given reference
+     * does not use this format or if you are looking for references to an external file
+     * (for example it can't be used to search for all aliases that refer to a given
+     * Dropbox or Box.net file).
      *
      * Aliases in user draft areas are excluded from the returned list.
      *
@@ -1672,6 +1701,10 @@ class file_storage {
         if (is_null($reference)) {
             throw new coding_exception('NULL is not a valid reference to an external file');
         }
+
+        // Give {@link self::unpack_reference()} a chance to throw exception if the
+        // reference is not in a valid format.
+        self::unpack_reference($reference);
 
         $referencehash = sha1($reference);
 
@@ -1692,7 +1725,13 @@ class file_storage {
     }
 
     /**
-     * Returns the number of aliases that link to an external file identified by the given reference
+     * Returns the number of aliases that refer to some stored_file via the given reference
+     *
+     * All repositories that provide access to a stored_file are expected to use
+     * {@link self::pack_reference()}. This method can't be used if the given reference
+     * does not use this format or if you are looking for references to an external file
+     * (for example it can't be used to count aliases that refer to a given Dropbox or
+     * Box.net file).
      *
      * Aliases in user draft areas are not counted.
      *
@@ -1706,6 +1745,10 @@ class file_storage {
             throw new coding_exception('NULL is not a valid reference to an external file');
         }
 
+        // Give {@link self::unpack_reference()} a chance to throw exception if the
+        // reference is not in a valid format.
+        self::unpack_reference($reference);
+
         $referencehash = sha1($reference);
 
         $sql = "SELECT COUNT(f.id)
@@ -1715,7 +1758,7 @@ class file_storage {
                  WHERE r.referencehash = ?
                        AND (f.component <> ? OR f.filearea <> ?)";
 
-        return $DB->count_records_sql($sql, array($referencehash, 'user', 'draft'));
+        return (int)$DB->count_records_sql($sql, array($referencehash, 'user', 'draft'));
     }
 
     /**

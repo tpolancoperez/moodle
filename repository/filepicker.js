@@ -518,7 +518,7 @@ M.core_filepicker.init = function(Y, options) {
     Y.extend(FilePickerHelper, Y.Base, {
         api: M.cfg.wwwroot+'/repository/repository_ajax.php',
         cached_responses: {},
-
+        waitinterval : null, // When the loading template is being displayed and its animation is running this will be an interval instance.
         initializer: function(options) {
             this.options = options;
             if (!this.options.savepath) {
@@ -885,6 +885,22 @@ M.core_filepicker.init = function(Y, options) {
                 }
             }, false);
         },
+       classnamecallback : function(node) {
+            var classname = '';
+            if (node.children) {
+                classname = classname + ' fp-folder';
+            }
+            if (node.isref) {
+                classname = classname + ' fp-isreference';
+            }
+            if (node.refcount) {
+                classname = classname + ' fp-hasreferences';
+            }
+            if (node.originalmissing) {
+                classname = classname + ' fp-originalmissing';
+            }
+            return Y.Lang.trim(classname);
+        },
         /** displays list of files in tree (list) view mode. If param appenditems is specified,
          * appends those items to the end of the list. Otherwise (default behaviour)
          * clears the contents and displays the items from this.filelist */
@@ -920,9 +936,7 @@ M.core_filepicker.init = function(Y, options) {
                         this.content_scrolled();
                     }
                 },
-                classnamecallback : function(node) {
-                    return node.children ? 'fp-folder' : '';
-                },
+                classnamecallback : this.classnamecallback,
                 dynload : this.active_repo.dynload,
                 filepath : this.filepath,
                 treeview_dynload : this.treeview_dynload
@@ -961,9 +975,7 @@ M.core_filepicker.init = function(Y, options) {
                         this.select_file(node);
                     }
                 },
-                classnamecallback : function(node) {
-                    return node.children ? 'fp-folder' : '';
-                }
+                classnamecallback : this.classnamecallback
             };
             this.fpnode.one('.fp-content').fp_display_filelist(options, list, this.lazyloading);
         },
@@ -998,9 +1010,7 @@ M.core_filepicker.init = function(Y, options) {
                         this.select_file(node);
                     }
                 },
-                classnamecallback : function(node) {
-                    return node.children ? 'fp-folder' : '';
-                }
+                classnamecallback : this.classnamecallback
             };
             this.fpnode.one('.fp-content').fp_display_filelist(options, list, this.lazyloading);
         },
@@ -1125,10 +1135,7 @@ M.core_filepicker.init = function(Y, options) {
                     if (origlicense) {
                         origlicense = origlicense.getContent();
                     }
-                    var newlicenseval = license.get('value');
-                    if (newlicenseval && this.options.licenses[newlicenseval] != origlicense) {
-                        Y.Cookie.set('recentlicense', newlicenseval);
-                    }
+                    this.set_preference('recentlicense', license.get('value'));
                 }
                 params['author'] = selectnode.one('.fp-setauthor input').get('value');
 
@@ -1191,7 +1198,37 @@ M.core_filepicker.init = function(Y, options) {
             }, this);
         },
         wait: function() {
-            this.fpnode.one('.fp-content').setContent(M.core_filepicker.templates.loading);
+            // First check there isn't already an interval in play, and if there is kill it now.
+            if (this.waitinterval != null) {
+                clearInterval(this.waitinterval);
+            }
+            // Prepare the root node we will set content for and the loading template we want to display as a YUI node.
+            var root = this.fpnode.one('.fp-content');
+            var content = Y.Node.create(M.core_filepicker.templates.loading).addClass('fp-content-hidden').setStyle('opacity', 0);
+            var count = 0;
+            // Initiate an interval, we will have a count which will increment every 100 milliseconds.
+            // Count 0 - the loading icon will have visibility set to hidden (invisible) and have an opacity of 0 (invisible also)
+            // Count 5 - the visiblity will be switched to visible but opacity will still be at 0 (inivisible)
+            // Counts 6 - 15 opacity will be increased by 0.1 making the loading icon visible over the period of a second
+            // Count 16 - The interval will be cancelled.
+            var interval = setInterval(function(){
+                if (!content || !root.contains(content) || count >= 15) {
+                    clearInterval(interval);
+                    return true;
+                }
+                if (count == 5) {
+                    content.removeClass('fp-content-hidden');
+                } else if (count > 5) {
+                    var opacity = parseFloat(content.getStyle('opacity'));
+                    content.setStyle('opacity', opacity + 0.1);
+                }
+                count++;
+                return false;
+            }, 100);
+            // Store the wait interval so that we can check it in the future.
+            this.waitinterval = interval;
+            // Set the content to the loading template.
+            root.setContent(content);
         },
         viewbar_set_enabled: function(mode) {
             var viewbar = this.fpnode.one('.fp-viewbar')
@@ -1219,7 +1256,7 @@ M.core_filepicker.init = function(Y, options) {
                 }
                 this.viewbar_set_enabled(true)
                 this.view_files();
-                Y.Cookie.set('recentviewmode', this.viewmode);
+                this.set_preference('recentviewmode', this.viewmode);
             }
         },
         render: function() {
@@ -1296,7 +1333,7 @@ M.core_filepicker.init = function(Y, options) {
                         set('id', 'fp-repo-'+client_id+'-'+repository.id).
                         on('click', function(e, repository_id) {
                             e.preventDefault();
-                            Y.Cookie.set('recentrepository', repository_id);
+                            this.set_preference('recentrepository', repository_id);
                             this.hide_header();
                             this.list({'repo_id':repository_id});
                         }, this /*handler running scope*/, repository.id/*second argument of handler*/);
@@ -1541,7 +1578,7 @@ M.core_filepicker.init = function(Y, options) {
             }
             node.setContent('');
             var licenses = this.options.licenses;
-            var recentlicense = Y.Cookie.get('recentlicense');
+            var recentlicense = this.get_preference('recentlicense');
             if (recentlicense) {
                 this.options.defaultlicense=recentlicense;
             }
@@ -1563,7 +1600,7 @@ M.core_filepicker.init = function(Y, options) {
             });
             if (!licenseset) {
                 // we did not find the value in the list
-                var recentlicense = Y.Cookie.get('recentlicense');
+                var recentlicense = this.get_preference('recentlicense');
                 node.all('option[selected]').set('selected', false);
                 node.all('option[value='+recentlicense+']').set('selected', true);
             }
@@ -1588,6 +1625,9 @@ M.core_filepicker.init = function(Y, options) {
             });
             content.one('form').set('id', id);
             content.one('.fp-file input').set('name', 'repo_upload_file');
+            if (data.upload.label && content.one('.fp-file label')) {
+                content.one('.fp-file label').setContent(data.upload.label);
+            }
             content.one('.fp-saveas input').set('name', 'title');
             content.one('.fp-setauthor input').setAttrs({name:'author', value:this.options.author});
             content.one('.fp-setlicense select').set('name', 'license');
@@ -1605,7 +1645,8 @@ M.core_filepicker.init = function(Y, options) {
             content.one('.fp-upload-btn').on('click', function(e) {
                 e.preventDefault();
                 var license = content.one('.fp-setlicense select');
-                Y.Cookie.set('recentlicense', license.get('value'));
+
+                this.set_preference('recentlicense', license.get('value'));
                 if (!content.one('.fp-file input').get('value')) {
                     scope.print_msg(M.str.repository.nofilesattached, 'error');
                     return false;
@@ -1696,7 +1737,7 @@ M.core_filepicker.init = function(Y, options) {
                 setAttrs({id:'fp-tb-help-'+client_id+'-link', target:'_blank'}).
                 setStyle('display', 'none');
             toolbar.append(helplnk);
-            toolbar.one('.fp-tb-manage').one('a,button').
+            toolbar.one('.fp-tb-help').one('a,button').
                 on('click', function(e) {
                     e.preventDefault();
                     helplnk.simulate('click')
@@ -1743,6 +1784,14 @@ M.core_filepicker.init = function(Y, options) {
                         if (obj.repo_id == scope.active_repo.id && obj.form) {
                             // if we did not jump to another repository meanwhile
                             searchform.setContent(obj.form);
+                            // Highlight search text when user click for search.
+                            var searchnode = searchform.one('input[name="s"]');
+                            if (searchnode) {
+                                searchnode.once('click', function(e) {
+                                    e.preventDefault();
+                                    this.select();
+                                });
+                            }
                         }
                     }
                 }, false);
@@ -1824,13 +1873,26 @@ M.core_filepicker.init = function(Y, options) {
         show_recent_repository: function() {
             this.hide_header();
             this.viewbar_set_enabled(false);
-            var repository_id = Y.Cookie.get('recentrepository');
-            this.viewmode = Y.Cookie.get('recentviewmode', Number);
+            var repository_id = this.get_preference('recentrepository');
+            this.viewmode = this.get_preference('recentviewmode');
             if (this.viewmode != 2 && this.viewmode != 3) {
                 this.viewmode = 1;
             }
             if (this.options.repositories[repository_id]) {
                 this.list({'repo_id':repository_id});
+            }
+        },
+        get_preference: function (name) {
+            if (this.options.userprefs[name]) {
+                return this.options.userprefs[name];
+            } else {
+                return false;
+            }
+        },
+        set_preference: function(name, value) {
+            if (this.options.userprefs[name] != value) {
+                M.util.set_user_preference('filepicker_' + name, value);
+                this.options.userprefs[name] = value;
             }
         }
     });

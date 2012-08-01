@@ -206,6 +206,9 @@ class mod_assign_renderer extends plugin_renderer_base {
         $this->page->set_heading($header->assign->name);
 
         $o .= $this->output->header();
+        if ($header->preface) {
+            $o .= $header->preface;
+        }
         $o .= $this->output->heading(format_string($header->assign->name,false, array('context' => $header->context)));
 
         if ($header->showintro) {
@@ -245,6 +248,8 @@ class mod_assign_renderer extends plugin_renderer_base {
         if ($summary->submissionsenabled) {
             $this->add_table_row_tuple($t, get_string('numberofsubmittedassignments', 'assign'),
                                        $summary->submissionssubmittedcount);
+            $this->add_table_row_tuple($t, get_string('numberofsubmissionsneedgrading', 'assign'),
+                                       $summary->submissionsneedgradingcount);
         }
 
         $time = time();
@@ -270,11 +275,12 @@ class mod_assign_renderer extends plugin_renderer_base {
         $o .= $this->output->box_end();
 
         // link to the grading page
-        $o .= $this->output->single_button(new moodle_url('/mod/assign/view.php',
+        $o .= $this->output->container_start('submissionlinks');
+        $o .= $this->output->action_link(new moodle_url('/mod/assign/view.php',
                                                           array('id' => $summary->coursemoduleid,
                                                                 'action'=>'grading')),
-                                                          get_string('viewgrading', 'assign'),
-                                                          'get');
+                                                          get_string('viewgrading', 'assign'));
+        $o .= $this->output->container_end();
 
         // close the container and insert a spacer
         $o .= $this->output->container_end();
@@ -463,8 +469,13 @@ class mod_assign_renderer extends plugin_renderer_base {
 
         // links
         if ($status->canedit) {
-            $o .= $this->output->single_button(new moodle_url('/mod/assign/view.php',
-                array('id' => $status->coursemoduleid, 'action' => 'editsubmission')), get_string('editsubmission', 'assign'), 'get');
+            if (!$status->submission) {
+                $o .= $this->output->single_button(new moodle_url('/mod/assign/view.php',
+                    array('id' => $status->coursemoduleid, 'action' => 'editsubmission')), get_string('addsubmission', 'assign'), 'get');
+            } else {
+                $o .= $this->output->single_button(new moodle_url('/mod/assign/view.php',
+                    array('id' => $status->coursemoduleid, 'action' => 'editsubmission')), get_string('editsubmission', 'assign'), 'get');
+            }
         }
 
         if ($status->cansubmit) {

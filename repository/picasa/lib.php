@@ -98,9 +98,6 @@ class repository_picasa extends repository {
         return parent::logout();
     }
 
-    public function get_name() {
-        return get_string('pluginname', 'repository_picasa');
-    }
     public function supported_filetypes() {
         return array('web_image');
     }
@@ -114,14 +111,16 @@ class repository_picasa extends repository {
 
     public static function type_config_form($mform, $classname = 'repository') {
         $a = new stdClass;
-        $a->docsurl = get_docs_url('Google_OAuth2_Setup');
+        $a->docsurl = get_docs_url('Google_OAuth_2.0_setup');
         $a->callbackurl = google_oauth::callback_url()->out(false);
 
         $mform->addElement('static', null, '', get_string('oauthinfo', 'repository_picasa', $a));
 
         parent::type_config_form($mform);
         $mform->addElement('text', 'clientid', get_string('clientid', 'repository_picasa'));
+        $mform->setType('clientid', PARAM_RAW_TRIMMED);
         $mform->addElement('text', 'secret', get_string('secret', 'repository_picasa'));
+        $mform->setType('secret', PARAM_RAW_TRIMMED);
 
         $strrequired = get_string('required');
         $mform->addRule('clientid', $strrequired, 'required', null, 'client');

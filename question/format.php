@@ -539,7 +539,10 @@ class qformat_default {
         if (is_readable($filename)) {
             $filearray = file($filename);
 
-            /// Check for Macintosh OS line returns (ie file on one line), and fix
+            // If the first line of the file starts with a UTF-8 BOM, remove it.
+            $filearray[0] = textlib::trim_utf8_bom($filearray[0]);
+
+            // Check for Macintosh OS line returns (ie file on one line), and fix.
             if (preg_match("~\r~", $filearray[0]) AND !preg_match("~\n~", $filearray[0])) {
                 return explode("\r", $filearray[0]);
             } else {
@@ -846,7 +849,7 @@ class qformat_default {
      * Convert a string, as returned by {@link assemble_category_path()},
      * back into an array of category names.
      *
-     * Each category name is cleaned by a call to clean_param(, PARAM_MULTILANG),
+     * Each category name is cleaned by a call to clean_param(, PARAM_TEXT),
      * which matches the cleaning in question/category_form.php.
      *
      * @param string $path
@@ -856,7 +859,7 @@ class qformat_default {
         $rawnames = preg_split('~(?<!/)/(?!/)~', $path);
         $names = array();
         foreach ($rawnames as $rawname) {
-            $names[] = clean_param(trim(str_replace('//', '/', $rawname)), PARAM_MULTILANG);
+            $names[] = clean_param(trim(str_replace('//', '/', $rawname)), PARAM_TEXT);
         }
         return $names;
     }
