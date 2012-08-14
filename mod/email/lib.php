@@ -1321,10 +1321,19 @@ function email_choose_users_to_send($email, $options) {
 
     $selectedusers = array();
 
-    // Get teachers, use standard of group to set teacher/s.
+    // Get contacts
     $context = get_context_instance(CONTEXT_COURSE, $email->course);
+    $teachers = get_enrolled_users($context, "moodle/course:viewhiddenactivities");
+    $teacherids = array_keys($teachers);
     $enrolled_users = get_enrolled_users($context);
     if ($enrolled_users) {
+        foreach($enrolled_users as $userid=>$user){
+            if(in_array($userid, $teacherids)){
+                unset($enrolled_users[$userid]);
+                $unselectedusers[$user->id] = "# ".fullname($user, true);
+            }
+        }
+        
         foreach ($enrolled_users as $user) {
             if ( ! email_contains(fullname($user, true), $selectedusers) ) {
             	$unselectedusers[$user->id] = fullname($user, true);

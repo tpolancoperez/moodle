@@ -47,3 +47,7 @@ body#page-mod-email-view #page-content #region-main {
     margin-left: 0;
     margin-right: 0;
 }
+
+body#page-mod-email-participants div#frametop {
+    min-width: 425px;
+}
