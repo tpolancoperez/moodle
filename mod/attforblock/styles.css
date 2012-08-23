@@ -1,0 +1,12 @@
+/* 
+    Document   : styles
+    Created on : Aug 23, 2012, 10:49:28 AM
+    Author     : Matthew Switlik <switlikm@gmail.com>
+    Description:
+        Purpose of the stylesheet follows.
+*/
+
+.modtype_attforblock .editing_duplicate { 
+    display: none;
+}
+
