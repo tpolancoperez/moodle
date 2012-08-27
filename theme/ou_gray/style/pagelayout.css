@@ -27,9 +27,9 @@
  *
  ****/
 
-#page-content #region-pre {background-color: #658fa8;}
-#page-content #region-post {background-color: #658fa8;}
-#page-content #region-post-box {background-color: #658fa8;}
+#page-content #region-pre {background-color: #dbdbdb;}
+#page-content #region-post {background-color: #dbdbdb;}
+#page-content #region-post-box {background-color: #dbdbdb;}
 /* #page-content #region-main {background-color: #f6f6f6;} */
 
 .path-course-view .weeks .main, .path-course-view .topics .main {border: 1px solid #DDD;}
