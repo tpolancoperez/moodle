@@ -287,13 +287,21 @@ class block_course_overview extends block_base {
             $changed = false;
 			$options = array();
 			foreach ($cats as $cat) {
-                $options[$cat] = 1;
+    			if (($cat == 164) || ($cat == 169)) {
+        			$options[$cat] = 1;
+    			} else {
+        			$options[$cat] = 0;
+    			}
 			}
 		} else {
 			$changed = false;
 			foreach ($cats as $cat) {
 				if (!isset($options[$cat])) {
-					$options[$cat] = 1;
+	    			if (($cat == 164) || ($cat == 169)) {
+            			$options[$cat] = 1;
+        			} else {
+            			$options[$cat] = 0;
+        			}
 					$changed = true;
 				}
 			}
