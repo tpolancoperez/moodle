@@ -8,7 +8,8 @@ class mod_attforblock_mod_form extends moodleform_mod {
         global $CFG, $DB, $OUTPUT;
         $mform    =& $this->_form;
         $attendance = $DB->record_exists('attforblock', array('course'=>$this->current->course));
-        if(!$attendance){
+        $update = optional_param('update', 0, PARAM_INT);
+        if(!$attendance || $update>0){
             //-------------------------------------------------------------------------------
             $mform->addElement('header', 'general', get_string('general', 'form'));
 
