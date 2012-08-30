@@ -48,3 +48,6 @@ $THEME->sheets = array(
     'css3'      
 );
 $THEME->enable_dock = true;
+
+
+$THEME->hidefromselector = true;
