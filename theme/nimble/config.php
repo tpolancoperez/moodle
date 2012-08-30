@@ -255,3 +255,7 @@ $THEME->rarrow    = '&rang;';
 ////////////////////////////////////////////////////
 
 $THEME->csspostprocess = 'nimble_process_css';
+
+
+/* OU Disable */
+$THEME->hidefromselector = true;

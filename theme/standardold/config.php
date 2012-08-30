@@ -143,3 +143,6 @@ $THEME->layouts = array(
  * This enables the dock on the side of the page as this theme supports it.
  */
 $THEME->enable_dock = false;
+
+/* OU Disable */
+$THEME->hidefromselector = true;

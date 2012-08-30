@@ -259,3 +259,7 @@ $THEME->rarrow  = '&rang;';
 ////////////////////////////////////////////////////
 
 $THEME->editor_sheets = array('editor');
+
+
+/* OU Disable */
+$THEME->hidefromselector = true;
