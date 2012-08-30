@@ -252,3 +252,6 @@ $THEME->layouts = array(
 $THEME->csspostprocess = 'brick_process_css';
  //$THEME->rendererfactory = 'theme_overridden_renderer_factory';
 
+
+/* OU Disable */
+$THEME->hidefromselector = true;

@@ -46,3 +46,6 @@ $THEME->sheets = array(
     'css3'      /** Sets up CSS 3 + browser specific styles **/
 );
 $THEME->enable_dock = true;
+
+/* OU Disable */
+$THEME->hidefromselector = true;
