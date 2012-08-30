@@ -1,0 +1,4 @@
+/** General **/
+.block {border: 1px solid #C6BDA8;}
+.block .content {border-color: #dddddd;background-color:#9dc5dd;}
+.block .header .title {background-image:url([[pix:theme|block-gradient]]);background-repeat: repeat-x;background-color: #E3DFD4;};
