@@ -1,4 +1,6 @@
-html {background-color: #4a7751;font-size: 13px;}
+/* Green */
+
+html {background-image:url([[pix:theme|bg]]); background-repeat: repeat; background-color: #4b7952;font-size: 13px;}
 
 
 #page-content {background-color: white;}
@@ -7,7 +9,6 @@ html {background-color: #4a7751;font-size: 13px;}
  * Boxes
  */
 
-.header,
 .navbar {background-image:url([[pix:theme|breadcrumb-gradient]]);background-repeat: repeat-x;background-color:#a4bba8;}
 
 
@@ -35,9 +36,11 @@ html {background-color: #4a7751;font-size: 13px;}
 #custommenu .yui3-menu-horizontal.javascript-disabled .yui3-menu-content,
 #custommenu .yui3-menu-horizontal.javascript-disabled .yui3-menu-content ul {border:none;}
 
+/*
 #custommenu .yui3-menu .yui3-menuitem-content {background-color: #a4bba8;}
 
 #custommenu ul.first-of-type li{border-right:1px solid #ccc}
+*/
 
-
+.header {background-image:url([[pix:theme|header-gradient]]);background-repeat: repeat-x; background-color:#a4bba8;}
 
