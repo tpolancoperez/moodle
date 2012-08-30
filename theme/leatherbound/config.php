@@ -240,3 +240,6 @@ $THEME->layouts = array(
 // theme, used when working with custom renderers.
 ////////////////////////////////////////////////////
 
+
+/* OU Disable */
+$THEME->hidefromselector = true;

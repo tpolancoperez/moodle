@@ -146,3 +146,6 @@ $THEME->rendererfactory = 'theme_overridden_renderer_factory'; //Adds the custom
 
 $THEME->javascripts = array();
 $THEME->javascripts_footer = array('footers');
+
+/* OU Disable */
+$THEME->hidefromselector = true;

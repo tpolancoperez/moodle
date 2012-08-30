@@ -142,3 +142,6 @@ $THEME->layouts = array(
 );
 
 $THEME->csspostprocess = 'splash_process_css';
+
+/* OU Disable */
+$THEME->hidefromselector = true;

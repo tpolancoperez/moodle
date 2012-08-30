@@ -232,3 +232,7 @@ $THEME->layouts = array(
 ////////////////////////////////////////////////////
 
 $THEME->editor_sheets = array('editor');
+
+
+/* OU Disable */
+$THEME->hidefromselector = true;

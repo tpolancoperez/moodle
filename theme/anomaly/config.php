@@ -128,3 +128,6 @@ $THEME->rendererfactory = 'theme_overridden_renderer_factory';
 $THEME->enable_dock = true;
 
 $THEME->editor_sheets = array('editor');
+
+/* OU Disable */
+$THEME->hidefromselector = true;
