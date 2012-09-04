@@ -112,3 +112,5 @@ $THEME->editor_sheets = array('editor');
 // theme, used when working with custom renderers.
 ////////////////////////////////////////////////////
 
+/* OU Disable */
+$THEME->hidefromselector = true;

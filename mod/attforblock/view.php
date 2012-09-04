@@ -4,9 +4,9 @@
 /// (Replace attforblock with the name of your module)
 
     require_once("../../config.php");
-    require_once('locallib.php');
+    global $DB, $CFG;
+    require_once($CFG->dirroot . '/mod/attforblock/locallib.php');
 
-    global $DB;
 
     $url = new moodle_url($CFG->wwwroot.$SCRIPT);
     $PAGE->set_url($url);

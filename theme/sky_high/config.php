@@ -246,3 +246,6 @@ $THEME->csspostprocess = 'sky_high_process_css';
 // Sets a custom render factory to use with the
 // theme, used when working with custom renderers.
 ////////////////////////////////////////////////////
+
+/* OU Disable */
+$THEME->hidefromselector = true;

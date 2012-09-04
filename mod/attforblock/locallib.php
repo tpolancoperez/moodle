@@ -293,7 +293,7 @@ function print_user_attendaces($user, $cm,  $course = 0, $printing = null) {
 
 	
 	if ($course) {
-		$stqry = "SELECT ats.sessdate,ats.description,al.statusid,al.remarks";
+		$stqry = "SELECT ats.id,ats.sessdate,ats.description,al.statusid,al.remarks";
                 $stqry.= " FROM {attendance_log} al";
                 $stqry.= " JOIN {attendance_sessions} ats";
                     $stqry.= " ON al.sessionid = ats.id";

@@ -1,0 +1,8 @@
+#page {width: 98%;margin-left: 1%;margin-top: 1%;position:relative;}
+#page {font-size: 100%;}
+
+#page-content {margin-bottom: 20px;}
+
+.navbar {padding-top: 0.35em; padding-bottom: 0.15em;}
+.navbar .navbutton {padding-right: 0.5em;}
+.breadcrumb {margin-left: 0.8em;}

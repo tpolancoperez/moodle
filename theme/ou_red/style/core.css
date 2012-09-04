@@ -1,0 +1,61 @@
+/* Red */
+
+html {background-image:url([[pix:theme|bg]]); background-repeat: repeat; background-color: #843741;font-size: 13px;}
+
+
+#page-content {background-color: white;}
+
+/**
+ * Boxes
+ */
+
+.navbar {background-image:url([[pix:theme|breadcrumb-gradient]]);background-repeat: repeat-x;background-color:#b4858b;}
+
+
+/**
+ * Overriding base
+ */
+#page-header {background-image:url([[pix:theme|logo]]); background-repeat: no-repeat; background-color: #b4858b;}
+#page-header .headermain {display:none}
+#page-header .headermenu {height: 60px;}
+
+.navbar li a:link,
+.navbar li a:visited {color: white;}
+.navbar li span {color: #E3DFD4;}
+
+/**
+ * Custom menu
+ */
+
+
+#custommenu .yui3-menu {background-color:#d3b8bb;}
+#custommenu .yui3-menu {background-color:#d3b8bb;}
+#custommenu .yui3-menu .yui3-menu {background-image:none;background-color:#d3b8bb;}
+#custommenu .yui3-menu .yui3-menu-label,
+#custommenu .yui3-menu .yui3-menuitem-content,
+#custommenu .yui3-menu .yui3-menu-content,
+#custommenu .yui3-menu .yui3-menu .yui3-menu-content,
+#custommenu .yui3-menu-horizontal.javascript-disabled .yui3-menu-content,
+#custommenu .yui3-menu-horizontal.javascript-disabled .yui3-menu-content ul {border:none;}
+
+
+/*
+#custommenu .yui3-menu .yui3-menuitem-content {background-color: #d3b8bb;}
+#custommenu .yui3-menu .yui3-menuitem-active {background-color: #ffffff;}
+*/
+
+/*
+#custommenu .yui3-menu .yui3-menuitem-content {background-color: #d3b8bb;}
+#custommenu .yui3-menuitem-active {background-color:#B3D4FF;background-image:none;background-position: center center;background-repeat:no-repeat;}
+*/
+
+/* #custommenu ul.first-of-type li{border-right:1px solid #ccc} */
+
+
+
+.header {background-color: #d3b8bb; background-image:url([[pix:theme|header-gradient]]); background-size: auto 100%}
+
+#content {width: auto; background-color: white;}
+
+#page-footer {}
+

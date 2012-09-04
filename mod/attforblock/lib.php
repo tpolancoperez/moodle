@@ -145,10 +145,12 @@ function attforblock_user_outline($course, $user, $mod, $attforblock) {
 /// Used for user activity reports.
 /// $return->time = the time they did it
 /// $return->info = a short text description
+	global $CFG;
+	require_once($CFG->dirroot . '/mod/attforblock/locallib.php');
 	
-	require_once('locallib.php');
-	
-  	if (isstudent($course->id, $user->id)) {
+  	$currentcontext = get_context_instance(CONTEXT_COURSE, $course->id);
+        $isstudent = has_capability('moodle/course:viewparticipants', $currentcontext, $user->id);
+  	if ($isstudent) {
 	  	if ($sescount = get_attendance($user->id,$course)) {
 	  		$strgrade = get_string('grade');
 	  		$maxgrade = get_maxgrade($user->id, $course);
@@ -164,10 +166,12 @@ function attforblock_user_outline($course, $user, $mod, $attforblock) {
 function attforblock_user_complete($course, $user, $mod, $attforblock) {
 /// Print a detailed representation of what a  user has done with 
 /// a given particular instance of this module, for user activity reports.
-
-	require_once('locallib.php');
+        global $CFG;
+        require_once($CFG->dirroot . '/mod/attforblock/locallib.php');
 	
-	if (isstudent($course->id, $user->id)) {
+	$currentcontext = get_context_instance(CONTEXT_COURSE, $course->id);
+        $isstudent = has_capability('moodle/course:viewparticipants', $currentcontext, $user->id);
+  	if ($isstudent) {
 //        if (! $cm = get_coursemodule_from_instance("attforblock", $attforblock->id, $course->id)) {
 //            error("Course Module ID was incorrect");
 //        }
@@ -203,7 +207,7 @@ function attforblock_cron () {
 function attforblock_get_user_grades($attforblock, $userid=0) {
     global $CFG, $DB;
     
-	require_once('locallib.php');
+    require_once($CFG->dirroot . '/mod/attforblock/locallib.php');
 	
     if (! $course = $DB->get_record('course', array('id'=>$attforblock->course))) {
         error("Course is misconfigured");
@@ -281,7 +285,7 @@ function attforblock_update_grades($attforblock=null, $userid=0, $nullifnone=tru
 function attforblock_grade_item_update($attforblock, $grades=NULL) {
     global $CFG, $DB;
     
-	require_once('locallib.php');
+    require_once($CFG->dirroot . '/mod/attforblock/locallib.php');
 	
     if (!function_exists('grade_update')) { //workaround for buggy PHP versions
         require_once($CFG->libdir.'/gradelib.php');

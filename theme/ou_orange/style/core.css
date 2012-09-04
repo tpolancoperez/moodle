@@ -1,0 +1,45 @@
+/* Orange */
+
+html {background-color: #d99d56;font-size: 13px;}
+
+
+#page-content {background-color: white;}
+
+/**
+ * Boxes
+ */
+
+.navbar {background-image:url([[pix:theme|breadcrumb-gradient]]);background-repeat: repeat-x;background-color:#e5bb8a;}
+
+
+/**
+ * Overriding base
+ */
+#page-header {background-image:url([[pix:theme|logo]]); background-repeat: no-repeat; background-color: #e5bb8a;}
+#page-header .headermain {display:none}
+#page-header .headermenu {height: 60px;}
+
+.navbar li a:link,
+.navbar li a:visited {color: white;}
+.navbar li span {color: #E3DFD4;}
+
+/**
+ * Custom menu
+ */
+#custommenu .yui3-menu {background-color:#eccfac;}
+#custommenu .yui3-menu {background-color:#eccfac;}
+#custommenu .yui3-menu .yui3-menu {background-image:none;background-color:#eccfac;}
+#custommenu .yui3-menu .yui3-menu-label,
+#custommenu .yui3-menu .yui3-menuitem-content,
+#custommenu .yui3-menu .yui3-menu-content,
+#custommenu .yui3-menu .yui3-menu .yui3-menu-content,
+#custommenu .yui3-menu-horizontal.javascript-disabled .yui3-menu-content,
+#custommenu .yui3-menu-horizontal.javascript-disabled .yui3-menu-content ul {border:none;}
+
+/* #custommenu .yui3-menuitem-active {background-color: #eccfac;} */
+
+/* #custommenu ul.first-of-type li{border-right:1px solid #ccc} */
+
+.header {background-image:url([[pix:theme|header-gradient]]); background-size: auto 100%}
+
+

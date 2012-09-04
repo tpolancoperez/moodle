@@ -1,11 +1,12 @@
 <?PHP 
 
     require_once('../../config.php'); 
-    require_once('locallib.php');
+    global $DB, $OUTPUT, $CFG;
+    
+    require_once($CFG->dirroot . '/mod/attforblock/locallib.php');
     require_once('lib.php');
-
-    global $DB, $OUTPUT;
-
+    
+    
     $url = new moodle_url($CFG->wwwroot.$SCRIPT);
     $PAGE->set_url($url);
     

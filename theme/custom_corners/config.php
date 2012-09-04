@@ -138,3 +138,5 @@ $THEME->layouts = array(
     ),
 );
 
+/* OU Disable */
+$THEME->hidefromselector = true;

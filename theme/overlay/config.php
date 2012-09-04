@@ -248,3 +248,5 @@ $THEME->csspostprocess = 'overlay_process_css';
 // theme, used when working with custom renderers.
 ////////////////////////////////////////////////////
 
+/* OU Disable */
+$THEME->hidefromselector = true;
