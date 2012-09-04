@@ -1,15 +1,15 @@
 <?PHP // $Id: sessions.php,v 1.2.2.3 2009/02/23 19:22:41 dlnsk Exp $
 
     require_once('../../config.php');    
+    global $DB, $OUTPUT, $CFG, $PAGE;
     require_once($CFG->libdir.'/blocklib.php');
-    require_once('locallib.php');
+    require_once($CFG->dirroot . '/mod/attforblock/locallib.php');
     require_once('lib.php');
     require_once('add_form.php');
     require_once('update_form.php');
     require_once('duration_form.php');
 
-    global $DB, $OUTPUT, $CFG, $PAGE;
-
+    
     $url = new moodle_url($CFG->wwwroot.$SCRIPT);
     $PAGE->set_url($url);
     

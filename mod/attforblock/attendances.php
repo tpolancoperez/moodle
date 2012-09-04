@@ -4,7 +4,7 @@
 
     require_once('../../config.php');    
     require_once($CFG->libdir.'/blocklib.php');
-    require_once('locallib.php');
+    require_once($CFG->dirroot . '/mod/attforblock/locallib.php');
     require_once('lib.php');
 
     global $DB;

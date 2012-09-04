@@ -4,10 +4,10 @@
 /// (Replace attforblock with the name of your module)
 
     require_once('../../config.php');
-    require_once('locallib.php');
-
-    global $CFG, $DB, $OUTPUT;
     
+    global $CFG, $DB, $OUTPUT;
+    require_once($CFG->dirroot . '/mod/attforblock/locallib.php');
+
     $id   = required_param('id', PARAM_INT);   // Course Module ID, or
     $from = optional_param('from', '', PARAM_TEXT);
 

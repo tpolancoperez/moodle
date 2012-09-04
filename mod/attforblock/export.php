@@ -3,10 +3,10 @@
 //  Lists all the sessions for a course
 
     require_once('../../config.php');    
-    require_once('locallib.php');
+    global $DB, $CFG;
+    require_once($CFG->dirroot . '/mod/attforblock/locallib.php');
     require_once('export_form.php');
 	
-    global $DB;
 
     $url = new moodle_url($CFG->wwwroot.$SCRIPT);
     $PAGE->set_url($url);
