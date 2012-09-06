@@ -75,7 +75,7 @@ $allgroups = groups_get_all_groups($courseid);
 $mastercap = true;
 $groups = $allgroups;
 
-if (!has_capability('moodle/site:accessallgroups', $context)) {
+if (groups_get_course_groupmode($course) == SEPARATEGROUPS  && !has_capability('moodle/site:accessallgroups', $context)) {
     $mastercap = false;
     $mygroups = groups_get_user_groups($courseid);
     $gids = implode(',', array_values($mygroups['0']));
