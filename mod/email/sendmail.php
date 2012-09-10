@@ -151,7 +151,7 @@
                 }
             } else {
                 // Save in Draft
-                if (! $mailid = email_add_new_mail_in_draft($mail, $attachments, $form->mailid) ) {
+                if (! $mailid = email_add_new_mail_in_draft($mail, $form->mailid, $context, $formoptions["attachmentoptions"], $formoptions["bodyoptions"]) ) {
                         notify('Could not save mail in as draft');
                 }
             }

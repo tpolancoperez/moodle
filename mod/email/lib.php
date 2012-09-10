@@ -2968,45 +2968,48 @@ function email_add_new_mail($mail, $usersto, $userscc, $usersbcc, $mailid, $cont
  * @return boolean Success/Fail
  * @todo Finish documenting this function
  **/
-function email_add_new_mail_in_draft($mail, $attachments, $mailid=NULL) {
+function email_add_new_mail_in_draft($mail, $mailid=NULL, $context, $attachmentoptions, $bodyoptions) {
     global $DB;
     
-	$mail->timecreated = time();
+    $draftid_editor = $mail->body["itemid"];
+    $mail->body = $mail->body["text"];
+    
+    $mail->timecreated = time();
 
-	if (! $mailid ) {
-		if (! $mail->id = $DB->insert_record('email_mail', $mail)) {
-			return false;
-    	}
+    if (! $mailid ) {
+        if (! $mail->id = $DB->insert_record('email_mail', $mail)) {
+                return false;
+        }
 
-    	if (! email_reference_mail_folder($mail, EMAIL_DRAFT) ) {
-    		print_error('draftfail','email');
-    	}
+        if (! email_reference_mail_folder($mail, EMAIL_DRAFT) ) {
+            print_error('draftfail','email');
+        }
 
-	} else {
-		$mail->id = $mailid;
-		if (! $DB->update_record('email_mail', $mail)) {
-			notify(' Fail updating draft mail ');
-		}
-	}
-
-	// Get an account object
-	if (! $account = email_get_account_by_id($mail->accountid) ) {
-            print_error('noaccount','email');
+    } else {
+        $mail->id = $mailid;
+        if (! $DB->update_record('email_mail', $mail)) {
+                notify(' Fail updating draft mail ');
+        }
     }
 
-	// Get an email object
-	if (! $email = $DB->get_record('email', array('id'=>$account->emailid))) {
-            print_error( 'nocourseemail','email');
+    // Get an account object
+    if (! $account = email_get_account_by_id($mail->accountid) ) {
+        print_error('noaccount','email');
+    }
+
+    // Get an email object
+    if (! $email = $DB->get_record('email', array('id'=>$account->emailid))) {
+        print_error( 'nocourseemail','email');
     }
 
     // Add attachments
-    if ($attachments) {
-		if (! email_add_attachments($mail->id, $attachments, $email) ) {
-			notify('Fail uploading attachments');
-		}
+    file_save_draft_area_files($mail->attachments, $context->id, 'mod_email', 'attachments', $mail->id, $attachmentoptions);
+    if(!empty($draftid_editor)){
+        $mail->body = file_save_draft_area_files($draftid_editor, $context->id, 'mod_email', 'body', $mail->id, $bodyoptions, $mail->body);
+        $DB->set_field('email_mail', 'body', $mail->body, array('id'=>$mail->id));
     }
 
-	return $mail->id;
+    return $mail->id;
 }
 
 /**
