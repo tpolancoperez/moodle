@@ -1107,7 +1107,7 @@ function email_get_form_options($email, $mail, $options, $selectedusers, $contex
     $bodyoptions = array('subdirs'=>0, 'maxfiles'=>50, 'maxbytes'=>$email->maxbytes, 'trusttext'=>true, 'context'=>$context);
     $attachmentoptions = array('subdirs'=>0, 'maxfiles'=>50, 'maxbytes'=>$email->maxbytes, 'context'=>$context);
     
-    $itemid = null;  //being set to NULL creates a new entry
+    $itemid = isset($mail->id)?$mail->id:null;  //being set to NULL creates a new entry
     $mail = file_prepare_standard_filemanager($mail, 'attachments', $attachmentoptions, $context, 'mod_email', 'attachments', $itemid);
     
     $itemid = isset($mail->bodyitemid)?$mail->bodyitemid:null;
@@ -1687,7 +1687,7 @@ function email_forward($mailid, $options, $context) {
  * @return boolean Success/Fail
  * @todo Finish documenting this function
  */
-function email_draftmailform($mailid, $options) {
+function email_draftmailform($mailid, $options, $context) {
     global $DB, $CFG;
     
 	// Get mail
@@ -1707,7 +1707,7 @@ function email_draftmailform($mailid, $options) {
 
 	include_once('sendmail_form.php');
         $selectedusers = array();
-        $formoptions = email_get_form_options($email, $mail, $options, $selectedusers);
+        $formoptions = email_get_form_options($email, $mail, $options, $selectedusers, $context);
         $mform = new mod_email_sendmail_form('sendmail.php', $formoptions);
 
         //Form processing and displaying is done here
@@ -2968,45 +2968,48 @@ function email_add_new_mail($mail, $usersto, $userscc, $usersbcc, $mailid, $cont
  * @return boolean Success/Fail
  * @todo Finish documenting this function
  **/
-function email_add_new_mail_in_draft($mail, $attachments, $mailid=NULL) {
+function email_add_new_mail_in_draft($mail, $mailid=NULL, $context, $attachmentoptions, $bodyoptions) {
     global $DB;
     
-	$mail->timecreated = time();
+    $draftid_editor = $mail->body["itemid"];
+    $mail->body = $mail->body["text"];
+    
+    $mail->timecreated = time();
 
-	if (! $mailid ) {
-		if (! $mail->id = $DB->insert_record('email_mail', $mail)) {
-			return false;
-    	}
+    if (! $mailid ) {
+        if (! $mail->id = $DB->insert_record('email_mail', $mail)) {
+                return false;
+        }
 
-    	if (! email_reference_mail_folder($mail, EMAIL_DRAFT) ) {
-    		print_error('draftfail','email');
-    	}
+        if (! email_reference_mail_folder($mail, EMAIL_DRAFT) ) {
+            print_error('draftfail','email');
+        }
 
-	} else {
-		$mail->id = $mailid;
-		if (! $DB->update_record('email_mail', $mail)) {
-			notify(' Fail updating draft mail ');
-		}
-	}
-
-	// Get an account object
-	if (! $account = email_get_account_by_id($mail->accountid) ) {
-            print_error('noaccount','email');
+    } else {
+        $mail->id = $mailid;
+        if (! $DB->update_record('email_mail', $mail)) {
+                notify(' Fail updating draft mail ');
+        }
     }
 
-	// Get an email object
-	if (! $email = $DB->get_record('email', array('id'=>$account->emailid))) {
-            print_error( 'nocourseemail','email');
+    // Get an account object
+    if (! $account = email_get_account_by_id($mail->accountid) ) {
+        print_error('noaccount','email');
+    }
+
+    // Get an email object
+    if (! $email = $DB->get_record('email', array('id'=>$account->emailid))) {
+        print_error( 'nocourseemail','email');
     }
 
     // Add attachments
-    if ($attachments) {
-		if (! email_add_attachments($mail->id, $attachments, $email) ) {
-			notify('Fail uploading attachments');
-		}
+    file_save_draft_area_files($mail->attachments, $context->id, 'mod_email', 'attachments', $mail->id, $attachmentoptions);
+    if(!empty($draftid_editor)){
+        $mail->body = file_save_draft_area_files($draftid_editor, $context->id, 'mod_email', 'body', $mail->id, $bodyoptions, $mail->body);
+        $DB->set_field('email_mail', 'body', $mail->body, array('id'=>$mail->id));
     }
 
-	return $mail->id;
+    return $mail->id;
 }
 
 /**

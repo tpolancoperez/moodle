@@ -85,7 +85,7 @@ class mod_email_sendmail_form extends moodleform {
         
         $buttonarray=array();
         $buttonarray[] = &$mform->createElement('submit', 'send', get_string('send','email'));
-        $buttonarray[] = &$mform->createElement('submit', 'draft', get_string('draft','email'));
+        $buttonarray[] = &$mform->createElement('submit', 'draft', get_string('savedraft','email'));
         $buttonarray[] = &$mform->createElement('cancel');
         $mform->addGroup($buttonarray, 'buttonar', '', array(' '), false);
         $mform->closeHeaderBefore('buttonar'); 
