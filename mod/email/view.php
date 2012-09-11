@@ -187,7 +187,7 @@
             break;
 
         case 'draftmail':
-                email_draftmailform($mailid, $options);
+                email_draftmailform($mailid, $options, $context);
             break;
 
         case 'reply':

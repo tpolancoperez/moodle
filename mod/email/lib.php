@@ -1107,7 +1107,7 @@ function email_get_form_options($email, $mail, $options, $selectedusers, $contex
     $bodyoptions = array('subdirs'=>0, 'maxfiles'=>50, 'maxbytes'=>$email->maxbytes, 'trusttext'=>true, 'context'=>$context);
     $attachmentoptions = array('subdirs'=>0, 'maxfiles'=>50, 'maxbytes'=>$email->maxbytes, 'context'=>$context);
     
-    $itemid = null;  //being set to NULL creates a new entry
+    $itemid = isset($mail->id)?$mail->id:null;  //being set to NULL creates a new entry
     $mail = file_prepare_standard_filemanager($mail, 'attachments', $attachmentoptions, $context, 'mod_email', 'attachments', $itemid);
     
     $itemid = isset($mail->bodyitemid)?$mail->bodyitemid:null;
@@ -1687,7 +1687,7 @@ function email_forward($mailid, $options, $context) {
  * @return boolean Success/Fail
  * @todo Finish documenting this function
  */
-function email_draftmailform($mailid, $options) {
+function email_draftmailform($mailid, $options, $context) {
     global $DB, $CFG;
     
 	// Get mail
@@ -1707,7 +1707,7 @@ function email_draftmailform($mailid, $options) {
 
 	include_once('sendmail_form.php');
         $selectedusers = array();
-        $formoptions = email_get_form_options($email, $mail, $options, $selectedusers);
+        $formoptions = email_get_form_options($email, $mail, $options, $selectedusers, $context);
         $mform = new mod_email_sendmail_form('sendmail.php', $formoptions);
 
         //Form processing and displaying is done here
