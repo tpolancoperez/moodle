@@ -1625,14 +1625,20 @@ class assign {
             $useridlist = $this->get_grading_userid_list();
         }
         
+        //BUGFIX: in PostgreSQL the get_grading_userid_list() may not always be in the same order, double check the userid
         $userid = optional_param('userid', 0, PARAM_INT);
-        if ($userid > 0) { // if the userid parqam is set
+        if ($userid > 0) { // if the userid param is set
             if($userid != $useridlist[$rownum]){    // And it is not the same as the userid of the rownumber
+                $found = false;
                 foreach($useridlist as $k=>$v){     // Find the userid and update the rownumber
                     if($v == $userid){
                         $rownum = $k;
+                        $found = true;
                         break;
                     }
+                }
+                if(!$found){
+                    throw new coding_exception('Error, userid not found in get_grading_userid_list(): ' . $userid);
                 }
             }
         }
