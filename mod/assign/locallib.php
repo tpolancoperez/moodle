@@ -369,7 +369,7 @@ class assign {
             $o .= $this->view_plugin_content('assignsubmission');
         } else if ($action == 'editsubmission') {
             $o .= $this->view_edit_submission_page($mform);
-        } else if ($action == 'grading') {
+        } else if ($action == 'grading') {           
             $o .= $this->view_grading_page();
         } else if ($action == 'downloadall') {
             $o .= $this->download_submissions();
@@ -1624,6 +1624,19 @@ class assign {
         } else {
             $useridlist = $this->get_grading_userid_list();
         }
+        
+        $userid = optional_param('userid', 0, PARAM_INT);
+        if ($userid > 0) { // if the userid parqam is set
+            if($userid != $useridlist[$rownum]){    // And it is not the same as the userid of the rownumber
+                foreach($useridlist as $k=>$v){     // Find the userid and update the rownumber
+                    if($v == $userid){
+                        $rownum = $k;
+                        break;
+                    }
+                }
+            }
+        }
+        
         $last = false;
         $userid = $useridlist[$rownum];
         if ($rownum == count($useridlist) - 1) {
@@ -1783,7 +1796,7 @@ class assign {
                                                                         'gradingtable'=>$table));
             $o .= $this->output->render(new assign_form('quickgradingform', $quickgradingform));
         } else {
-            $o .= $this->output->render(new assign_grading_table($this, $perpage, $filter, 0, false));
+            $o .= $this->output->render(new assign_grading_table($this, $perpage, $filter, 0, false));            
         }
 
         $currentgroup = groups_get_activity_group($this->get_course_module(), true);
