@@ -825,15 +825,17 @@ function email_printblocks($userid, $options) {
                 // Check if show principal course
 		if ( $CFG->email_display_course_principal ) {
                     if ($cm = get_coursemodule_from_instance('email', $email->id, $course->id)) {
-                        //added
-                        $list[]  = '<a href="'.$CFG->wwwroot.'/mod/email/view.php?id='.$cm->id.'">'.$course->fullname.'</a>';
+                        //added   
+                        $dimmed = (!$cm->visible || !$course->visible)?' class="dimmed"':'';
+                        $list[]  = '<a href="'.$CFG->wwwroot.'/mod/email/view.php?id='.$cm->id.'"'.$dimmed.'>'.$course->fullname.'</a>';
                         $icons[] = $icon;
                     }
 		} else {
                     // Don't show principal course.
                     if ( $course->id != 1 ) {
                         if ($cm = get_coursemodule_from_instance('email', $email->id, $course->id)) {
-                            $list[]  = '<a href="'.$CFG->wwwroot.'/mod/email/view.php?id='.$cm->id.'">'.$course->fullname.'</a>';
+                            $dimmed = (!$cm->visible || !$course->visible)?' class="dimmed"':'';
+                            $list[]  = '<a href="'.$CFG->wwwroot.'/mod/email/view.php?id='.$cm->id.'"'.$dimmed.'>'.$course->fullname.'</a>';
                             $icons[] = $icon;
                         }
                     }

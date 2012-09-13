@@ -74,7 +74,7 @@ class block_email extends block_list {
 						// By configure show or not show principal course
 						if ( $CFG->email_display_course_principal ) {
                                                         $contentitem = '<a href="'.$CFG->wwwroot.'/mod/email/view.php?id='.$cm->id.'"';
-                                                        $contentitem.= ($cm->visible == 0)?' class="dimmed"':'';
+                                                        $contentitem.= (!$cm->visible || !$my_course->visible)?' class="dimmed"':'';
                                                         $contentitem.= '>'.$my_course->fullname .' '. $number_unread_mails.'</a>';
 							$this->content->items[] = $contentitem;
 							$this->content->icons[] = $icon;
@@ -82,7 +82,7 @@ class block_email extends block_list {
 							// Don't display principal course
 							if ( $course->id != 1 ) {
                                                             $contentitem = '<a href="'.$CFG->wwwroot.'/mod/email/view.php?id='.$cm->id.'"';
-                                                            $contentitem.= ($cm->visible == 0)?' class="dimmed"':'';
+                                                            $contentitem.= (!$cm->visible || !$my_course->visible)?' class="dimmed"':'';
                                                             $contentitem.= '>'.$my_course->fullname .' '. $number_unread_mails.'</a>';
                                                             $this->content->items[] = $contentitem;
                                                             $this->content->icons[] = $icon;
@@ -103,7 +103,7 @@ class block_email extends block_list {
 					// By configure show or not show principal course
                                         if ( $CFG->email_display_course_principal or !isset($CFG->email_display_course_principal) ) {
                                                 $contentitem = '<a href="'.$CFG->wwwroot.'/mod/email/view.php?id='.$cm->id.'"';
-                                                $contentitem.= ($cm->visible == 0)?' class="dimmed"':'';
+                                                $contentitem.= (!$cm->visible || !$my_course->visible)?' class="dimmed"':'';
                                                 $contentitem.= '>'.$my_course->fullname .' '. $number_unread_mails.'</a>';
                                                 $this->content->items[] = $contentitem;
                                                 $this->content->icons[] = $icon;
@@ -111,7 +111,7 @@ class block_email extends block_list {
                                                 // Don't display principal course
                                                 if ( $course->id != 1 ) {
                                                     $contentitem = '<a href="'.$CFG->wwwroot.'/mod/email/view.php?id='.$cm->id.'"';
-                                                    $contentitem.= ($cm->visible == 0)?' class="dimmed"':'';
+                                                    $contentitem.= (!$cm->visible || !$my_course->visible)?' class="dimmed"':'';
                                                     $contentitem.= '>'.$my_course->fullname .' '. $number_unread_mails.'</a>';
                                                     $this->content->items[] = $contentitem;
                                                     $this->content->icons[] = $icon;
