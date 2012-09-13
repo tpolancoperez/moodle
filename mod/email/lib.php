@@ -842,40 +842,6 @@ function email_printblocks($userid, $options) {
             }
         }
         
-/*        
-	// Get list accounts
-	if (! $accounts = $DB->get_records('email_account', array('userid'=>$userid)) ) {
-		$list = array();
-	}
-
-
-
-	// Get courses associated at this account
-	foreach ($accounts as $account) {
-		$email   = $DB->get_record('email', array('id'=>$account->emailid));
-		if($email === false){
-                    continue;
-                }
-                $course  = $DB->get_record('course', array('id'=>$email->course));
-
-		// Check if show principal course
-		if ( $CFG->email_display_course_principal ) {
-                    if ($cm = get_coursemodule_from_instance('email', $email->id, $course->id)) {
-                        //added
-                        $list[]  = '<a href="'.$CFG->wwwroot.'/mod/email/view.php?id='.$cm->id.'">'.$course->fullname.'</a>';
-                        $icons[] = $icon;
-                    }
-		} else {
-			// Don't show principal course.
-			if ( $course->id != 1 ) {
-				if ($cm = get_coursemodule_from_instance('email', $email->id, $course->id)) {
-                                	$list[]  = '<a href="'.$CFG->wwwroot.'/mod/email/view.php?id='.$cm->id.'">'.$course->fullname.'</a>';
-					$icons[] = $icon;
-				}
-			}
-		}
-	}
-*/
 	// Print block of my account courses
 	print_side_block($startdivtitle.$strcourses.$enddivtitle, '', $list, $icons);
 
