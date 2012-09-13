@@ -14,14 +14,35 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+require_once(dirname(dirname(dirname(dirname(__FILE__)))) . '/config.php');
+require_once($CFG->libdir.'/adminlib.php');
+require_login();
+require_capability('moodle/site:config', get_context_instance(CONTEXT_SYSTEM));
 
-$plugin->version  = 2012091202;
+require_once('../enrollib.php');
 
-$plugin->release = "2.1.8";
+admin_externalpage_setup('enroltoollmbstatus');
 
-$plugin->maturity = MATURITY_STABLE;
+echo $OUTPUT->header();
+
+$config = enrol_lmb_get_config();
 
 
-$plugin->requires = 2011033006.00;
-$plugin->component = 'enrol_lmb';
-$plugin->cron = 600;
+echo $OUTPUT->box_start();
+
+
+
+$xlists = $DB->get_records('enrol_lmb_crosslists', array('status' => 0));
+
+foreach ($xlists as $xlist) {
+    print "Crosslist $xlist->crosslistsourcedid, Course $xlist->coursesourcedid<br>\n";
+    enrol_lmb_drop_crosslist_users($xlist);
+}
+
+echo $OUTPUT->box_end();
+
+
+echo $OUTPUT->footer();
+
+exit;
+

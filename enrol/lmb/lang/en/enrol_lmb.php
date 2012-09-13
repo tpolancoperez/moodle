@@ -118,6 +118,10 @@ $string['useridtypeother'] = 'useridtype - Other:';
 $string['otheruserid'] = 'Other User ID Source';
 $string['otherpassword'] = 'Other Password Source';
 $string['forcepassword'] = 'Force password on update';
+$string['customfield1mapping'] = 'Custom profile field';
+$string['customfield1help'] = 'Shortname of the custom field to map to.';
+$string['customfield1source'] = 'Custom profile field source';
+$string['customfield1sourcehelp'] = 'Source for the custom user profile field';
 
 $string['ignoreusernamecase'] = 'Ignore username capitalization';
 $string['ignoreemailcase'] = 'Ignore email address capitalization';
@@ -329,4 +333,10 @@ $string['page_importnow'] = 'Process File';
 $string['page_extractprocess'] = 'Process Extract';
 $string['page_reprocessenrolments'] = 'Reprocess Enrolments';
 $string['page_prunelmbtables'] = 'Prune Tables';
+$string['page_cleanxlsdrops'] = 'Clean XLS Drops';
 $string['tools'] = 'Tools';
+
+$string['lmb:enrol'] = 'Enrol users';
+$string['lmb:unenrol'] = 'Unenrol users from the course';
+$string['lmb:unenrolself'] = 'Unenrol self from the course';
+$string['lmb:manage'] = 'Manage user enrolments';

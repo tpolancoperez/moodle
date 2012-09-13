@@ -1,5 +1,5 @@
 Luminis Message Broker enrollment Module.
-Version: 2.1.7
+Version: 2.1.8
 Moodle version: 2.0.6 throught 2.3.x
 Maintainer: Eric Merrill (merrill@oakland.edu)
 
@@ -13,6 +13,15 @@ Documentation at https://github.com/merrill-oakland/Banner-Luminis-Message-Broke
 RECENT CHANGES
 --------------
 View full change log at https://github.com/merrill-oakland/Banner-Luminis-Message-Broker-for-Moodle/wiki/Change-Log
+
+Release 2.1.8
+Fix enrol_lmb_plugin->get_config to meet E_STRICT requirements.
+Fixed flaw in logic for dropping users from crosslists (and when crosslists are removed) (CONTRIB-3913).
+Added tool to cleanup the incorrectly dropped crosslists.
+Grades are only recovered if the user is not already installed. Significantly improves bulk import times.
+Added custom field mapping. Map XML data to a user custom field. (CONTRIB-3618 - Thanks to Charles Fulton!)
+Fixes to group enrolments if courses are deleted and recreated.
+
 
 Release 2.1.7
 Significant performance increase when processing on large site. Added indexes to common columns.
