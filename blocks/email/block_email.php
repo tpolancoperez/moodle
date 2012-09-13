@@ -32,7 +32,7 @@ class block_email extends block_list {
 		// Only show all course in principal course, others, show it
 		if ( $PAGE->course->id == 1 || $PAGE->pagetype == 'my-index') {
                     //Get the courses of the user
-                    $my_courses = enrol_get_my_courses('*','visible DESC, category DESC, sortorder ASC');
+                    $my_courses = enrol_get_my_courses('*');
 		} else {
                     // Get this course
                     $course = $DB->get_record('course',array('id'=>$PAGE->course->id));
