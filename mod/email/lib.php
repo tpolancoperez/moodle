@@ -815,6 +815,34 @@ function email_printblocks($userid, $options) {
 	// Define default path of icon for course
 	$icon = '<img src="'.$OUTPUT->pix_url('/i/course').'" height="16" width="16" alt="'.$strcourse.'" />';
 
+        
+        $list = array();
+        $my_courses = enrol_get_my_courses('*');
+        foreach ($my_courses as $course) {
+            $email = $DB->get_record('email', array('course'=>$course->id));
+            if ($email!=false) {
+                
+                // Check if show principal course
+		if ( $CFG->email_display_course_principal ) {
+                    if ($cm = get_coursemodule_from_instance('email', $email->id, $course->id)) {
+                        //added
+                        $list[]  = '<a href="'.$CFG->wwwroot.'/mod/email/view.php?id='.$cm->id.'">'.$course->fullname.'</a>';
+                        $icons[] = $icon;
+                    }
+		} else {
+                    // Don't show principal course.
+                    if ( $course->id != 1 ) {
+                        if ($cm = get_coursemodule_from_instance('email', $email->id, $course->id)) {
+                            $list[]  = '<a href="'.$CFG->wwwroot.'/mod/email/view.php?id='.$cm->id.'">'.$course->fullname.'</a>';
+                            $icons[] = $icon;
+                        }
+                    }
+		}
+                
+            }
+        }
+        
+/*        
 	// Get list accounts
 	if (! $accounts = $DB->get_records('email_account', array('userid'=>$userid)) ) {
 		$list = array();
@@ -847,7 +875,7 @@ function email_printblocks($userid, $options) {
 			}
 		}
 	}
-
+*/
 	// Print block of my account courses
 	print_side_block($startdivtitle.$strcourses.$enddivtitle, '', $list, $icons);
 
