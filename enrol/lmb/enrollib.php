@@ -50,7 +50,41 @@ function enrol_lmb_get_roleid($imsrole, $config=null) {
 
 
 
+function enrol_lmb_get_crosslist_children($xlsid, $merged = true) {
+    global $DB;
 
+    $params = array('crosslistsourcedid' => $xlsid);
+    if ($merged) {
+        $params['type'] = 'merge';
+    }
+
+    return $DB->get_records('enrol_lmb_crosslists', $params);
+}
+
+function enrol_lmb_check_enrolled_in_xls_merged($userid, $courseid) {
+    global $DB;
+
+    if (!$xlsid = $DB->get_field('course', 'idnumber', array('id' => $courseid))) {
+        return false;
+    }
+
+    if (!$personsourcedid = $DB->get_field('user', 'idnumber', array('id' => $userid))) {
+        return false;
+    }
+
+    $subsql = "SELECT coursesourcedid FROM {enrol_lmb_crosslists} "
+            ."WHERE crosslistsourcedid = :xlsid AND type = 'merge' AND status = 1";
+    $sql = "SELECT * FROM {enrol_lmb_enrolments} WHERE status = 1 "
+            ."AND personsourcedid = :personsourcedid AND coursesourcedid IN (".$subsql.")";
+
+    $params = array('personsourcedid' => $personsourcedid, 'xlsid' => $xlsid);
+
+    if ($enrols = $DB->get_records_sql($sql, $params)) {
+        return true;
+    }
+
+    return false;
+}
 
 function enrol_lmb_get_crosslist_groupid($coursesourcedid, $crosslistsourcedid = null) {
     global $DB;
@@ -65,7 +99,7 @@ function enrol_lmb_get_crosslist_groupid($coursesourcedid, $crosslistsourcedid =
         }
     }
 
-    if ($crosslist->crosslistgroupid) {
+    if ($crosslist->crosslistgroupid && groups_group_exists($crosslist->crosslistgroupid)) {
         return $crosslist->crosslistgroupid;
     }
     return enrol_lmb_create_crosslist_group($crosslist);
@@ -76,8 +110,8 @@ function enrol_lmb_create_crosslist_group($lmbcrosslist) {
     global $CFG, $DB;
     require_once($CFG->dirroot.'/group/lib.php');
 
-    if ($lmbcrosslist->crosslistgroupid) {
-        return $crosslist->crosslistgroupid;
+    if ($lmbcrosslist->crosslistgroupid && groups_group_exists($lmbcrosslist->crosslistgroupid)) {
+        return $lmbcrosslist->crosslistgroupid;
     }
 
     if (!$mdlcourse = $DB->get_record('course', array('idnumber' => $lmbcrosslist->crosslistsourcedid))) {
@@ -321,7 +355,7 @@ function enrol_lmb_force_course_to_db($idnumber, $print = false) {
         foreach ($enrols as $enrol) {
             $logline = $enrol->personsourcedid.':';
 
-            $status = $enrolmod->process_enrolment_log($enrol, $logline, $config) && $status;
+            $status = $enrolmod->process_enrolment_log($enrol, $logline) && $status;
 
             $logline .= "<br>\n";
             if ($print) {

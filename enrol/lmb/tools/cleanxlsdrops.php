@@ -19,33 +19,30 @@ require_once($CFG->libdir.'/adminlib.php');
 require_login();
 require_capability('moodle/site:config', get_context_instance(CONTEXT_SYSTEM));
 
-require_once('../lib.php');
+require_once('../enrollib.php');
 
-admin_externalpage_setup('enroltoolimportextract');
-
-$config = enrol_lmb_get_config();
-
-$term = null;
-$matches = array();
+admin_externalpage_setup('enroltoollmbstatus');
 
 echo $OUTPUT->header();
 
+$config = enrol_lmb_get_config();
+
+
 echo $OUTPUT->box_start();
 
-// Check to see if a folder is set in config.
-if (!isset($config->bannerxmlfolder) || !$config->bannerxmlfolder) {
-    die();
+
+
+$xlists = $DB->get_records('enrol_lmb_crosslists', array('status' => 0));
+
+foreach ($xlists as $xlist) {
+    print "Crosslist $xlist->crosslistsourcedid, Course $xlist->coursesourcedid<br>\n";
+    enrol_lmb_drop_crosslist_users($xlist);
 }
-
-$enrol = new enrol_lmb_plugin();
-
-print("<pre>");
-
-$enrol->process_folder(null);
-
-print("</pre>");
 
 echo $OUTPUT->box_end();
 
+
 echo $OUTPUT->footer();
+
+exit;
 
