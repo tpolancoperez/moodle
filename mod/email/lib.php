@@ -1103,7 +1103,7 @@ function email_get_form_options($email, $mail, $options, $selectedusers, $contex
     $bodyoptions = array('subdirs'=>0, 'maxfiles'=>50, 'maxbytes'=>$email->maxbytes, 'trusttext'=>true, 'context'=>$context);
     $attachmentoptions = array('subdirs'=>0, 'maxfiles'=>50, 'maxbytes'=>$email->maxbytes, 'context'=>$context);
     
-    $itemid = isset($mail->id)?$mail->id:null;  //being set to NULL creates a new entry
+    $itemid = isset($mail->attachmentsitemid)?$mail->attachmentsitemid:null;  //being set to NULL creates a new entry
     $mail = file_prepare_standard_filemanager($mail, 'attachments', $attachmentoptions, $context, 'mod_email', 'attachments', $itemid);
     
     $itemid = isset($mail->bodyitemid)?$mail->bodyitemid:null;
@@ -1448,66 +1448,6 @@ function email_prepare_add_old_attachments($mail, $checked=false) {
  * 
  */
 function email_modify_body_for_reply($mail, $user){
-    $maxCharInLine = 100;
-    $l = strlen($mail->body);
-    $i = 0;
-    $c = 0;
-    while($i < $l){
-        if(substr_compare($mail->body, "&gt;", $i, 4)===0){
-            $i += 4;
-            //move to end of consecutive >'s
-            while(substr_compare($mail->body, "&gt;", $i, 4)===0){
-                $i += 4;
-            }
-            
-            //insert another >
-            $body = substr($mail->body, 0 , $i);
-            $body.= "&gt;";
-            $body.= substr($mail->body, $i);
-            $mail->body = $body;
-            $i += 4;
-            $c = 0;
-            $l = strlen($mail->body);
-            
-        }elseif(substr_compare($mail->body, "<p>", $i, 3)===0){
-            $i += 3;
-            //move to end of consecutive >'s
-            while(substr_compare($mail->body, "&gt;", $i, 4)===0){
-                $i += 4;
-            }
-            
-            //insert another >
-            $body = substr($mail->body, 0 , $i);
-            $body.= "&gt;";
-            $body.= substr($mail->body, $i);
-            $mail->body = $body;
-            $i += 4;
-            $c = 0;
-            $l = strlen($mail->body);
-            
-        }elseif(substr_compare($mail->body, "<br />", $i, 6)===0){
-            $i += 6;
-            $c = 0;
-            
-        }else{
-            $c++;
-            if($c > $maxCharInLine){
-                //If char is not a whitespace back up until you find one.
-                while($mail->body[$i]!=' ' && $i>0){
-                    $i--;
-                }
-                $body = substr($mail->body, 0 , $i);
-                $body.= "<br />&gt;";
-                $body.= substr($mail->body, $i);
-                $mail->body = $body;
-                $i += 10;
-                $c = 0;
-                $l = strlen($mail->body);
-            }else{
-                $i++;
-            }
-        }
-    }
     $mail->body = "<br/>\n<br/>\n".email_make_default_line_replyforward($user, $mail->timecreated)."\n".$mail->body;
     return $mail->body;
 }
@@ -1550,10 +1490,13 @@ function email_reply($mailid, $options, $context) {
     $mail->body = email_modify_body_for_reply($mail, $userwriter);
 
     include_once('sendmail_form.php');
+    //$mail->attachmentsitemid = $mail->id; //enables loading of file attachments
+    $mail->bodyitemid = $mail->id; //enables loading of body attachments
     $formoptions = email_get_form_options($email, $mail, $options, $selectedusers, $context);
     $mform = new mod_email_sendmail_form('sendmail.php', $formoptions);
     
-    $mail->body = $mail->body_editor;    
+    $mail->body = $mail->body_editor;
+    $mail->attachments = $mail->attachments_filemanager;
     $mform->set_data($mail);
     $mform->display();
     
@@ -1611,10 +1554,13 @@ function email_replyall($mailid, $options, $context) {
     $mail->body = email_modify_body_for_reply($mail, $userwriter);
 
     include_once('sendmail_form.php');
+    //$mail->attachmentsitemid = $mail->id; //enables loading of file attachments
+    $mail->bodyitemid = $mail->id; //enables loading of body attachments
     $formoptions = email_get_form_options($email, $mail, $options, $selectedusers, $context);
     $mform = new mod_email_sendmail_form('sendmail.php', $formoptions);
     
     $mail->body = $mail->body_editor;
+    $mail->attachments = $mail->attachments_filemanager;
     $mform->set_data($mail);
     $mform->display();
     
@@ -1656,19 +1602,17 @@ function email_forward($mailid, $options, $context) {
     // Modify Body
     $mail->body = email_modify_body_for_reply($mail, $user);
 
-    // Add old attachments
-//    if ( email_has_attachments($mail) ) {
-//            $formoldattachments = email_prepare_add_old_attachments($mail);
-//    }
-
     $options->action = 'forward';
     $selectedusers = array();
     include_once('sendmail_form.php');
+    $mail->attachmentsitemid = $mail->id; //enables loading of file attachments
+    $mail->bodyitemid = $mail->id; //enables loading of body attachments
     $formoptions = email_get_form_options($email, $mail, $options, $selectedusers, $context);
     $mform = new mod_email_sendmail_form('sendmail.php', $formoptions);
     
     //Form processing and displaying is done here
     $mail->body = $mail->body_editor;
+    $mail->attachments = $mail->attachments_filemanager;
     $mform->set_data($mail);
     $mform->display();
     
@@ -1703,11 +1647,14 @@ function email_draftmailform($mailid, $options, $context) {
 
 	include_once('sendmail_form.php');
         $selectedusers = array();
+        $mail->attachmentsitemid = $mail->id; //enables loading of file attachments
+        $mail->bodyitemid = $mail->id; //enables loading of body attachments
         $formoptions = email_get_form_options($email, $mail, $options, $selectedusers, $context);
         $mform = new mod_email_sendmail_form('sendmail.php', $formoptions);
 
         //Form processing and displaying is done here
         $mail->body = $mail->body_editor;
+        $mail->attachments = $mail->attachments_filemanager;
         $mform->set_data($mail);
         $mform->display();
     
