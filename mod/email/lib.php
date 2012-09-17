@@ -2460,9 +2460,9 @@ function email_showaccountmails($accountid, $order = '', $page=0, $perpage=10, $
 
                 $struser = '';
 
-                if (! email_readed($mail->id, $accountid) ) {
-                    $attribute = array( 'bgcolor' => '#CCCCCC', 'style' => 'font-weight:bold');
-                }
+//                if (! email_readed($mail->id, $accountid) ) {
+//                    $attribute = array( 'bgcolor' => '#CCCCCC', 'style' => 'font-weight:bold');
+//                }
 
             } else {
 
@@ -3474,17 +3474,18 @@ function email_get_number_unreaded($accountid, $folderid=NULL) {
 			return $DB->count_records_sql( $sql.$wheresql );
 
 		} else if ( email_isfolder_type($folder, EMAIL_DRAFT) ) {
-			// For apply order, I've writting an sql clause
-			$sql = "SELECT count(*)
-		                   	FROM {email_mail} m
-		                   	LEFT JOIN {email_foldermail} fm ON m.id = fm.mailid ";
-
-
-			// WHERE principal clause for filter account
-			$wheresql = " WHERE m.accountid = $accountid
-						  AND fm.folderid = $folder->id";
-
-			return $DB->count_records_sql( $sql.$wheresql );
+                    return false;
+//			// For apply order, I've writting an sql clause
+//			$sql = "SELECT count(*)
+//                                FROM {email_mail} m
+//                                LEFT JOIN {email_foldermail} fm ON m.id = fm.mailid ";
+//
+//
+//			// WHERE principal clause for filter account
+//			$wheresql = " WHERE m.accountid = $accountid
+//						  AND fm.folderid = $folder->id";
+//
+//			return $DB->count_records_sql( $sql.$wheresql );
 
 		} else {
 			return false;
