@@ -55,3 +55,12 @@ body#page-mod-email-participants div#frametop {
 .modtype_email .editing_duplicate {
     display:none;
 }
+
+body#page-mod-email-view .filemanager {
+    width:522px;
+    margin-top: 3px;
+    margin-bottom: 3px;
+}
+body#page-mod-email-view .filemanager-container {
+    width:520px;
+}
