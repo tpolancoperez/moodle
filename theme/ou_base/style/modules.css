@@ -1,5 +1,7 @@
 /* Base */
 
 .forumpost {border: 1px solid #aaaaaa;}
+.forumpost.unread {background: #c1d5ff;}
+.forumpost.unread .content {border:2px solid #3a75e1;} /** inside border of unread posts in nested format in */
 
 .resourcecontent #resourceobject {min-height: 650px; min-width: 850px;}
