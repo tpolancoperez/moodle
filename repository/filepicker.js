@@ -113,7 +113,7 @@ YUI.add('moodle-core_filepicker', function(Y) {
 
     /** scan TreeView to find which node contains image with id=imgid and replace it's html
      * with the new image source. */
-    YAHOO.widget.Node.prototype.refreshPreviews = function(imgid, newsrc, regex) {
+    Y.YUI2.widget.Node.prototype.refreshPreviews = function(imgid, newsrc, regex) {
         if (!regex) {
             regex = new RegExp("<img\\s[^>]*id=\""+imgid+"\"[^>]*?(/?)>", "im");
         }
@@ -199,7 +199,7 @@ YUI.add('moodle-core_filepicker', function(Y) {
             }
             // create node
             tmpnodedata.html = el.getContent();
-            var tmpNode = new YAHOO.widget.HTMLNode(tmpnodedata, level, false);
+            var tmpNode = new Y.YUI2.widget.HTMLNode(tmpnodedata, level, false);
             if (node.dynamicLoadComplete) {
                 tmpNode.dynamicLoadComplete = true;
             }
@@ -219,7 +219,7 @@ YUI.add('moodle-core_filepicker', function(Y) {
         var initialize_tree_view = function() {
             var parentid = scope.one('.'+classname).get('id');
             // TODO MDL-32736 use YUI3 gallery TreeView
-            scope.treeview = new YAHOO.widget.TreeView(parentid);
+            scope.treeview = new Y.YUI2.widget.TreeView(parentid);
             if (options.dynload) {
                 scope.treeview.setDynamicLoad(Y.bind(options.treeview_dynload, options.callbackcontext), 1);
             }
@@ -273,7 +273,7 @@ YUI.add('moodle-core_filepicker', function(Y) {
                     callback = options.rightclickcallback;
                 }
                 Y.bind(callback, options.callbackcontext)(e, e.node.fileinfo);
-                YAHOO.util.Event.stopEvent(e.event)
+                Y.YUI2.util.Event.stopEvent(e.event)
             });
             // TODO MDL-32736 support right click
             /*if (options.rightclickcallback) {
@@ -1386,6 +1386,8 @@ M.core_filepicker.init = function(Y, options) {
             this.active_repo.norefresh = (data.login || data.norefresh); // this is either login form or 'norefresh' attribute set
             this.active_repo.nologin = (data.login || data.nologin); // this is either login form or 'nologin' attribute is set
             this.active_repo.logouttext = data.logouttext?data.logouttext:null;
+            this.active_repo.logouturl = (data.logouturl || '');
+            this.active_repo.message = (data.message || '');
             this.active_repo.help = data.help?data.help:null;
             this.active_repo.manage = data.manage?data.manage:null;
             this.print_header();
@@ -1618,7 +1620,9 @@ M.core_filepicker.init = function(Y, options) {
             var client_id = this.options.client_id;
             var id = data.upload.id+'_'+client_id;
             var content = this.fpnode.one('.fp-content');
-            content.setContent(M.core_filepicker.templates.uploadform);
+            var template_name = 'uploadform_'+this.options.repositories[data.repo_id].type;
+            var template = M.core_filepicker.templates[template_name] || M.core_filepicker.templates['uploadform'];
+            content.setContent(template);
 
             content.all('.fp-file,.fp-saveas,.fp-setauthor,.fp-setlicense').each(function (node) {
                 node.all('label').set('for', node.one('input,select').generateID());
@@ -1696,6 +1700,9 @@ M.core_filepicker.init = function(Y, options) {
                         callback: this.display_response
                     }, true);
                 }
+                if (this.active_repo.logouturl) {
+                    window.open(this.active_repo.logouturl, 'repo_auth', 'location=0,status=0,width=500,height=300,scrollbars=yes');
+                }
             }, this);
             toolbar.one('.fp-tb-refresh').one('a,button').on('click', function(e) {
                 e.preventDefault();
@@ -1718,7 +1725,7 @@ M.core_filepicker.init = function(Y, options) {
                             callback: this.display_response
                         }, true);
                     }
-                }, this);
+            }, this);
 
             // it does not matter what kind of element is .fp-tb-manage, we create a dummy <a>
             // element and use it to open url on click event
@@ -1815,6 +1822,10 @@ M.core_filepicker.init = function(Y, options) {
             // help url
             enable_tb_control(toolbar.one('.fp-tb-help'), r.help);
             Y.one('#fp-tb-help-'+client_id+'-link').set('href', r.help);
+
+            // message
+            enable_tb_control(toolbar.one('.fp-tb-message'), r.message);
+            toolbar.one('.fp-tb-message').setContent(r.message);
         },
         print_path: function() {
             if (!this.pathbar) {

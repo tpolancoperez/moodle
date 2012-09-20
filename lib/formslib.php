@@ -80,26 +80,26 @@ function form_init_date_js() {
         $module   = 'moodle-form-dateselector';
         $function = 'M.form.dateselector.init_date_selectors';
         $config = array(array(
-            'firstdayofweek'    =>  get_string('firstdayofweek', 'langconfig'),
-            'mon'               => strftime('%a', 360000),      // 5th Jan 1970 at 12pm
-            'tue'               => strftime('%a', 446400),
-            'wed'               => strftime('%a', 532800),
-            'thu'               => strftime('%a', 619200),
-            'fri'               => strftime('%a', 705600),
-            'sat'               => strftime('%a', 792000),
-            'sun'               => strftime('%a', 878400),
-            'january'           => strftime('%B', 14400),       // 1st Jan 1970 at 12pm
-            'february'          => strftime('%B', 2692800),
-            'march'             => strftime('%B', 5112000),
-            'april'             => strftime('%B', 7790400),
-            'may'               => strftime('%B', 10382400),
-            'june'              => strftime('%B', 13060800),
-            'july'              => strftime('%B', 15652800),
-            'august'            => strftime('%B', 18331200),
-            'september'         => strftime('%B', 21009600),
-            'october'           => strftime('%B', 23601600),
-            'november'          => strftime('%B', 26280000),
-            'december'          => strftime('%B', 28872000)
+            'firstdayofweek'    => get_string('firstdayofweek', 'langconfig'),
+            'mon'               => strftime('%a', strtotime("Monday")),
+            'tue'               => strftime('%a', strtotime("Tuesday")),
+            'wed'               => strftime('%a', strtotime("Wednesday")),
+            'thu'               => strftime('%a', strtotime("Thursday")),
+            'fri'               => strftime('%a', strtotime("Friday")),
+            'sat'               => strftime('%a', strtotime("Saturday")),
+            'sun'               => strftime('%a', strtotime("Sunday")),
+            'january'           => strftime('%B', strtotime("January 1")),
+            'february'          => strftime('%B', strtotime("February 1")),
+            'march'             => strftime('%B', strtotime("March 1")),
+            'april'             => strftime('%B', strtotime("April 1")),
+            'may'               => strftime('%B', strtotime("May 1")),
+            'june'              => strftime('%B', strtotime("June 1")),
+            'july'              => strftime('%B', strtotime("July 1")),
+            'august'            => strftime('%B', strtotime("August 1")),
+            'september'         => strftime('%B', strtotime("September 1")),
+            'october'           => strftime('%B', strtotime("October 1")),
+            'november'          => strftime('%B', strtotime("November 1")),
+            'december'          => strftime('%B', strtotime("December 1"))
         ));
         $PAGE->requires->yui_module($module, $function, $config);
         $done = true;
@@ -395,7 +395,7 @@ abstract class moodleform {
                     if ($rule['type'] == 'required') {
                         $draftid = (int)$mform->getSubmitValue($elementname);
                         $fs = get_file_storage();
-                        $context = get_context_instance(CONTEXT_USER, $USER->id);
+                        $context = context_user::instance($USER->id);
                         if (!$files = $fs->get_area_files($context->id, 'user', 'draft', $draftid, 'id DESC', false)) {
                             $errors[$elementname] = $rule['message'];
                         }
@@ -673,7 +673,7 @@ abstract class moodleform {
             }
             $draftid = $values[$elname];
             $fs = get_file_storage();
-            $context = get_context_instance(CONTEXT_USER, $USER->id);
+            $context = context_user::instance($USER->id);
             if (!$files = $fs->get_area_files($context->id, 'user', 'draft', $draftid, 'id DESC', false)) {
                 return false;
             }
@@ -721,7 +721,7 @@ abstract class moodleform {
             }
             $draftid = $values[$elname];
             $fs = get_file_storage();
-            $context = get_context_instance(CONTEXT_USER, $USER->id);
+            $context = context_user::instance($USER->id);
             if (!$files = $fs->get_area_files($context->id, 'user', 'draft', $draftid, 'id DESC', false)) {
                 return false;
             }
@@ -784,7 +784,7 @@ abstract class moodleform {
             }
             $draftid = $values[$elname];
             $fs = get_file_storage();
-            $context = get_context_instance(CONTEXT_USER, $USER->id);
+            $context = context_user::instance($USER->id);
             if (!$files = $fs->get_area_files($context->id, 'user', 'draft', $draftid, 'id DESC', false)) {
                 return null;
             }
@@ -828,7 +828,7 @@ abstract class moodleform {
                 return false;
             }
             $draftid = $values[$elname];
-            $context = get_context_instance(CONTEXT_USER, $USER->id);
+            $context = context_user::instance($USER->id);
             if (!$files = $fs->get_area_files($context->id, 'user' ,'draft', $draftid, 'id DESC', false)) {
                 return false;
             }
@@ -890,7 +890,7 @@ abstract class moodleform {
             }
             $draftid = $values[$elname];
             $fs = get_file_storage();
-            $context = get_context_instance(CONTEXT_USER, $USER->id);
+            $context = context_user::instance($USER->id);
             if (!$files = $fs->get_area_files($context->id, 'user', 'draft', $draftid, 'id DESC', false)) {
                 return false;
             }
@@ -1301,13 +1301,15 @@ class MoodleQuickForm extends HTML_QuickForm_DHTMLRulesTableless {
         } else {
             $this->_pageparams = '';
         }
-        //no 'name' atttribute for form in xhtml strict :
-        $attributes = array('action'=>$action, 'method'=>$method,
-                'accept-charset'=>'utf-8', 'id'=>'mform'.$formcounter) + $target;
+        // No 'name' atttribute for form in xhtml strict :
+        $attributes = array('action' => $action, 'method' => $method, 'accept-charset' => 'utf-8') + $target;
+        if (is_null($this->getAttribute('id'))) {
+            $attributes['id'] = 'mform' . $formcounter;
+        }
         $formcounter++;
         $this->updateAttributes($attributes);
 
-        //this is custom stuff for Moodle :
+        // This is custom stuff for Moodle :
         $oldclass=   $this->getAttribute('class');
         if (!empty($oldclass)){
             $this->updateAttributes(array('class'=>$oldclass.' mform'));
@@ -1596,10 +1598,14 @@ class MoodleQuickForm extends HTML_QuickForm_DHTMLRulesTableless {
         $unfiltered = array();
         if (null === $elementList) {
             // iterate over all elements, calling their exportValue() methods
-            $emptyarray = array();
             foreach (array_keys($this->_elements) as $key) {
-                if ($this->_elements[$key]->isFrozen() && !$this->_elements[$key]->_persistantFreeze){
-                    $value = $this->_elements[$key]->exportValue($emptyarray, true);
+                if ($this->_elements[$key]->isFrozen() && !$this->_elements[$key]->_persistantFreeze) {
+                    $varname = $this->_elements[$key]->_attributes['name'];
+                    $value = '';
+                    // If we have a default value then export it.
+                    if (isset($this->_defaultValues[$varname])) {
+                        $value = array($varname => $this->_defaultValues[$varname]);
+                    }
                 } else {
                     $value = $this->_elements[$key]->exportValue($this->_submitValues, true);
                 }
@@ -1626,7 +1632,6 @@ class MoodleQuickForm extends HTML_QuickForm_DHTMLRulesTableless {
         if (is_array($this->_constantValues)) {
             $unfiltered = HTML_QuickForm::arrayMerge($unfiltered, $this->_constantValues);
         }
-
         return $unfiltered;
     }
 

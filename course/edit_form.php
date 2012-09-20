@@ -124,7 +124,7 @@ class course_edit_form extends moodleform {
             array(COURSE_DISPLAY_SINGLEPAGE => get_string('coursedisplay_single'),
                 COURSE_DISPLAY_MULTIPAGE => get_string('coursedisplay_multi')));
         $mform->addHelpButton('coursedisplay', 'coursedisplay');
-        $mform->setDefault('coursedisplay', COURSE_DISPLAY_SINGLEPAGE);
+        $mform->setDefault('coursedisplay', $courseconfig->coursedisplay);
 
         for ($i = 0; $i <= $courseconfig->maxsections; $i++) {
             $sectionmenu[$i] = "$i";
@@ -156,7 +156,7 @@ class course_edit_form extends moodleform {
         $mform->addHelpButton('showreports', 'showreports');
         $mform->setDefault('showreports', $courseconfig->showreports);
 
-        $choices = get_max_upload_sizes($CFG->maxbytes);
+        $choices = get_max_upload_sizes($CFG->maxbytes, 0, 0, $course->maxbytes);
         $mform->addElement('select', 'maxbytes', get_string('maximumupload'), $choices);
         $mform->addHelpButton('maxbytes', 'maximumupload');
         $mform->setDefault('maxbytes', $courseconfig->maxbytes);

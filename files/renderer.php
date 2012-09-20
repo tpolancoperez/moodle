@@ -526,6 +526,7 @@ class core_files_renderer extends plugin_renderer_base {
                     <div class="{!}fp-tb-logout"><img src="'.$this->pix_url('a/logout').'" /><a href="#"></a></div>
                     <div class="{!}fp-tb-manage"><a href="#"><img src="'.$this->pix_url('a/setting').'" /> '.get_string('manageurl', 'repository').'</a></div>
                     <div class="{!}fp-tb-help"><a href="#"><img src="'.$this->pix_url('a/help').'" /> '.get_string('help').'</a></div>
+                    <div class="{!}fp-tb-message"></div>
                 </div>
                 <div class="{!}fp-viewbar">
                     <a class="{!}fp-vb-icons" href="#"></a>
@@ -965,7 +966,7 @@ class files_tree_viewer implements renderable {
         $this->path = array();
         while ($level) {
             $params = $level->get_params();
-            $context = get_context_instance_by_id($params['contextid']);
+            $context = context::instance_by_id($params['contextid']);
             // $this->context is current context
             if ($context->id != $this->context->id or empty($params['filearea'])) {
                 break;

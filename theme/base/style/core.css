@@ -106,7 +106,6 @@ img.iconkbhelp {height:17px;width:49px;}
 .buttons .singlebutton form,
 .buttons .singlebutton div {display: inline;}
 .buttons .singlebutton input {margin:20px 5px;}
-.blink {text-decoration: blink;}
 .headermain {font-weight:bold;}
 #maincontent {display: block;height: 1px;overflow: hidden;}
 img.uihint {cursor: help;}
@@ -252,8 +251,9 @@ input#id_externalurl {direction:ltr;}
  * Blogs
  */
 .addbloglink {text-align: center;}
-.blog_entry .audience {text-align: right;}
+.blog_entry .audience {text-align: right;padding-right: 4px;}
 .blog_entry .tags {margin-top: 15px;}
+.blog_entry .content {margin-left: 43px;}
 
 /**
  * Group
@@ -356,10 +356,9 @@ table.mod_index {width:100%;}
 .comment-paging{text-align:center;}
 .comment-paging .pageno{padding:2px;}
 .comment-paging .curpage{border:1px solid #CCC;}
-.comment-userpicture {width: 20px;float:left;}
-.comment-content {margin-left: 22px;}
-.comment-content div {margin:0;padding:0;}
-.comment-content p {padding:0;margin:0 18px 0 0;}
+.comment-message .picture {width: 20px;float:left;}
+.comment-message .text {margin:0;padding:0;}
+.comment-message .text p {padding:0;margin:0 18px 0 0;}
 .comment-delete {float:right;text-align:right;}
 .comment-delete-confirm {background: #eee; padding: 2px; width: 5em;text-align:center;}
 .comment-container {float:left;margin: 4px;}
@@ -450,10 +449,15 @@ body.tag .managelink {padding: 5px;}
 .path-backup .mform .grouped_settings.section_level {clear:both;}
 .path-backup .mform .grouped_settings {clear:both;overflow:hidden;}
 .path-backup .mform .grouped_settings .fitem .fitemtitle {width:40%;padding-right:10px;}
+.path-backup.dir-rtl .mform .grouped_settings .fitem .fitemtitle {width: 60%;}
 .path-backup .mform .grouped_settings .fitem .felement {width:50%;}
+.path-backup.dir-rtl .mform .grouped_settings .fitem .felement {width: 99%;}
 .path-backup .mform .grouped_settings.section_level .include_setting {width:50%;margin:0;float:left;clear:left;font-weight:bold;}
+.path-backup.dir-rtl  .mform .grouped_settings.section_level .include_setting {float: right; clear: right;}
 .path-backup .mform .grouped_settings.section_level .normal_setting {width:50%;margin:0;margin-left:50%;}
+.path-backup.dir-rtl  .mform .grouped_settings.section_level .normal_setting {margin:0;}
 .path-backup .mform .grouped_settings.activity_level .include_setting label {font-weight:normal;}
+.path-backup.dir-rtl .mform .grouped_settings.activity_level .include_setting label img {float:right;}
 .path-backup .mform .fitem fieldset.felement {margin-left:0;width:auto;padding-left:0;}
 .path-backup .notification.dependencies_enforced {text-align:center;color:#A00;font-weight:bold;}
 .path-backup .backup_progress {text-align:center;}
@@ -508,7 +512,7 @@ body.tag .managelink {padding: 5px;}
 #custommenu .yui3-menu-horizontal .yui3-menu-label,
 #custommenu .yui3-menu-horizontal .yui3-menu-content {background-image:none;background-position:right center;background-repeat:no-repeat;}
 #custommenu .yui3-menu-label,
-#custommenu .yui3-menu .yui3-menu .yui3-menu-label {background-image:url([[pix:theme|vertical-menu-submenu-indicator]]);}
+#custommenu .yui3-menu .yui3-menu .yui3-menu-label {background-image:url([[pix:theme|vertical-menu-submenu-indicator]]); padding-right: 20px;}
 #custommenu .yui3-menu .yui3-menu .yui3-menu-label-menuvisible {background-image:url([[pix:theme|horizontal-menu-submenu-indicator]]);}
 
 /**
@@ -555,6 +559,7 @@ body.tag .managelink {padding: 5px;}
 .userenrolment .col_role {width:262px;}
 .userenrolment .col_role .roles {margin-right:30px;}
 .userenrolment .col_role .role {float:left;padding:3px;margin:3px;}
+.dir-rtl .userenrolment .col_role .role {float:right;}
 .userenrolment .col_role .role a {margin-left:3px;cursor:pointer;}
 .userenrolment .col_role .addrole {float:right;width:18px;margin:3px;height:18px;text-align:center;}
 .userenrolment .col_role .addrole a img {vertical-align:bottom;}
@@ -893,6 +898,9 @@ sup {vertical-align: super;}
     -webkit-box-shadow: inset 0px 0px 30px 0px #CCCCCC;
     -moz-box-shadow: inset 0px 0px 30px 0px #CCCCCC;
 }
+.dir-rtl.jsenabled .choosercontainer #chooseform .alloptions {
+    max-width: 18.3em;
+}
 
 /* Settings for option rows and option subtypes */
 .choosercontainer #chooseform .moduletypetitle,
@@ -936,6 +944,9 @@ sup {vertical-align: super;}
 .choosercontainer #chooseform .subtype {
     margin-bottom: 0;
     padding: 0 1.6em 0 3.2em;
+}
+.dir-rtl .choosercontainer #chooseform .subtype {
+    padding: 0 2.6em 0 3.2em;
 }
 
 .choosercontainer #chooseform .subtype .typename {
