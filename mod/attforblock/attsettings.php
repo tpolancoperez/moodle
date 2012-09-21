@@ -136,7 +136,7 @@
                                              "<img src=\"".$OUTPUT->pix_url('t/delete')."\" alt=\"$deltitle\" /></a>&nbsp;";
             }
             $table->data[$i][] = "<a title=\"$titlevis\" href=\"attsettings.php?id=$cm->id&amp;st={$st->id}&amp;action=$action\">".
-                                                     "<img src=\"".$OUTPUT->pix_url('t/{$action}')."\" alt=\"$titlevis\" /></a>&nbsp;".
+                                                     "<img src=\"".$OUTPUT->pix_url("t/{$action}")."\" alt=\"$titlevis\" /></a>&nbsp;".
                                                      $deleteact;
             $i++;
     }
