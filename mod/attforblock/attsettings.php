@@ -58,8 +58,8 @@
                             print_error('cantdeletestatus', 'attforblock', "attsettings.php?id=$id");
 		    	}
 				
-		    	$confirm = optional_param('confirm');
-		    	if (isset($confirm)) {
+		    	$confirm = optional_param('confirm', 0, PARAM_INT);
+		    	if (isset($confirm) && $confirm==1) {
 		    		$DB->set_field('attendance_statuses', 'deleted', 1, array('id'=>$rec->id));
                                 redirect('attsettings.php?id='.$id, get_string('statusdeleted','attforblock'), 3);
 		    	}
