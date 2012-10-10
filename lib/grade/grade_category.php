@@ -914,6 +914,7 @@ class grade_category extends grade_object {
                     $possibleitemid = $grade_keys[$originalindex+$i];
                     if ($grade_values[$founditemid] != $grade_values[$possibleitemid]) {
                         // The next grade item has a different grade. Stop looking.
+                        $i++;
                         break;
                     }
 
