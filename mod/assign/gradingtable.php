@@ -61,13 +61,18 @@ class assign_grading_table extends table_sql implements renderable {
      * @param bool $quickgrading Is this table wrapped in a quickgrading form?
      */
     function __construct(assign $assignment, $perpage, $filter, $rowoffset, $quickgrading) {
-        global $CFG, $PAGE, $DB;
+        global $CFG, $PAGE, $DB, $SESSION;
         parent::__construct('mod_assign_grading');
         $this->assignment = $assignment;
         $this->perpage = $perpage;
         $this->quickgrading = $quickgrading;
         $this->output = $PAGE->get_renderer('mod_assign');
 
+        //set a default sort order because PostgreSQL and other DBs that may not have a consistent return row order
+        if(!isset($SESSION->flextable["mod_assign_grading"]->sortby["lastname"])){
+            $SESSION->flextable["mod_assign_grading"]->sortby["lastname"] = SORT_ASC;
+        }
+        
         $this->define_baseurl(new moodle_url($CFG->wwwroot . '/mod/assign/view.php', array('action'=>'grading', 'id'=>$assignment->get_course_module()->id)));
 
         // do some business - then set the sql
