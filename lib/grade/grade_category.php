@@ -919,6 +919,7 @@ class grade_category extends grade_object {
 
                     if ($extraused && $items[$possibleitemid]->aggregationcoef > 0) {
                         // Don't drop extra credit grade items. Continue the search.
+                        $i++;
                         continue;
                     }
 
