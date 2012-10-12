@@ -405,9 +405,14 @@ abstract class question_bank {
     public static function cron() {
         global $CFG;
 
-        // Delete any old question preview that got left in the database.
-        require_once($CFG->dirroot . '/question/previewlib.php');
-        question_preview_cron();
+        $lasttime = get_config('elis', 'previewdelete');
+        $now = time();
+        if (!$lastttime || (($now - $lasttime) >= (3600 * 4))) {
+            set_config('previewdelete', $now, 'elis');
+            // Delete any old question preview that got left in the database.
+            require_once($CFG->dirroot . '/question/previewlib.php');
+            question_preview_cron();
+        }
     }
 }
 
