@@ -407,7 +407,7 @@ abstract class question_bank {
 
         $lasttime = get_config('elis', 'previewdelete');
         $now = time();
-        if (!$lastttime || (($now - $lasttime) >= (3600 * 4))) {
+        if (!$lasttime || (($now - $lasttime) >= (3600 * 4))) {
             set_config('previewdelete', $now, 'elis');
             // Delete any old question preview that got left in the database.
             require_once($CFG->dirroot . '/question/previewlib.php');
