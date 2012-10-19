@@ -3372,8 +3372,10 @@ class assign {
     public function get_user_grades_for_gradebook($userid) {
         global $DB, $CFG;
         $grades = array();
-        $assignmentid = $this->get_instance()->id;
-
+        $inst = $this->get_instance();
+        $assignmentid = $inst->id;
+        $courseid = $inst->courseid;
+        
         $adminconfig = $this->get_admin_config();
         $gradebookpluginname = $adminconfig->feedback_plugin_for_gradebook;
         $gradebookplugin = null;
@@ -3386,10 +3388,14 @@ class assign {
                 }
             }
         }
+        
         if ($userid) {
             $where = ' WHERE u.id = ? ';
         } else {
-            $where = ' WHERE u.id != ? ';
+            $context = context_course::instance($courseid);
+            $enrolledusers = get_enrolled_users($context, '', '', 'u.id');
+            $userids = array_keys($enrolledusers);
+            $where = ' WHERE u.id IN ('.implode(',',$userids).') AND u.id != ?';
         }
 
         $graderesults = $DB->get_recordset_sql('SELECT u.id as userid, s.timemodified as datesubmitted, g.grade as rawgrade, g.timemodified as dategraded, g.grader as usermodified
