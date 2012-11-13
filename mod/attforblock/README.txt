@@ -30,3 +30,15 @@ INSTALLATION
 The attendance follows standard installation procedures.
 Place the "attforblock" directory in your mod directory.
 Then visit the Admin page in Moodle to activate it.
+
+
+-----------------------------------------------------------------------------------
+Modifications made to Moodle 2.3.1 by Mike Seiler, Fuller Theological Seminary
+-----------------------------------------------------------------------------------
+
+Attendance Module Files
+/var/moodle_www/html/mod/attforblock/renderer.php - modified the page to not allow and “add session” tab
+/var/moodle_www/html/mod/attforblock/renderables.php - modified the page to not print out the delete icon so that professors can’t “accidentally” delete an attendance session
+/var/moodle_www/html/mod/attforblock/lang/en/attforblock.php - removed the array options for “Late” and “Absent”
+
+/var/moodle_www/html/test_add_attendance.php - modified the script to use course categories, rather than the name of the quarter
