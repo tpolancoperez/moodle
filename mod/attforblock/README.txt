@@ -32,9 +32,9 @@ Place the "attforblock" directory in your mod directory.
 Then visit the Admin page in Moodle to activate it.
 
 
------------------------------------------------------------------------------------
-Modifications made to Moodle 2.3.1 by Mike Seiler, Fuller Theological Seminary
------------------------------------------------------------------------------------
+-----------------------------------------------------------------------------------------
+Modifications are compatible to Moodle 2.3.1 by Mike Seiler, Fuller Theological Seminary
+-----------------------------------------------------------------------------------------
 
 Attendance Module Files
 /var/moodle_www/html/mod/attforblock/renderer.php - modified the page to not allow and “add session” tab
