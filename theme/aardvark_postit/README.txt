@@ -47,3 +47,9 @@ Cleaned up CSS whitespace
 Used UNICODE characters rather than images for the toggle tab in the profilebar
 Removed toggle5 script from profilebar and moved it to theme/aardvark_postit/javascript/ directory as a seperat file
 Added javascript toggle5 file in theme/aardvark_postit/config.php so that it gets included on each page
+
+Customized for Fuller Theological Seminary
+----------------------------------------------
+Version: Moodle 2.3.1
+Customized: Logo, background image, layout/profilelogin, profile image size, activity icons, authorization CAS or oter users.
+By: Thelma Polanco-Perez
