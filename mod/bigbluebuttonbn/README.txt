@@ -91,3 +91,9 @@ on, contact us at
 Regards,... Fred Dixon
 
 ffdixon [at] blindsidenetworks [dt] com
+
+
+Note:
+BigBlueButtonBN Activity Module for Moodle 2.x
+==============================================
+It has been tested on Moodle 2.3.1 test server successfully. Thelma Polanco-Perez.
