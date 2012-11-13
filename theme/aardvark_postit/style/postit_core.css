@@ -1,0 +1,777 @@
+html, body {
+    margin: 0;
+    padding: 0;
+    background: #FFF;
+    color: #333;
+}
+h1, h2, h3, h4, h5, h6, p, ul, ol, dl, input, textarea {
+    font-family: 'Trebuchet MS', 'Helvetica Neue', Helvetica, Arial,sans-serif;
+}
+a:link, a:visited { color: #036;}
+
+a:active {
+    outline: 0;
+}
+a:focus {
+    outline: 0;
+}
+#page {
+    font-family: 'Trebuchet MS', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    width: 95%;
+    margin: 0 auto;
+    padding: 0;
+}
+#page-header {
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    height: auto;
+}
+#headerwrap {
+    height: 80px;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    clear: both;
+    background: none;
+}
+#logowrap {
+    height: 80px;
+    float: left;
+    margin-left: 0;
+    margin-right: auto;
+}
+#logo {
+    float: left;
+    margin-top: 10px;
+    margin-left: 0;
+}
+.headermenu {
+    float: right;
+    margin: 5px 0;
+    padding: 0;
+    position: relative;
+    top: 5px;
+}
+#page-content {
+    clear: both;
+    background: #FFF;
+    min-width: 775px;
+}
+.breadcrumb {
+    text-transform: uppercase;
+    font-weight: bold;
+    font-size: 0.9em;
+    margin-left: 7px;
+}
+.breadcrumb a {
+    color: #369;
+}
+.breadcrumb ul {
+    color: #666;
+}
+.arrow, .arrow_button input {
+    color: #AAA;
+}
+#navbar-top {
+    width: 100%;
+    margin: 0 auto;
+    clear: both;
+    background: #FFF url([[pix:theme|nav/navgrad]]) repeat-x left top;
+    height: 35px;
+}
+#navbar-top-left {
+    margin-left: 15px;
+    font-weight: 600;
+    font-size: 13px;
+    float: left;
+    min-width: 100px;
+    max-width: 45%;
+    overflow: hidden;
+    height: 35px;
+}
+#navbar-top-right {
+    width: auto;
+    float: right;
+    text-align: right;
+    margin-top: 4px;
+    margin-right: 10px;
+}
+
+#page-footer {
+    text-align: left;
+    margin: 0;
+    padding: 0;
+    width: 100%;
+}
+#footer-wrapper {
+    background-color: #FFF;
+    width: 100%;
+    margin: 10px auto;
+}
+#footer-inner {
+    margin: 0 auto;
+    color: #999999;
+    border-top: 1px dashed #CCC;
+    color: #999999;
+    padding: 10px;
+    height: 40px;
+    font-size: 10px;
+    clear: both;
+}
+#footer-inner a {
+    color: #999;
+}
+.breadcrumb ul {
+    line-height: 35px;
+}
+.breadcrumb li,
+.breadcrumb li a,
+.breadcrumb li a:link,
+.breadcrumb li a:visited {
+    font-weight: 200;
+    text-decoration: none;
+    color: #333;
+    font-size: 12px;
+}
+.breadcrumb li a:hover {
+    text-decoration: underline;
+    color: #888;
+}
+.breadcrumb li img {
+    vertical-align: middle;
+}
+div.tabtree li a span {
+    font-size: 11px;
+}
+
+/* CSS Styles for Docking Module only if enabled
+-------------------------------------------------*/
+
+#dock {
+    background-color: #000;
+    border-right: 1px solid #ddd;
+    height: 100%;
+    left: 0;
+    position: fixed;
+    top: 0;
+    width: 30px;
+    z-index: 11000;
+}
+#dock .dockeditem {
+    border: none;
+    color: #FFF;
+    font: 100% Constantia, Lucidabright, Lucida, Georgia, san-serif;
+}
+#dock .dockeditem_container.firstdockitem {
+    border-top: none;
+}
+#dock .dockedtitle {
+    border: none;
+    padding-top: 3px;
+    padding-bottom: 3px;
+    border-top: 1px solid #4d4d4d;
+    border-bottom: 1px solid #5d5d5d;
+    cursor: pointer;
+}
+#dock .dockedtitle h2 {
+    font-weight: 200;
+}
+#dock .dockeditempanel_content {
+    border: 1px solid #dadada;
+    border-left: 0 none;
+    font-size: 90%;
+}
+#dock .dockeditempanel_content a {
+    text-decoration: none;
+}
+#dock .dockeditempanel_hd {
+    text-align: left;
+    font-size: 12px;
+}
+#dock .dockeditempanel_hd {
+    padding-top: 3px;
+    padding-bottom: 3px;
+    background-color: #EEE;
+    border-bottom: 1px solid #dadada;
+}
+#dock .dockeditempanel_hd h2 {
+    font-weight: 600;
+    font-size: 12px;
+}
+#dock .dockeditempanel_bd ul, #dock .dockeditempanel_bd li {
+    list-style-type: none;
+    padding: 0;
+}
+#dock .dockeditempanel_bd {
+    font-weight: 200;
+}
+#dockeditempanel {
+    margin-left: 1px;
+}
+#dock div.controls {
+    margin-top: 20px;
+    padding-top: 0;
+    position: relative;
+}
+
+h3.sectionname,
+h2.headingblock,
+h2.main,
+h3.main,
+h2.main a,
+h3.main a {
+    font-size: 18px;
+    text-transform: uppercase;
+    text-align: left;
+    padding-bottom: 2px;
+    margin: 3px 0 2px;
+    display: block;
+    font-weight: normal;
+}
+#page-course-info h2.main,
+h3.sectionname,
+h2.main a,
+h3.main a,
+div.hd h3.main {
+    font-size: 16px;
+    background: none;
+}
+#page-my-index h3.main {
+    border-bottom: 0;
+}
+.forumpost {
+    border: 1px solid #EEE;
+}
+.forumpost div.row.header {
+    background: #EEE url([[pix:theme|forumt]]) no-repeat 20px 100%;
+padding-bottom: 12px;
+}
+.forumpost .left.picture img {
+    border: 2px solid #FFF;
+}
+.forumpost .topic {
+    padding-top: 5px;
+    padding-left: 5px;
+}
+.forumpost .subject {
+    font-size: 110%;
+}
+.forumpost .author {
+    font-size: 90%;
+    font-weight: 300;
+}
+.forumpost .content {
+    padding: 10px;
+}
+.forumpost .row.side {
+    font-size: 90%;
+    padding-top: 10px;
+    padding-bottom: 5px;
+}
+.forumpost .commands {
+    padding-right: 5px;
+}
+.info .name a {
+    font-weight: bold;
+}
+.indent {
+    margin-left: 30px;
+}
+div.subscribelink {
+    text-align: right;
+}
+.subscribelink a {
+    text-decoration: none;
+    font-size: 11px;
+}
+.mform fieldset, fieldset.clearfix {
+    border: 1px solid #dadada;
+    background: #f9f9f9;
+}
+.ftoggler {
+    font-size: 18px;
+    color: #333333;
+}
+.notifysuccess {
+    background:  url([[pix:theme|check]]) no-repeat scroll 2% 50% #FFFFFF;
+    border: 3px solid #DADADA;
+    color: #9AC000;
+    font-size: 18px;
+    font-weight: 600;
+    margin: 0 auto;
+    padding: 5px;
+    text-align: center;
+    text-transform: uppercase;
+    width: 80%;
+}
+table a {
+    text-decoration: none;
+}
+td.maincalendar table.calendartable th, table.rolecap .header, .generaltable .header, .forumheaderlist .header, .files .header, .editcourse .header, .logtable .header, #attempts .header, table#categoryquestions th {
+    font-size: 11px;
+    font-weight: 200;
+    text-decoration: none;
+    color: #333;
+    border-top: 1px solid #CCC;
+    padding: 5px;
+}
+table#categoryquestions th a {
+    color: #FFF;
+}
+.generaltable .header a,
+.forumheaderlist .header a,
+th.header.questionnametext a {
+    border: none;
+    color: #036;
+    font-size: 12px;
+    text-decoration: none;
+    padding: 5px;
+}
+tr.r1 td {
+    background-color: #f9f9f9;
+}
+table.rolecap td, table.rolecap th {
+    border-bottom: 1px solid #dadada;
+}
+table.rolecap td.risk {
+    border-left: 1px solid #dadada;
+}
+ul.unlist, ul.unlist li,
+ul.unlist li div,
+ul.unlist li div ul,
+ul.unlist li div ul li {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+}
+div.coursebox {
+    padding-bottom: 7px;
+    margin-bottom: 7px;
+    border-bottom: 1px solid #EEE;
+}
+div.coursebox h3.name {
+    margin-top: 0;
+    margin-bottom: 0;
+}
+div.coursebox h3.name a {
+    font-size: 16px;
+    font-weight: 400;
+}
+.unlist div.summary {
+    font-size: 14px;
+    color: #666666;
+    font-style: italic;
+}
+.unlist ul.teachers {
+    display: block;
+    padding-left: 5px;
+}
+.unlist ul.teachers li {
+    font-size: 10px;
+}
+.unlist ul.teachers li a {
+    font-size: 11px;
+}
+div.categorybox {
+    border: none;
+    margin-top: 0;
+}
+td.category.name a {
+    padding-left: 20px;
+    font-weight: 400;
+    font-size: 16px;
+}
+#course-index td.category.name a {
+    padding-left: 0;
+    background-image: none;
+}
+table.categorylist td {
+    padding: 0;
+}
+div.course_category_tree a {
+    font-size: 16px;
+    font-weight: 400;
+    text-decoration: none;
+}
+div.course_category_tree div.category, div.course_category_tree div.category_label, div.course_category_tree div.courses {
+    margin-bottom: 8px;
+}
+div.course_category_tree div.category.with_children div.category_label {
+    background-position: 0% 55%;
+}
+div.course_category_tree div.course.odd {
+    background: #EEE;
+}
+div.course_category_tree div.course a {
+    font-size: 14px;
+}
+div.category.subcategory.with_children {
+    margin-left: 20px;
+}
+div.course_category_tree div.controls {
+    font-size: 10px;
+    color: #666;
+    text-transform: uppercase;
+}
+div.course_category_tree div.controls div {
+    margin-top: 3px;
+    margin-right: 10px;
+    border-bottom: 1px solid #dadada;
+}
+.path-course-view .course-content li.section {
+    border: 1px solid #e5e5e5;
+}
+.path-course-view .course-content .side {
+    padding: 5px 0;
+}
+#page-course-view-weeks .weekdates {
+    font-size: 1em;
+    font-weight: normal;
+    color: #777;
+    padding: 2px;
+}
+.course-content .main .content {
+    padding: 10px;
+    background: #FFF;
+}
+span.completionprogress {
+    font-size: 11px;
+    font-weight: 200;
+}
+div.assignment.overview {
+    margin-bottom: 5px;
+    padding-bottom: 3px;
+    border-bottom: 1px dashed #dadada;
+}
+div.assignment.overview div.name {
+}
+div.assignment.overview div {
+    display: block;
+    float: none;
+    width: 100%;
+}
+#page-my-index div.coursebox {
+
+}
+table.glossarycategoryheader h2.main {
+    text-align: center;
+    margin-bottom: 0;
+    margin-top: 0;
+}
+table.glossarypost {
+    margin-top: 0;
+    width: 100%;
+    border-bottom: 1px dashed #dadada;
+}
+table.glossarypost td.entry h3 {
+    font-size: 20px;
+}
+#page-mod-wiki-view div.generalbox {
+    padding: 10px;
+}
+#page-mod-wiki-view h2.wiki_headingtitle {
+    font-size: 22px;
+    font-family: Georgia, serif;
+    color: #333333;
+    font-weight: 600;
+    text-align: left;
+    margin-bottom: 3px;
+    margin-top: 2px;
+}
+.content hr {
+    height: 1px;
+    color: #dadada;
+    background-color: #dadada;
+    border: none;
+    border-style: none;
+}
+div#intro {
+    border: none;
+    text-align: center;
+    font-size: 14px;
+    color: #333333;
+}
+div.que {
+    border: 1px solid #dadada;
+}
+div.questionbankwindow.block div.header {
+    background-color: #EEE;
+}
+div.questionbankwindow.block div.header a {
+    color: #333;
+    font-size: 11px;
+}
+div.generalbox, div.section {
+    border: 1px solid #dadada;
+}
+div.generalbox.sitetopic,
+div.generalbox.authsui,
+#page-course-info div.generalbox,
+#page-admin-roles-assign div.generalbox,
+table.roleassigntable,
+table.roleassigntable td,
+#page-blocks-private-edit div.generalbox {
+    border: none;
+}
+div.generalbox.firstpageoptions h3.main {
+    font-size: 16px;
+}
+div.redirectmessage {
+    width: 60%;
+    margin: 10px auto 0 auto;
+    border: none;
+    font-size: 13px;
+    background: #FFF url([[pix:theme|ajax-loader]]) no-repeat 50% 100%;
+    padding: 20px;
+}
+div.box.errorbox {
+    border: 1px solid #dadada;
+    color: #f00;
+    background: #FFF url([[pix:theme|error]]) no-repeat 1% 3%;
+    padding: 10px;
+}
+div#newmessageoverlay {
+    padding: 10px;
+}
+div#newmessageoverlay a {
+    text-decoration: none;
+    font-size: 11px;
+}
+#page-mod-page-view div.generalbox {
+    border-left: none;
+    border-right: none;
+    border-top: none;
+}
+div#tablecontainer {
+    margin-bottom: 10px;
+}
+div.course-content div.availabilityinfo {
+    font-size: 11px;
+    font-style: italic;
+    padding: 2px;
+    border-bottom: 1px dashed #dadada;
+    margin-bottom: 10px;
+}
+div.signuppanel {
+    float: right !important;
+    width: 40% !important;
+    margin-left: 0;
+    padding-left: 0;
+}
+div.singlebutton.forumaddnew {
+    text-align: center;
+}
+#page-course-info h2.main {
+    line-height: 5px;
+    margin-bottom: 5px;
+}
+#page-course-info div.generalbox ul,
+#page-course-info div.generalbox li {
+    list-style-type: none;
+}
+.singlebutton {
+    margin: 0;
+}
+.calendar_event_course {
+    background-color: #ddd;
+}
+.calendar_event_global {
+    background-color: #ddeeb8;
+}
+.calendar_event_group {
+    background-color: #fee7ae;
+}
+.calendar_event_user {
+    background-color: #bee2f7;
+}
+#id_summary_editor {
+    width: 100%;
+}
+.mod-indent a:hover {
+    text-decoration:none;
+}
+.mod-indent img {
+    vertical-align:middle;
+}
+#page-admin-index .adminwarning {
+    border: 1px solid #CCC48d;
+    background: #FFF9d0;
+}
+#page-footer .logininfo {
+    float: right;
+    padding: 0;
+    text-align: right;
+}
+#page-footer .purgecaches { text-align: center;}
+
+
+/* URL Resource
+-------------------------*/
+
+.path-mod-url .resourcecontent {
+    display: block;
+    }
+
+.path-mod-url .resourcecontent #resourceobject {
+    height: 650px;
+    text-align: center;
+    margin: 0 auto;
+}
+#region-pre .region-content,
+#region-post .region-content {
+    border-left: 1px solid #EEE;
+}
+#region-post .region-content {
+    border-right: 1px solid #EEE;
+}
+/* COMMAND ICONS (2011-10-13)
+-------------------------------------*/
+img.iconsmall,
+.block.block_with_controls div.header div.commands a img,
+.course-content ul.topics li.section .right img,
+.course-content ul.topics li.section .left img {
+    height:15px;
+    margin:2px;
+    width:15px;
+    background-color: #EEE;
+    border: 1px solid #aaa;
+    padding:1px;
+    -webkit-border-radius:5px;
+    -moz-border-radius: 5px;
+    border-radius: 5px;
+}
+/* REPORT & ADMIN LAYOUTS
+-------------------------*/
+.pagelayout-admin .no-overflow,
+.pagelayout-report .no-overflow { overflow: auto;}
+
+/* AUTO COMPLETION LEFT ALIGN
+-----------------------------*/
+
+.path-course-view li.activity span.autocompletion,
+.path-course-view li.activity form.togglecompletion {
+    display: inline;
+    left: -25px;
+    top: -3px;
+    padding: 0.2em 0;
+    position: absolute;
+    z-index: 10;
+}
+.path-course-view li.activity span.autocompletion img,
+.path-course-view li.activity form.togglecompletion div input {
+    width: 16px;
+    height: 16px;
+}
+td.maincalendar table.calendartable th,
+table.rolecap .header,
+.generaltable .header,
+.forumheaderlist .header,
+.files .header,
+.editcourse .header,
+.logtable .header,
+#attempts .header,
+table#categoryquestions th {
+    background-color: #EEE;
+}
+div.yui3-widget-bd a,
+.tabtree li a,
+.block div.content a,
+.unlist a,
+.categorybox a,
+.course_category_tree a,
+.section a {
+    text-decoration: none;
+}
+#region-pre {
+    border-right: 1px solid #EEE;
+}
+div.yui3-widget.yui3-overlay.yui3-widget-positioned {
+    border: 1px solid #CCC;
+}
+div.yui3-overlay-content.yui3-widget-stdmod {
+    border: 1px solid #FFF;
+    background: #EEE url([[pix:theme|alert-overlay]]) repeat-x;
+}
+
+div.yui3-overlay-content.yui3-widget-stdmod img {
+    vertical-align: middle;
+}
+
+div.yui3-widget-bd {
+    border: none;
+    background: none;
+}
+div.yui3-widget-bd h1.helpheading {
+    font-size: 16px;
+    font-weight: 800;
+    margin-top: 5px;
+}
+.yui-module.yui-overlay.yui-panel div.hd {
+    background: #EEE url([[pix:theme|bart5]]) repeat-x 0 90%;
+}
+#page-header .langmenu noscript input {
+    position: relative;
+    top: -20px;
+    right: 90px;
+    height: 20px;
+    width: auto;
+    line-height: 2;
+    padding: 0 5px;
+    margin: 0;
+    text-align: center;
+    text-transform: uppercase;
+    font-size: 8pt;
+    vertical-align:middle;
+  }
+  #page-header .langmenu noscript div {height: 1px;}
+
+/* Redirect
+-------------------------*/
+.redirectmessage,
+.continuebutton {
+    text-align: center;
+    font-size: 14pt;
+    color: #036;
+    padding-bottom: 10px;
+}
+/* Purge all caches notice
+-------------------------*/
+#notice {
+    width: 100%;
+    margin: 0;
+    padding: 0;
+}
+#notice p {
+    text-align: justify;
+    line-height: 1;
+    padding: 20px 15px;
+}
+#notice p:first-letter {
+    margin-left: 10px;
+}
+#notice.box .buttons .singlebutton form div input {
+    margin: 0 3px;
+    padding: 0 1em;
+    background-color: [[setting:menuhovercolor]];
+    color: #333;
+    text-transform: uppercase;
+    cursor: pointer;
+}
+#notice.box .buttons .singlebutton form div input:hover {
+    background-color: #333;
+    color: [[setting:menuhovercolor]];
+}
+/* Category List
+-------------------------*/
+.categorylist .category .info,
+.categorylist .category .indentation,
+.categorylist .category .name,
+.categorylist .category .image,
+.categorylist .course .name,
+.categorylist .course .info {
+    float: left;
+    text-align: left;
+}
+.helplink img { margin-left: 5px;}
+.dir-rtl .helplink img { margin-right: 5px;}
