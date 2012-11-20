@@ -1,0 +1,104 @@
+<?php // Library for connecting to iTunesU from Moodle
+
+   function generate_token($username, $userid, $courseabbr, $courseid) {
+      $debugsuffix = '/pfh879';
+      $sharedsecret = 'NDJSLWE6EMTX7GFZXUMZF8J527MYURWE';
+      $siteurl = 'https://deimos.apple.com/WebObjects/Core.woa/Browse/fuller.edu';
+      $administratorcredential = 'Administrator\@urn:mace:itunesu.com:sites:fuller.edu';
+      $instructorcredential = 'Instructor\@urn:mace:fuller.edu:';
+      $studentcredential = 'Student\@urn:mace:fuller.edu:classes:0207:ch503:01';
+      $credentialarray = array();
+      $token = array();
+
+      //
+      // First Generate the Credential String
+      //
+ 
+      // If one of these users, we are admins on the iTunesU site
+      if ($username == 'starmountain' || $username == 'jharwell' || isadmin($userid)) {
+         array_push($credentialarray, $administratorcredential);
+      }
+      // If the user in a teacher they get the instructor credentials
+      if (isteacher($courseid) || isadmin($userid)) {
+         array_push($credentialarray, $instructorcredential.$courseabbr);
+      }
+      // And since we are logged in though a course we get the student credenticals for that coursea
+      $studentcredential .= ':0208:'.$courseabbr.':01';
+      array_push($credentialarray, $studentcredential);
+
+      //
+      // Now put together the rest of the necessary information and make the token
+      //
+
+      $identity = get_identity_string();  
+      $credentialsstring = get_credentials_string($credentialarray);
+      $currenttime = time();
+      $token = get_authorization_token($identity, $credentialsstring, $currenttime, $sharedsecret);
+
+      return $token;
+   }
+
+   function post_token($token) {
+      $siteurl = 'https://deimos.apple.com/WebObjects/Core.woa/Browse/fuller.edu';
+      $debugsuffix = '/pfh879';
+      #$siteurl .= $debugsuffix;      
+      $r = new HttpRequest($siteurl, HttpRequest::METH_POST);
+      $r->addPostFields($token);
+      try {
+         $r->send();
+         $message = $r->getResponseMessage();
+         return $message->getBody();
+      } catch (HttpException $ex) {
+	 print "Returned an Error<br>\n";
+         return $ex->__toString();
+      }
+   }
+
+   function get_authorization_token($identity, $credentials, $currenttime, $sharedsecret) {
+      $token = array();
+      $signature = '';
+      $buffer = '';
+
+      // create the POST Content and sign it
+      $buffer .= 'credentials=' . urlencode($credentials);
+      $buffer .= '&identity=' . urlencode($identity);
+      $buffer .= '&time=' . urlencode($currenttime);
+      $signature = hash_hmac('sha256', $buffer, $sharedsecret);
+
+      $token['credentials'] = $credentials;
+      $token['identity'] = $identity;
+      $token['time'] = $currenttime;
+      $token['signature'] = $signature;
+      return $token;
+   }
+
+   function get_identity_string() {
+      // We are using the Moodle environment to pull this information
+      // If you are not using moodle you will need to re-implement this
+      global $USER;
+      $identitystring = '';
+      $displayname = '';
+
+      if (!$USER->lastname || !$USER->email || !$USER->username || !$USER->id) {
+         print "Not enough user information to generate the identity string, aborting\n";
+         exit;
+      }
+
+      if ($USER->firstname) {
+         $displayname = $USER->firstname." ".$USER->lastname;
+      } else {
+         $displayname = $USER->lastname;
+      }
+
+      // Do the required formating
+      return sprintf('"%s" <%s> (%s) [%s]', $displayname, $USER->email, $USER->username, $USER->id);
+   }
+      
+
+   function get_credentials_string($carray) {
+      if (!count($carray)) {
+         print "No credentials were assigned, this is an error, exiting.\n";
+         exit;
+      }
+      return implode(';', $carray);
+   }
