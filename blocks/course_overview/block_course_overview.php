@@ -64,7 +64,7 @@ class block_course_overview extends block_base {
             $courses_limit = $courses_limit + 1;
         }
 
-        $courses = enrol_get_my_courses('id, shortname, modinfo, sectioncache', 'visible DESC,sortorder ASC', $courses_limit);
+        $courses = enrol_get_my_courses('id, shortname, modinfo', 'visible DESC,sortorder ASC', $courses_limit);
         $site = get_site();
         $course = $site; //just in case we need the old global $course hack
 
@@ -101,6 +101,13 @@ class block_course_overview extends block_base {
         if (empty($courses) && empty($remote_courses)) {
             $content[] = get_string('nocourses','my');
         } else {
+        // ADDED THE SORTING OF COURSES HERE INSTEAD OF ABOVE
+	// ONLY BECAUSE HERE IS WHERE THE OUTPUT BEGINS
+	   ksort($courses);// sorts ascending
+	   $courses = array_reverse($courses,true);
+	// END THE SORTING OF THE ARRAY SENT TO COURSE/LIB.PHP
+	// VIA THE PRINT_OVERVIEW FUNCTION
+	// MIKE SEILER X5237
             ob_start();
 
             require_once $CFG->dirroot."/course/lib.php";
