@@ -121,10 +121,6 @@ class assign_grading_table extends table_sql implements renderable {
         if (!$this->is_downloading()) {
             $columns[] = 'select';
             $headers[] = get_string('select') . '<div class="selectall"><input type="checkbox" name="selectall" title="' . get_string('selectall') . '"/></div>';
-
-            // We have to call this column userid so we can use userid as a default sortable column.
-            $columns[] = 'userid';
-            $headers[] = get_string('edit');
         }
 
         // User picture
@@ -145,6 +141,11 @@ class assign_grading_table extends table_sql implements renderable {
         // Grade
         $columns[] = 'grade';
         $headers[] = get_string('grade');
+        if (!$this->is_downloading()) {
+            // We have to call this column userid so we can use userid as a default sortable column.
+            $columns[] = 'userid';
+            $headers[] = get_string('edit');
+        }
 
         // Submission plugins
         if ($assignment->is_any_submission_plugin_enabled()) {
@@ -205,6 +206,22 @@ class assign_grading_table extends table_sql implements renderable {
             }
         }
 
+    }
+
+    /**
+     * Before adding each row to the table make sure rownum is incremented
+     *
+     * @param array $row row of data from db used to make one row of the table.
+     * @return array one row for the table
+     */
+    function format_row($row) {
+        if ($this->rownum < 0) {
+            $this->rownum = $this->currpage * $this->pagesize;
+        } else {
+            $this->rownum += 1;
+        }
+
+        return parent::format_row($row);
     }
 
     /**
@@ -276,7 +293,7 @@ class assign_grading_table extends table_sql implements renderable {
 
 
     /**
-     * Format a user picture for display (and update rownum as a sideeffect)
+     * Format a user picture for display
      *
      * @param stdClass $row
      * @return string
@@ -434,11 +451,6 @@ class assign_grading_table extends table_sql implements renderable {
      */
     function col_userid(stdClass $row) {
         $edit = '';
-        if ($this->rownum < 0) {
-            $this->rownum = $this->currpage * $this->pagesize;
-        } else {
-            $this->rownum += 1;
-        }
 
         $actions = array();
 
