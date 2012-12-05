@@ -764,8 +764,8 @@ class enrol_lmb_plugin extends enrol_plugin {
 
         } else {
             $logline .= 'Using hard-coded settings:';
-            $moodlecourse->format               = 'topics';
-            $moodlecourse->numsections          = 6;
+            $moodlecourse->format               = 'weeks';
+            $moodlecourse->numsections          = 10;
             $moodlecourse->hiddensections       = 0;
             $moodlecourse->newsitems            = 3;
             $moodlecourse->showgrades           = 1;
