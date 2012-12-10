@@ -853,7 +853,20 @@ function print_overview($courses, array $remote_courses=array()) {
             }
         }
     }
+    // ADDED FOR SPITTING OUT CATEGORIES ONLY ONCE
+    // Set flag to zero before beginning...
+    $printed_cat = "";
     foreach ($courses as $course) {
+
+      // INSERTED THE FOLLOWING FOR CATEGORIES 10/11/12
+      // MIKE SEILER x5237
+        $course_category = get_course_category($course->category);
+        if($course_category != $printed_cat)
+        {
+                echo "<h2 class=\"headingblock header\">$course_category->name</h2>";
+        }
+      // END INSERT
+
         $fullname = format_string($course->fullname, true, array('context' => get_context_instance(CONTEXT_COURSE, $course->id)));
         echo $OUTPUT->box_start('coursebox');
         $attributes = array('title' => s($fullname));
@@ -863,11 +876,25 @@ function print_overview($courses, array $remote_courses=array()) {
         echo $OUTPUT->heading(html_writer::link(
             new moodle_url('/course/view.php', array('id' => $course->id)), $fullname, $attributes), 3);
         if (array_key_exists($course->id,$htmlarray)) {
-            foreach ($htmlarray[$course->id] as $modname => $html) {
-                echo $html;
+      // ADDED Role Search so Professors don't see assignments for every class
+           // MIKE SEILER 12/6/12
+            $role = get_user_roles(context_course::instance($course->id),$USER->id, false);
+            foreach($role as $struct) {
+                $roleName = $struct->name;
+                }
+            if($roleName == 'Student')
+            {
+         // END First Bit of addition
+                foreach ($htmlarray[$course->id] as $modname => $html) {
+                         echo $html;
+                }
+         // start second bit of addition
             }
+        // END INSERTION FOR PROFESSORS - MIKE SEILER 12/6/12
         }
         echo $OUTPUT->box_end();
+       // ADDED THIS FOR LOOPING MIKE SEILER x5237
+        $printed_cat = $course_category;
     }
 
     if (!empty($remote_courses)) {
