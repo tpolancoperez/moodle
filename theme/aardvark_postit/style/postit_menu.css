@@ -1,0 +1,134 @@
+
+#menuwrap {
+    height: 45px;
+    width: 100%;
+    margin: 0 auto;
+    padding: 0;
+    clear: both;
+    background: #F2F2F2 url([[pix:theme|menu/menugrad]]) repeat-x;
+}
+#homeicon,
+#homeicon:hover {
+    float: left;
+    border-width: 0;
+    width: 45px;
+    height: 45px;
+    margin: 0;
+    padding: 0;
+    text-align: center;
+    line-height: 3.5;
+}
+#menuitemswrap {
+    font-size: 13px;
+    font-weight: 600;
+    float: left;
+    border-width: 0;
+    margin: 0;
+}
+#custommenu {
+    border-width: 0;
+    padding: 0;
+    margin: 0;
+    height: 45px;
+}
+
+#custommenu .yui3-menu-horizontal.javascript-disabled .yui3-menu-content,
+#custommenu .yui3-menu-horizontal.javascript-disabled .yui3-menu-content .ul {
+    border: 0 none;
+}
+#custommenu .yui3-menu.yui3-menu-horizontal,
+#custommenu .yui3-menu.yui3-menu-horizontal.javascript-enabled {
+    border-width: 0;
+    float: left;
+}
+#custommenu .yui3-menu-content {
+    border: 0 none;
+}
+#custommenu .yui3-menu-content li a {
+    font-size: 12px;
+    text-transform: uppercase;
+    margin: 0;
+    font-weight: 400;
+    line-height: 45px;
+    cursor: pointer;
+    border-width: 0;
+    border: 0 none;
+    color: #FFF;
+}
+#custommenu .yui3-menu-content li a:hover {
+    color: #000;
+}
+#custommenu .yui3-menu-horizontal .yui3-menu-label,
+#custommenu .yui3-menu-horizontal.javascript-disabled .yui3-menu-label {
+    padding-left: 20px;
+    color: #FFF;
+}
+#custommenu .yui3-menu-content li {
+    border: 0 none;
+}
+#custommenu .yui3-menu.custom_menu_submenu {
+    background: url([[pix:theme|menu/yuiarrow]]) no-repeat 20px 0;
+    border: none;
+    min-width: 100px;
+    z-index: 99998;
+}
+#custommenu .yui3-menu.custom_menu_submenu div.yui3-menu.custom_menu_submenu {
+    background: none;
+    min-width: 100px;
+}
+#custommenu .yui3-menu.custom_menu_submenu div.yui3-menu-content {
+    z-index: 99999;
+    min-width: 200px;
+    padding-top: 0;
+    padding-bottom: 0;
+    margin: 20px 0 0 -40px;
+    background-color: #333;
+}
+#custommenu .yui3-menu.custom_menu_submenu div.yui3-menu-content div.yui3-menu.custom_menu_submenu div.yui3-menu-content {
+    position: absolute;
+    top: -15px;
+}
+#custommenu .yui3-menu.custom_menu_submenu .yui3-menu-content li {
+    border-left: 0 none;
+}
+#custommenu .yui3-menu.custom_menu_submenu .yui3-menu-content li a {
+    font-size: 12px;
+    border-bottom: 0 none;
+    border-top: 0 none;
+    text-transform: none;
+    text-decoration: none;
+}
+#custommenu .yui3-menu.custom_menu_submenu .yui3-menu-content li a:hover {
+    cursor: pointer;
+    text-decoration: none;
+}
+#custommenu .yui3-menu.custom_menu_submenu li a.yui3-menu-label {
+    background: url([[pix:theme|menu/subarrow]]) no-repeat right center;
+}
+#custommenu .yui3-menu.custom_menu_submenu li a.yui3-menu-label:hover,
+#custommenu .javascript-disabled #custom_menu_1.yui3-menu div.yui3-menu-content ul li #cm_submenu_1.yui3-menu .yui3-menu-content ul li a.yui3-menu-label,
+#custommenu .yui3-menu-horizontal.javascript-disabled .yui3-menu.custom_menu_submenu li a.yui3-menu-label:hover {
+    background-image: none;
+}
+#custommenu .yui3-menu-horizontal.javascript-disabled .yui3-menu.custom_menu_submenu li a.yui3-menu-label,
+#custommenu .yui3-menu-horizontal.javascript-disabled .yui3-menu.custom_menu_submenu .yui3-menu-content li a:hover,
+#custommenu .yui3-menu-horizontal.javascript-disabled .yui3-menu-label-active,
+#custommenu .yui3-menu-horizontal.javascript-disabled .yui3-menu-label-menuvisible,
+#custommenu .yui3-menu-horizontal.javascript-disabled .yui3-menu .yui3-menu .yui3-menu-label-active,
+#custommenu .yui3-menu-horizontal.javascript-disabled .yui3-menu .yui3-menu .yui3-menu-label-menuvisible,
+#custommenu .yui3-menu-horizontal.javascript-disabled .yui3-menuitem-active .yui3-menuitem-content,
+#custommenu .yui3-menu-horizontal.javascript-disabled .yui3-menu .yui3-menu .yui3-menuitem-active .yui3-menuitem-content,
+#custommenu .yui3-menu-horizontal.javascript-disabled .yui3-menu-content li:hover,
+#custommenu .yui3-menu.custom_menu_submenu li a.yui3-menu-label,
+#custommenu .yui3-menu.custom_menu_submenu .yui3-menu-content li a:hover,
+#custommenu .yui3-menu-label-active,
+#custommenu .yui3-menu-label-menuvisible,
+#custommenu .yui3-menu .yui3-menu .yui3-menu-label-active,
+#custommenu .yui3-menu .yui3-menu .yui3-menu-label-menuvisible,
+#custommenu .yui3-menuitem-active .yui3-menuitem-content,
+#custommenu .yui3-menu .yui3-menu .yui3-menuitem-active .yui3-menuitem-content,
+#custommenu .yui3-menu-content li:hover,
+#homeicon:hover,
+.profileoptions ul li:hover {
+    color: #000;
+}

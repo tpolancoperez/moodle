@@ -1,0 +1,105 @@
+.block {
+    margin: 0;
+    padding: 5px;
+    border: 0 none;
+    background-color: #FFF;
+}
+.block .header {
+    margin: 0;
+    padding-top: 0;
+    height: 33px;
+    border-bottom: 1px solid #EEE;
+}
+.block.hidden .header {
+    border-bottom: 0 none;
+}
+.block.block_with_controls .header .commands {
+    text-align: right;
+    padding: 0;
+    margin: 0;
+}
+.block.block_with_controls .header .commands a img {
+    margin-right: 3px;
+}
+.block .header .title h2 {
+    font-size: 12px;
+    font-weight: 400;
+    margin: 0;
+    padding: 8px 0 0 10px;
+    text-transform: uppercase;
+}
+.block div.block_action input,
+.block div.block_action img {
+    margin-top: 3px;
+    margin-right: 3px;
+    position: relative;
+    top: 6px;
+}
+.block div.content {
+    font-size: 12px;
+    font-weight: 200;
+    padding: 10px 15px 15px;
+}
+#region-post .block div.content {
+    padding-left: 20px;
+}
+.block_calendar_month table.minicalendar.calendartable td,
+.block_calendar_month table.minicalendar.calendartable th {
+    border: 0 none;
+}
+.block_calendar_month table.minicalendar {
+    margin-bottom: 0;
+}
+.block_calendar_month table.minicalendar.calendartable th abbr {
+    border: 0 none;
+    text-decoration: none;
+}
+.block_comments div.content li {
+    list-style-type: none;
+}
+.block_messages.block div.content .list a {
+    font-size: 10px;
+}
+.block_login.block div.content div {
+    margin-bottom: 9px;
+    clear: both;
+}
+.block_login.block div.content label {
+    font-size: 11px;
+    display: inline-block;
+    min-width: 50px;
+    margin-right: 3px;
+}
+.block_myprofile div.content div {
+    font-size: 11px;
+}
+.block_myprofile div.content div.myprofileitem.picture {
+    width: 105px;
+    float: left;
+}
+.block_myprofile div.myprofileitem.fullname {
+    font-size: 12px;
+    font-weight: 800;
+}
+.block_myprofile div.myprofileitem.edit {
+    clear: both;
+    font-weight: 800;
+    font-size: 12px;
+}
+.block_news_items div.content li.post {
+    margin-bottom: 4px;
+    margin-top: 2px;
+}
+.block_news_items div.content div.head.clearfix {
+    font-size: 11px;
+}
+.block_news_items div.content div.info {
+    font-weight: 600;
+}
+.block_recent_activity.block_docked div.content h2.main, .block_recent_activity.block_docked div.content h3.main, .side-pre .block div.content h2.main, .side-post .block div.content h2.main, .block div.content h3.main, .block div.content h2 {
+    font-size: 13px;
+    color: #333;
+    font-weight: 800;
+    background: none;
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
