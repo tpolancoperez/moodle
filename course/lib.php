@@ -876,9 +876,21 @@ function print_overview($courses, array $remote_courses=array()) {
         echo $OUTPUT->heading(html_writer::link(
             new moodle_url('/course/view.php', array('id' => $course->id)), $fullname, $attributes), 3);
         if (array_key_exists($course->id,$htmlarray)) {
-            foreach ($htmlarray[$course->id] as $modname => $html) {
-                echo $html;
+           // ADDED Role Search so Professors don't see assignments for every class
+           // MIKE SEILER 12/6/12
+            $role = get_user_roles(context_course::instance($course->id),$USER->id, false);
+            foreach($role as $struct) {
+                $roleName = $struct->name;
+                }
+            if($roleName == 'Student')
+            {
+         // END First Bit of addition
+                foreach ($htmlarray[$course->id] as $modname => $html) {
+                         echo $html;
+                }
+         // start second bit of addition
             }
+        // END INSERTION FOR PROFESSORS - MIKE SEILER 12/6/12
         }
         echo $OUTPUT->box_end();
        // ADDED THIS FOR LOOPING MIKE SEILER x5237
