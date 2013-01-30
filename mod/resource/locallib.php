@@ -428,7 +428,8 @@ function resource_get_final_display_type($resource) {
     if (file_mimetype_in_typegroup($mimetype, 'archive')) {
         return RESOURCELIB_DISPLAY_DOWNLOAD;
     }
-    if (file_mimetype_in_typegroup($mimetype, array('web_image', '.pdf', '.htm', 'web_video', 'web_audio'))) {
+    // remove pdf from list below, and it will default to open. modified by TP. 11/5/12
+    if (file_mimetype_in_typegroup($mimetype, array('web_image', '.htm', 'web_video', 'web_audio'))) {
         return RESOURCELIB_DISPLAY_EMBED;
     }
 
