@@ -26,6 +26,7 @@
 require_once(dirname(__FILE__).'/../../config.php');
 require_once(dirname(__FILE__).'/locallib.php');
 
+
 $pageparams = new att_manage_page_params();
 
 $id                         = required_param('id', PARAM_INT);
@@ -41,6 +42,28 @@ require_login($course, true, $cm);
 
 $pageparams->init($cm);
 $att = new attforblock($att, $cm, $course, $PAGE->context, $pageparams);
+///////////////////////////////////////////////////////////////////////
+// THIS HERE GETS THE ID #S OF THE ADMINISTRATORS, AS DEFINED IN THE 
+// DATABASE.  ONCE WE HAVE THE IDS, WE CYCLE THROUGH THEM TO MATCH
+// THEM AGAINS THE CURRENTLY LOGGED IN USER.  IF THEY MATCH, WE SET
+// THE ATTFORBLOCK PERMISSIONS ATTRIBUTE.  WE REFERENCE THIS IN
+// renderables.php AND renderer.php
+// THIS IS SET SO THAT ADMINS CAN ADD AND DELETE ATTENDANCE SESSIONS
+// WITHOUT HAVING TO CONTACT THE IT DEPARTMENT (I.E. ME)
+// MIKE SEILER 01/16/2013 - X5237
+$admins = get_admins();
+$adminator = false;
+foreach($admins as $admin)
+{
+        if($admin->id == $USER->id)
+        {
+                $att->perm->admin = true;
+                break;
+        }
+}
+//////////////////////////////////////////////////////////////////////
+// END OF THE ADMIN PERMISSION SETTING
+//////////////////////////////////////////////////////////////////////
 if (!$att->perm->can_manage() && !$att->perm->can_take() && !$att->perm->can_change())
     redirect($att->url_view());
 
