@@ -68,13 +68,14 @@ class attforblock_tabs implements renderable {
             $toprow[] = new tabobject(self::TAB_SESSIONS, $this->att->url_manage()->out(),
                         get_string('sessions','attforblock'));
         }
-	// CHANGE MADE ON 10/16/12 - MIKE SEILER
-  	//if ($this->att->perm->can_manage()) {
+	// CHANGE MADE ON 01/16/12 - MIKE SEILER
+	// -->$att->perm->admin is set in manage.php
+  	if ($this->att->perm->admin == true) {
 		// DOC RICHARDS WANTED IT SO THAT NO ONE COULD ADD A SESSION
 		// SO WE JUST PULL THE TAB ALTOGETHER
-          //  $toprow[] = new tabobject(self::TAB_ADD, $this->att->url_sessions()->out(false, array('action' => att_sessions_page_params::ACTION_ADD)),
-          //             get_string('add','attforblock'));
-        //}
+            $toprow[] = new tabobject(self::TAB_ADD, $this->att->url_sessions()->out(false, array('action' => att_sessions_page_params::ACTION_ADD)),
+                       get_string('add','attforblock'));
+        }
 
         if ($this->att->perm->can_view_reports()) {
             $toprow[] = new tabobject(self::TAB_REPORT, $this->att->url_report()->out(),
