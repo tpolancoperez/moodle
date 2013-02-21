@@ -192,7 +192,9 @@ function lti_build_sourcedid($instanceid, $userid, $launchid = null, $servicesal
     $data = new stdClass();
 
     $data->instanceid = $instanceid;
-    $data->userid = $userid;
+    //$data->userid = $userid;
+	// MIKE SEILER x5237 - Related to Mods made below
+	$data->userid = $USER->idnumber;
     if (!empty($launchid)) {
         $data->launchid = $launchid;
     } else {
