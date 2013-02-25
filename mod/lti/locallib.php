@@ -190,10 +190,10 @@ function lti_view($instance) {
 
 function lti_build_sourcedid($instanceid, $userid, $launchid = null, $servicesalt) {
     $data = new stdClass();
-
     $data->instanceid = $instanceid;
     //$data->userid = $userid;
 	// MIKE SEILER x5237 - Related to Mods made below
+	global $USER;
 	$data->userid = $USER->idnumber;
     if (!empty($launchid)) {
         $data->launchid = $launchid;
