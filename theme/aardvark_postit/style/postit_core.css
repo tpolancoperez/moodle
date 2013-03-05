@@ -86,7 +86,7 @@ a:focus {
     font-size: 13px;
     float: left;
     min-width: 100px;
-    max-width: 45%;
+    max-width: 75%;
     overflow: hidden;
     height: 35px;
 }
