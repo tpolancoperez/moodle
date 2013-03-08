@@ -1,0 +1,8 @@
+[12-Oct-2011 17:29:26] PHP Notice:  Use of undefined constant customint1 - assumed 'customint1' in E:\htdocs\vle\enrol\autoenrol\edit.php on line 76
+[12-Oct-2011 17:29:26] PHP Notice:  Use of undefined constant customint1 - assumed 'customint1' in E:\htdocs\vle\enrol\autoenrol\edit.php on line 76
+[12-Oct-2011 17:37:56] PHP Notice:  Undefined index:  in E:\htdocs\vle\enrol\autoenrol\edit_form.php on line 51
+[12-Oct-2011 17:37:59] PHP Notice:  Undefined index:  in E:\htdocs\vle\enrol\autoenrol\edit_form.php on line 51
+[12-Oct-2011 17:38:03] PHP Notice:  Undefined index:  in E:\htdocs\vle\enrol\autoenrol\edit_form.php on line 51
+[12-Oct-2011 17:38:38] PHP Fatal error:  Call to undefined method stdClass::get_config() in E:\htdocs\vle\enrol\autoenrol\edit_form.php on line 51
+[12-Oct-2011 17:38:48] PHP Notice:  Undefined index:  in E:\htdocs\vle\enrol\autoenrol\edit_form.php on line 51
+[12-Oct-2011 17:40:06] PHP Notice:  Undefined property: enrol_autoenrol_edit_form::$customint1 in E:\htdocs\vle\enrol\autoenrol\edit_form.php on line 51
