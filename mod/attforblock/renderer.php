@@ -106,8 +106,6 @@ class mod_attforblock_renderer extends plugin_renderer_base {
                     'cal_cur_date'  => $fcontrols->curdate);
             $curdate_controls = html_writer::script(js_writer::set_variable('M.attforblock', $jsvals));
 
-            $this->page->requires->yui2_lib('container');
-            $this->page->requires->yui2_lib('calendar');
             $this->page->requires->js('/mod/attforblock/calendar.js');
 
             $curdate_controls .= html_writer::link($fcontrols->url(array('curdate' => $fcontrols->prevcur)), $this->output->larrow());
@@ -174,9 +172,9 @@ class mod_attforblock_renderer extends plugin_renderer_base {
     }
 
     protected function render_sess_manage_table(attforblock_manage_data $sessdata) {
-	echo "<p align='center'><font color='red'><strong>If you do not see your Attendance Session, click the box marked 'All' above.</strong></font></p>";
-	$this->page->requires->js_init_call('M.mod_attforblock.init_manage');
-	$table = new html_table();
+        $this->page->requires->js_init_call('M.mod_attforblock.init_manage');
+
+        $table = new html_table();
         $table->width = '100%';
         $table->head = array(
                 '#',
@@ -195,15 +193,18 @@ class mod_attforblock_renderer extends plugin_renderer_base {
             $i++;
 
             $dta = $this->construct_date_time_actions($sessdata, $sess);
+
             $table->data[$sess->id][] = $i;
             $table->data[$sess->id][] = $sess->groupid ? $sessdata->groups[$sess->groupid]->name : get_string('commonsession', 'attforblock');
             $table->data[$sess->id][] = $dta['date'];
             $table->data[$sess->id][] = $dta['time'];
             //$table->data[$sess->id][] = $sess->description;
-	// ADDED THE 'TEXT_LINK' VARIABLE BELOW ON LINE 235
-	// MIKE SEILER 8/28/12
-	// EXT. 5237 - FULLER SEMINARY
-	    $table->data[$sess->id][] = $dta['text_link'];
+            
+            // ADDED THE 'TEXT_LINK' VARIABLE BELOW ON LINE 235
+	    // MIKE SEILER 8/28/12
+	    // EXT. 5237 - FULLER SEMINARY           
+            
+            $table->data[$sess->id][] = $dta['text_link']; 
             $table->data[$sess->id][] = $dta['actions'];
             $table->data[$sess->id][] = html_writer::checkbox('sessid[]', $sess->id, false);
         }
@@ -213,6 +214,7 @@ class mod_attforblock_renderer extends plugin_renderer_base {
 
     private function construct_date_time_actions(attforblock_manage_data $sessdata, $sess) {
         $actions = '';
+
         $date = userdate($sess->sessdate, get_string('strftimedmyw', 'attforblock'));
         $time = $this->construct_time($sess->sessdate, $sess->duration);
         if($sess->lasttaken > 0)
@@ -223,9 +225,8 @@ class mod_attforblock_renderer extends plugin_renderer_base {
 
                 $date = html_writer::link($url, $date, array('title' => $title));
                 $time = html_writer::link($url, $time, array('title' => $title));
-	        // THIS ADDITION OF 'TEXT_LINK' FORCES THE TABLE TO RENDER THE DESCRIPTION OF THE 
- 	        // SESSION WHEN IT WRITES OUT AFTER ATTENDANCE HAS BEEN TAKEN ONCE BEFORE
-	    	$text_link = html_writer::link($url, $sess->description, array('title' => $title)); 
+
+                $actions = $this->output->action_icon($url, new pix_icon('redo', $title, 'attforblock'));
             } else {
                 $date = '<i>' . $date . '</i>';
                 $time = '<i>' . $time . '</i>';
@@ -235,12 +236,8 @@ class mod_attforblock_renderer extends plugin_renderer_base {
                 $url = $sessdata->url_take($sess->id, $sess->groupid);
                 $title = get_string('takeattendance','attforblock');
                 $actions = $this->output->action_icon($url, new pix_icon('t/go', $title));
-		// ADDED THIS ARRAY ITEM TO THE DTA OBJECT.  USE IT AS THE DESCRIPTION
-		// IN THE ARRAY ABOVE, LINE 207
-		$text_link = html_writer::link($url, $sess->description, array('title' => $title)); 
             }
         }
-	// THIS IS THE ICONS ON THE RIGHT HAND SIDE - MIKE
         if($sessdata->perm->can_manage()) {
             $url = $sessdata->url_sessions($sess->id, att_sessions_page_params::ACTION_UPDATE);
             $title = get_string('editsession','attforblock');
@@ -248,13 +245,10 @@ class mod_attforblock_renderer extends plugin_renderer_base {
 
             $url = $sessdata->url_sessions($sess->id, att_sessions_page_params::ACTION_DELETE);
             $title = get_string('deletesession','attforblock');
-	    //////////////////////////////////////////////////////
-	    // DOC RICHARDS WANTED THAT PROFESSORS COULD NOT DELETE
-	    // A SESSION, ONLY EDIT IT, SO WE REMOVE THE ICON AND AVOID ANY PROBLEMS
-            //$actions .= $this->output->action_icon($url, new pix_icon('t/delete', $title));
+            $actions .= $this->output->action_icon($url, new pix_icon('t/delete', $title));
         }
 
-        return array('date' => $date, 'time' => $time, 'actions' => $actions, 'text_link' => $text_link);
+        return array('date' => $date, 'time' => $time, 'actions' => $actions);
     }
 
     protected function render_sess_manage_control(attforblock_manage_data $sessdata) {
@@ -564,6 +558,7 @@ class mod_attforblock_renderer extends plugin_renderer_base {
         $tabs[] = new tabobject(att_view_page_params::MODE_ALL_COURSES,
                         $userdata->url()->out(true, array('mode' => att_view_page_params::MODE_ALL_COURSES)),
                         get_string('allcourses','attforblock'));
+
         return print_tabs(array($tabs), $userdata->pageparams->mode, NULL, NULL, true);
     }
 
@@ -603,9 +598,17 @@ class mod_attforblock_renderer extends plugin_renderer_base {
     private function construct_user_sessions_log(attforblock_user_data $userdata) {
         $table = new html_table();
         $table->attributes['class'] = 'generaltable attwidth boxaligncenter';
-        $table->head = array('#', get_string('date'), get_string('time'), get_string('description','attforblock'), get_string('status','attforblock'), get_string('remarks','attforblock'));
-        $table->align = array('', '', 'left', 'left', 'center', 'left');
-        $table->size = array('1px', '1px', '1px', '*', '1px', '1px');
+        $table->head = array(
+            '#',
+            get_string('sessiontypeshort', 'attforblock'),
+            get_string('date'),
+            get_string('time'),
+            get_string('description','attforblock'),
+            get_string('status','attforblock'),
+            get_string('remarks','attforblock')
+        );
+        $table->align = array('', '', '', 'left', 'left', 'center', 'left');
+        $table->size = array('1px', '1px', '1px', '1px', '*', '1px', '1px');
 
         $i = 0;
         foreach ($userdata->sessionslog as $sess) {
@@ -613,6 +616,7 @@ class mod_attforblock_renderer extends plugin_renderer_base {
 
             $row = new html_table_row();
             $row->cells[] = $i;
+            $row->cells[] = html_writer::tag('nobr', $sess->groupid ? $userdata->groups[$sess->groupid]->name : get_string('commonsession', 'attforblock'));
             $row->cells[] = userdate($sess->sessdate, get_string('strftimedmyw', 'attforblock'));
             $row->cells[] = $this->construct_time($sess->sessdate, $sess->duration);
             $row->cells[] = $sess->description;

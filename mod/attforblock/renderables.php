@@ -68,14 +68,14 @@ class attforblock_tabs implements renderable {
             $toprow[] = new tabobject(self::TAB_SESSIONS, $this->att->url_manage()->out(),
                         get_string('sessions','attforblock'));
         }
-	// CHANGE MADE ON 01/16/12 - MIKE SEILER
+        // CHANGE MADE ON 01/16/12 - MIKE SEILER
 	// -->$att->perm->admin is set in manage.php
-  	if ($this->att->perm->admin == true) {
+        if ($this->att->perm->admin == true) {
 		// DOC RICHARDS WANTED IT SO THAT NO ONE COULD ADD A SESSION
 		// SO WE JUST PULL THE TAB ALTOGETHER
             $toprow[] = new tabobject(self::TAB_ADD, $this->att->url_sessions()->out(false, array('action' => att_sessions_page_params::ACTION_ADD)),
                        get_string('add','attforblock'));
-        }
+        }        
 
         if ($this->att->perm->can_view_reports()) {
             $toprow[] = new tabobject(self::TAB_REPORT, $this->att->url_report()->out(),
@@ -260,10 +260,12 @@ class attforblock_take_data implements renderable {
     private $att;
 
     public function  __construct(attforblock $att) {
-        if ($att->pageparams->grouptype)
+        if ($att->pageparams->grouptype) {
             $this->users = $att->get_users($att->pageparams->grouptype);
-        else
+        }
+        else {
             $this->users = $att->get_users($att->pageparams->group);
+        }
 
         $this->pageparams = $att->pageparams;
         $this->perm = $att->perm;
@@ -334,6 +336,8 @@ class attforblock_user_data implements renderable {
 
     public $sessionslog;
 
+    public $groups;
+
     public $coursesatts;
 
     private $urlpath;
@@ -365,6 +369,8 @@ class attforblock_user_data implements renderable {
             $this->filtercontrols = new attforblock_filter_controls($att);
 
             $this->sessionslog = $att->get_user_filtered_sessions_log_extended($userid);
+
+            $this->groups = groups_get_all_groups($att->course->id);
         }
         else {
             $this->coursesatts = att_get_user_courses_attendances($userid);

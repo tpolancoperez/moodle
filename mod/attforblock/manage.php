@@ -26,7 +26,6 @@
 require_once(dirname(__FILE__).'/../../config.php');
 require_once(dirname(__FILE__).'/locallib.php');
 
-
 $pageparams = new att_manage_page_params();
 
 $id                         = required_param('id', PARAM_INT);
@@ -80,7 +79,7 @@ if ($from === 'block') {
     } elseif ($size > 1) {
         $att->curdate = $today;
         //temporally set $view for single access to page from block
-        $att->$view = ATT_VIEW_DAYS;
+        $att->view = ATT_VIEW_DAYS;
     }
 }
 
