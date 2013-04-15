@@ -98,7 +98,7 @@ $THEME->layouts = array(
         'defaultregion' => 'side-pre',
     ),
     'login' => array(
-        'file' => 'login.php',
+        'file' => 'default.php',
         'regions' => array(),
         'options' => array('langmenu'=>true),
     ),

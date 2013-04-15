@@ -24,7 +24,7 @@
 
   <div id="profilename">
      <ul>
-     <li><a href="<?php echo $CFG->wwwroot.'/user/view.php?id='.$USER->id.'&amp;course='.$COURSE->id;?>"><?php echo $USER->firstname; ?><?php echo $USER->lastname; ?></a></li>
+     <li><a href="<?php echo $CFG->wwwroot.'/user/view.php?id='.$USER->id.'&amp;course='.$COURSE->id;?>"><?php echo $USER->firstname.'&nbsp;'.$USER->lastname; ?></a></li>
      <li><a id="toggle" href="javascript:toggle5('profilebar', 'toggle');" title="show &#9660;/hide &#9650;">&#9660;</a></li>
  </div>
  </div><!-- END #headerwrap -->
