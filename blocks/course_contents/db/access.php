@@ -16,15 +16,28 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * @package    block_course_contents
- * @copyright  2009 David Mudrak <david@moodle.com>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * Declares the block's capabilities
+ *
+ * @package     block_course_contents
+ * @category    access
+ * @copyright   2012 David Mudrak <david@moodle.com>
+ * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->component  = 'block_course_contents';
-$plugin->release    = '2.4.1';
-$plugin->version    = 2012121003;
-$plugin->requires   = 2012120300; // Moodle 2.4 (Build: 20121203)
-$plugin->maturity   = MATURITY_STABLE;
+$capabilities = array(
+
+    'block/course_contents:addinstance' => array(
+        'riskbitmask' => RISK_SPAM | RISK_XSS,
+
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_BLOCK,
+        'archetypes' => array(
+            'editingteacher' => CAP_ALLOW,
+            'manager' => CAP_ALLOW
+        ),
+
+        'clonepermissionsfrom' => 'moodle/site:manageblocks'
+    ),
+);

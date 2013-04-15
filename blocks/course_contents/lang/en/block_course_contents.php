@@ -25,6 +25,11 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+$string['config_blocktitle'] = 'Block title';
+$string['config_blocktitle_default'] = 'Table of contents';
+$string['config_blocktitle_help'] = 'Leave this field empty to use the default block title. If you define a title here, it will be used instead of the default one.';
+$string['config_enumerate'] = 'Enumerate section titles';
+$string['config_enumerate_label'] = 'If enabled, the section number is displayed before the section title';
+$string['course_contents:addinstance'] = 'Add a new course contents block';
+$string['notusingsections'] = 'This course format does not use sections.';
 $string['pluginname'] = 'Course contents';
-$string['jumptocurrenttopic'] = 'Go to current topic';
-$string['jumptocurrentweek'] = 'Go to current week';
