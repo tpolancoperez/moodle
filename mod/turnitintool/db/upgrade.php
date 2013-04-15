@@ -1,7 +1,7 @@
 <?php 
 /**
  * @package   turnitintool
- * @copyright 2010 iParadigms LLC
+ * @copyright 2012 Turnitin
  */
 
 function xmldb_turnitintool_upgrade($oldversion) {
@@ -381,6 +381,67 @@ function xmldb_turnitintool_upgrade($oldversion) {
     		$result = $result && add_field($table, $field8);
     		
     	}
+    }
+    
+    if ($result && $oldversion < 2012030501) {
+    	if (is_callable(array($DB,'get_manager'))) {
+            $dbman=$DB->get_manager();
+            $table = new xmldb_table('turnitintool_users');
+            // Launch add index userid
+            $index = new xmldb_index('userid', XMLDB_INDEX_UNIQUE, array('userid'));
+            if (!$dbman->index_exists($table, $index)) {
+                $dbman->add_index($table, $index);
+            }
+        } else {
+            $table = new XMLDBTable('turnitintool_users');
+            // Launch add index userid
+            $index = new XMLDBIndex('userid');
+            $index->setAttributes(XMLDB_INDEX_UNIQUE, array('userid'));
+            if (index_exists($table, $index)) {
+                $result = $result && add_index($table, $index);
+            }
+        }
+    }
+    
+    if ($result && $oldversion < 2012042701) {
+    	if (is_callable(array($DB,'get_manager'))) {
+            $dbman=$DB->get_manager();
+            $table = new xmldb_table('turnitintool_users');
+            $field = new xmldb_field('turnitin_utp', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, null, null, 0, 'turnitin_uid');
+            if (!$dbman->field_exists($table, $field)) {
+            	$dbman->add_field($table, $field);
+            }
+        } else {
+            $table = new XMLDBTable('turnitintool_users');
+            $field = new XMLDBField('turnitin_utp');
+            $field->setAttributes(XMLDB_TYPE_INTEGER, '10', null, null, null, null, null, 0, 'turnitin_uid');
+            $result = $result && add_field($table, $field);
+        }
+    }
+
+    if ($result && $oldversion < 2012081301) {
+    	if (is_callable(array($DB,'get_manager'))) {
+            $dbman=$DB->get_manager();
+            $table = new xmldb_table('turnitintool_submissions');
+            $field = new xmldb_field('submission_transmatch', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, null, null, 0, 'submission_unanonreason');
+            if (!$dbman->field_exists($table, $field)) {
+            	$dbman->add_field($table, $field);
+            }
+            $table = new xmldb_table('turnitintool');
+            $field = new xmldb_field('transmatch', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, null, null, 0, 'erater_style');
+            if (!$dbman->field_exists($table, $field)) {
+            	$dbman->add_field($table, $field);
+            }
+        } else {
+            $table = new XMLDBTable('turnitintool_submissions');
+            $field = new XMLDBField('submission_transmatch');
+            $field->setAttributes(XMLDB_TYPE_INTEGER, '10', null, null, null, null, null, 0, 'submission_unanonreason');
+            $result = $result && add_field($table, $field);
+            $table = new XMLDBTable('turnitintool');
+            $field = new XMLDBField('transmatch');
+            $field->setAttributes(XMLDB_TYPE_INTEGER, '10', null, null, null, null, null, 0, 'erater_style');
+            $result = $result && add_field($table, $field);
+        }
     }
 
     return $result;

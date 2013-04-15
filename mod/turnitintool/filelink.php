@@ -1,7 +1,7 @@
 <?php
 /**
  * @package   turnitintool
- * @copyright 2010 iParadigms LLC
+ * @copyright 2012 Turnitin
  */
 
 require_once("../../config.php");
@@ -69,6 +69,7 @@ if (!is_null($param_sub)) {
     $loaderbar = null;
     $tii = new turnitintool_commclass(turnitintool_getUID($owner),$owner->firstname,$owner->lastname,$owner->email,2,$loaderbar);
 
+    $post = new stdClass();
     $post->cid=turnitintool_getCID($course->id);
     $post->assignid=turnitintool_getAID($param_part);
     $post->ctl=turnitintool_getCTL($course->id);
@@ -85,9 +86,23 @@ if (!is_null($param_sub)) {
         turnitintool_print_error('downloadingfileerror','turnitintool',NULL,NULL,__FILE__,__LINE__);
         exit();
     } else {
-        header("Content-type: application/excel");
+        $output = $tii->getFileData();
+        if (function_exists('mb_strlen')) {
+            $size = mb_strlen($output, '8bit');
+        } else {
+            $size = strlen($output);
+        }
+        header("Pragma: public");
+        header("Expires: 0");
+        header("Cache-control: must-revalidate, post-check=0, pre-check=0");
+        header("Content-type: application/force-download");
+        header("Content-type: application/octet-stream");
+        header("Content-type: application/download");;
         header("Content-disposition: attachment; filename=".get_string('file','turnitintool')."_".$post->assignid.".xls");
-        echo $tii->getFileData();
+        header("Content-transfer-encoding: binary ");
+        header("Content-length: " . $size);
+
+        echo $output;
     }
 
 }

@@ -54,13 +54,14 @@ class restore_turnitintool_activity_structure_step extends restore_activity_stru
         $data = (object)$data;
         $oldid = $data->id;
         $data->course = $this->get_courseid();
-        
+
         if ($data->grade < 0) {
-        	// scale found, get mapping
-        	$data->grade = -($this->get_mappingid('scale', abs($data->grade)));
+            // scale found, get mapping
+            $data->grade = -($this->get_mappingid('scale', abs($data->grade)));
         }
 
         if ($CFG->turnitin_account_id!=$data->tiiaccount) {
+            $a = new stdClass();
             $a->backupid=$data->tiiaccount;
             $a->current=$CFG->turnitin_account_id;
             turnitintool_print_error('wrongaccountid','turnitintool',NULL,$a);
@@ -109,8 +110,8 @@ class restore_turnitintool_activity_structure_step extends restore_activity_stru
             $DB->insert_record('turnitintool_users',$tiiowner);
         }
         if ( !$DB->get_records_select('turnitintool_courses', 'courseid='.$data->courseid )) {
-        	$newitemid = $DB->insert_record('turnitintool_courses', $data);
-        	$this->set_mapping('turnitintool_courses', $oldid, $newitemid);
+            $newitemid = $DB->insert_record('turnitintool_courses', $data);
+            $this->set_mapping('turnitintool_courses', $oldid, $newitemid);
         }
     }
 
@@ -135,7 +136,8 @@ class restore_turnitintool_activity_structure_step extends restore_activity_stru
         $data->userid = $this->get_mappingid('user', $data->userid);
 
         // Create TII User Account Details
-        if (!$tiiuser = $DB->get_record('turnitintool_users', array('userid'=>$data->userid))) {
+        if (!$tiiuser = $DB->get_record('turnitintool_users', array('turnitin_uid'=>$data->tiiuserid))) {
+            $tiiuser = new object();
             $tiiuser->userid=$data->userid;
             $tiiuser->turnitin_uid=$data->tiiuserid;
             $DB->insert_record('turnitintool_users',$tiiuser);

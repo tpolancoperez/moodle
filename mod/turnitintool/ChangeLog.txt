@@ -1,3 +1,59 @@
+2013-03-05 : Added fix for differing profile language when loading javascript before login
+2013-03-05 : Added some user checks to the javascript jump to page
+2013-02-25 : Fixed a warning when refreshing inbox, which caused unnecessary database updates
+2013-02-25 : Fixed a Moodel 1.9 backwards compatibility issue
+2013-02-25 : Fixed some postgres related DB issues
+2013-02-18 : Fixed issue where deleted anonymous marking parts were making export links disappear
+2013-02-18 : Fixed issue where redirects were failing if the Moodle site was ran under a sub directory e.g. examplemoodle.org/moodle/
+2013-02-18 : Added the submission title back into the anonymous marking in box rows
+2013-02-18 : Fixed issue in postgres when accessing student My Submissions page
+2012-12-04 : Moved 'Enroll All Students' actions into ajax, enroll all students can now happen while refresh submissions is running
+2012-12-04 : Removed quote conversion functions, they were causing quote duplication in oracle DBs and are no longer
+2012-12-04 : Updated assignment setup screen to allow selection of grade category where supported
+2012-12-04 : Added support for showing descriptions in the course home page where supported
+2012-12-04 : Fixed issue where $cm->id wasn't available when logging create and update assignments actions
+2012-12-03 : Fixed issue with missing parameter in sql query
+2012-11-26 : Moved refresh submission actions into ajax calls triggered by click and unload events
+2012-11-26 : Added event trigger on user submission (thanks to Andrew Nicols)
+2012-11-26 : Added more logging and implemented course participation hooks
+2012-11-26 : Removed several database queries from inside loops to improve performance
+2012-11-26 : Refactored Submission inbox views, jQuery filtering implemented to reduce database requests
+2012-11-13 : Fixed issue where 'assignment does not belong to class' errors would loop endlessly
+2012-11-04 : Fixed issue with PLUGINFILE being output, now using 'format_module_intro' when available
+2012-11-04 : Updated create assignment to use Moodle Default timezone rather than server timezone
+2012-11-04 : Added check to make sure version check XML isn't parsed unless in admin screens (thanks to Andrew Nicols)
+2012-11-04 : Refactored Refresh Submissions API call to only update database rows where values have changed
+2012-11-04 : Replaced custom XML parser with SimpleXML to decrease memory usage when parsing API responses
+2012-09-24 : Update icons with current Turnitin icons, update icons to allow multi version support
+2012-09-24 : Fixed bug where Erater settings would reset when editing an assignment part
+2012-09-24 : Added support for Translated Matching
+2012-09-24 : Fixed numerous PHP strict standards warnings
+2012-09-24 : Re-factored Unlink / Relink users page to paginate user data and reduce memory usage
+2012-09-24 : Added a config level mod_turnitintool component file browser when using Moodle 2.0+ for mod_turnitintool
+2012-09-24 : Fixed issue when defaults are used in a course reset
+2012-09-24 : Fixed Tutor management screen HTML bug
+2012-04-27 : Fixed assignment start, due and post dates to correctly use server default timezone rather than user default timezone
+2012-04-27 : Fixed issue where invalid HTML was generated after an inbox refresh
+2012-04-27 : Added feature to allow anonymized student name data during API calls
+2012-04-26 : Added upgrade check to configurations screen
+2012-04-26 : Reversed out premature expired class fix, now handled correctly in the API
+2012-03-05 : Fixed an issue where the option "List only students that have made submissions" on Option tab did not work
+2012-03-05 : Added some workarounds for issue where grades were being revealed prematurely (http://tracker.moodle.org/browse/MDL-31487)
+2012-03-05 : Fixed XML parser error where 0% similarity was being displayed as pending
+2012-03-05 : Merged contributed code for default assignment settings (thanks to Howard Miller)
+2012-03-05 : Fixed issue where guests could see student submission form but not submit (now correctly shows permission denied error)
+2012-02-02 : Turned off Grade Reports and Bulk Download in Anonymous Marking assignments until post date
+2012-02-02 : Removed BOMs from language packs
+2012-02-02 : Fixed a pass by reference bug in the "check for submissions" function
+2012-02-02 : Added student view indicator icon to instructor's inbox screen
+2012-02-02 : Added backup up and restore from 1.9 to 2.1+ support (no user data)
+2012-02-02 : Moved temp upload file directory from system temp to moodledata temp to fix IIS permissions issues
+2012-02-02 : Fixed bug where Turnitin classes were prematurely expiring
+2012-02-02 : Re-factored unlink users feature to now remember unlinked users and allow relinking 
+2012-02-02 : Added communication and activity diagnostic logs to the admin config area
+2011-12-20 : Added fix to clean $_POST array inputs before passing the array into functions to improve security
+2011-12-02 : Fixed $post variable missing notice on the student submission inbox
+2011-12-02 : Fixed user dates to use userdate() in modform for part dates updating and in comms object for creating Turnitin assignment
 2011-10-26 : Fixed bug where gradescale grades were out by one in the GradeBook
 2011-10-26 : Changed gradescale calculation to use ceil instead of round
 2011-10-26 : Removed seriallised objects in URLs for better server interoperability (ie IIS url interpretation)

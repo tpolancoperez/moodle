@@ -4,7 +4,7 @@
  *
  * @package turnitintool
  * @subpackage classes
- * @copyright 2010 iParadigms LLC
+ * @copyright 2012 Turnitin
  */
 class turnitintool_commclass {
     /**
@@ -65,12 +65,13 @@ class turnitintool_commclass {
     var $curlerror;
     /**
      * A backward compatible constructor / destructor method that works in PHP4 to emulate the PHP5 magic method __construct
+     * Disabled to remove strict warnings, only useful for PHP 4 and there shouldn't be too many PHP 4 installs around by now
      */
-    function turnitintool_commclass($iUid,$iUfn,$iUln,$iUem,$iUtp,&$iLoaderBar) {
+    /*function turnitintool_commclass($iUid,$iUfn,$iUln,$iUem,$iUtp,&$iLoaderBar) {
         if (version_compare(PHP_VERSION,"5.0.0","<")) {
             $this->__construct($iUid,$iUfn,$iUln,$iUem,$iUtp,$iLoaderBar);
         }
-    }
+    }*/
     /**
      * The constructor for the class, Calls the startsession() method if we are using sessions
      *
@@ -88,6 +89,15 @@ class turnitintool_commclass {
         $this->apiurl=$CFG->turnitin_apiurl;
         $this->accountid=$CFG->turnitin_account_id;
         $this->uid=$iUid;
+        
+        // Convert the email, firstname and lastname to psuedos for students if the option is set in config
+        // Unless the user is already logged as a tutor then use real details
+        if ( isset( $CFG->turnitin_enablepseudo ) AND $CFG->turnitin_enablepseudo == 1 AND $iUtp == 1 AND !turnitintool_istutor( $iUem ) ) {
+            $iUfn = turnitintool_pseudofirstname();
+            $iUln = turnitintool_pseudolastname( $iUem );
+            $iUem = turnitintool_pseudoemail( $iUem );
+        }
+        
         $this->ufn=$iUfn;
         $this->uln=$iUln;
         $this->uem=$iUem;
@@ -118,6 +128,7 @@ class turnitintool_commclass {
         $assigndata['apilang']=$this->getLang();
         $this->result=$this->doRequest("POST", $this->apiurl, $assigndata,true);
         $this->tiisession=$this->getSessionid();
+        sleep(TII_LATENCY_SLEEP);
     }
     /**
      * Calls FID18, FCMD 2 to kill the session for this user / object call
@@ -149,26 +160,32 @@ class turnitintool_commclass {
     * @return string 1 or 0
     */
     function disableEmail($submission=false) {
-    	global $CFG;
-    	if ( ($this->utp==1 AND $CFG->turnitin_receiptemail!="1" AND $submission) OR  // If student and submission and sends receipts = no 
-    		 ($this->utp==1 AND $CFG->turnitin_studentemail!="1" AND !$submission) OR // If student and not submission and student emails = no 
-    		 ($this->utp==2 AND $CFG->turnitin_tutoremail!="1")	) {                   // If instructor and instructor emails = no 
-    		return "1";
-    	} else {
-    		return "0";
-    	}
+        global $CFG;
+        if ( ($this->utp==1 AND $CFG->turnitin_receiptemail!="1" AND $submission) OR  // If student and submission and sends receipts = no
+             ($this->utp==1 AND $CFG->turnitin_studentemail!="1" AND !$submission) OR // If student and not submission and student emails = no
+             ($this->utp==2 AND $CFG->turnitin_tutoremail!="1")	) {                   // If instructor and instructor emails = no
+            return "1";
+        } else {
+            return "0";
+        }
     }
     /**
-     * Converts XML string to array keys (__xmlkeys) and values (__xmlvalues)
+     * Converts XML string to array using SimpleXMLElement
      *
      * @param string $string
      * @return boolean
      */
-    function xmlToArray($string) {
-        $xml_parser = xml_parser_create();
-        $output=xml_parse_into_struct($xml_parser, $string, $this->_xmlvalues, $this->_xmlkeys);
-        xml_parser_free($xml_parser);
-        return $output;
+    function xmlToSimple( $string, $error = true ) {
+        try {
+            @$this->simplexml = new SimpleXMLElement( $string );
+        } catch ( Exception $e ) {
+            if ( $error ) {
+                turnitintool_print_error('apiunavailable','turnitintool',NULL,NULL,__FILE__,__LINE__);
+                exit();
+            }
+            return false;
+        }
+        return true;
     }
     /**
      * Returns a multidimensional array built in the format array[OBJECTID][fieldname]
@@ -177,53 +194,69 @@ class turnitintool_commclass {
      */
     function getSubmissionArray() {
         $output=array();
-        $xmlcall=$this->xmlToArray($this->result);
-        if (isset($this->_xmlkeys['OBJECTID']) AND is_array($this->_xmlkeys['OBJECTID'])) {
-            for ($i=0;$i<count($this->_xmlkeys['OBJECTID']);$i++) {
-
-                $pos1 = $this->_xmlkeys['USERID'][$i];
-                $pos2 = $this->_xmlkeys['OBJECTID'][$i];
-                $pos3 = $this->_xmlkeys['OVERLAP'][$i];
-                $pos4 = $this->_xmlkeys['SIMILARITYSCORE'][$i];
-                $pos5 = $this->_xmlkeys['SCORE'][$i];
-                $pos6 = $this->_xmlkeys['FIRSTNAME'][$i];
-                $pos7 = $this->_xmlkeys['LASTNAME'][$i];
-                $pos8 = $this->_xmlkeys['TITLE'][$i];
-                $pos9 = (isset($this->_xmlkeys['ANON'])) ? $this->_xmlkeys['ANON'][$i] : null;
-                $pos10 = $this->_xmlkeys['GRADEMARKSTATUS'][$i];
-                $pos11 = $this->_xmlkeys['DATE_SUBMITTED'][$i];
-
-                $objectid = $this->_xmlvalues[$pos2]['value'];
-
-                $output[$objectid]["userid"] = $this->_xmlvalues[$pos1]['value'];
-                $output[$objectid]["firstname"]=(isset($this->_xmlvalues[$pos6]['value'])) ? $this->_xmlvalues[$pos6]['value'] : '';
-                $output[$objectid]["lastname"]=(isset($this->_xmlvalues[$pos7]['value'])) ? $this->_xmlvalues[$pos7]['value'] : '';
-                $output[$objectid]["title"] = html_entity_decode($this->_xmlvalues[$pos8]['value'],ENT_QUOTES,"UTF-8");
-                $output[$objectid]["similarityscore"]=(isset($this->_xmlvalues[$pos4]['value']) AND $this->_xmlvalues[$pos4]['value']!="-1") ? $this->_xmlvalues[$pos4]['value'] : NULL;
-
-                $output[$objectid]["overlap"]=(isset($this->_xmlvalues[$pos3]['value']) // this is the Originality Percentage Score
-                                AND $this->_xmlvalues[$pos3]['value']!="-1"
-                                AND !is_null($output[$objectid]["similarityscore"])) ? $this->_xmlvalues[$pos3]['value'] : NULL;
-
-                $output[$objectid]["grademark"]=(isset($this->_xmlvalues[$pos5]['value']) AND $this->_xmlvalues[$pos5]['value']!="-1") ? $this->_xmlvalues[$pos5]['value'] : NULL;
-                $output[$objectid]["anon"]=(isset($this->_xmlvalues[$pos9]['value']) AND $this->_xmlvalues[$pos9]['value']!="-1") ? $this->_xmlvalues[$pos9]['value'] : NULL;
-                $output[$objectid]["grademarkstatus"]=(isset($this->_xmlvalues[$pos10]['value']) AND $this->_xmlvalues[$pos10]['value']!="-1") ? $this->_xmlvalues[$pos10]['value'] : NULL;
-                $output[$objectid]["date_submitted"]=(isset($this->_xmlvalues[$pos11]['value']) AND $this->_xmlvalues[$pos11]['value']!="-1") ? $this->_xmlvalues[$pos11]['value'] : NULL;
-            }
-            return $output;
-        } else {
+        
+        $this->xmlToSimple( $this->result );
+        $objects = $this->simplexml->object;
+        
+        if ( !isset( $objects ) ) {
             return $output;
         }
+        
+        foreach ( $objects as $object ) {
+            
+            $objectid = (string)$object->objectID;
+
+            $output[$objectid]["userid"] = (string)$object->userid;
+            $output[$objectid]["firstname"] = (string)$object->firstname;
+            $output[$objectid]["lastname"] = (string)$object->lastname;
+            $output[$objectid]["title"] = html_entity_decode( (string)$object->title, ENT_QUOTES, "UTF-8" );
+            
+            $similarityscore = $object->similarityScore;
+            $output[$objectid]["similarityscore"] = ( !is_null( $similarityscore ) AND $similarityscore != "-1" ) ? $similarityscore : null;
+            
+            $overlap = (string)$object->overlap;
+            $transmatch = (string)$object->translated_matching->overlap;
+            $transmatch_overlap = ( !is_null( $transmatch ) ) ? $transmatch : null;
+            if ( !is_null( $transmatch ) AND (integer)$transmatch_overlap > (integer)$overlap ) {
+                $high_overlap = $transmatch_overlap;
+                $output[$objectid]["transmatch"] = 1;
+            } else {
+                $high_overlap = $overlap;
+                $output[$objectid]["transmatch"] = 0;
+            }
+            
+            // note overlap is the Originality Percentage Score
+            $output[$objectid]["overlap"]=( $overlap === '0' OR ( !is_null( $overlap ) AND $overlap != "-1" AND !is_null( $output[$objectid]["similarityscore"] ) ) ) ? $high_overlap : null;
+            
+            $score = (string)$object->score;
+            $output[$objectid]["grademark"] = ( $score === '0' OR ( !is_null( $score ) AND $score != "-1" ) ) ? $score : null;
+
+            $anon = (string)$object->anon;
+            $output[$objectid]["anon"] = ( !is_null( $anon ) AND $anon != "-1" ) ? $anon : null;
+            
+            $grademarkstatus = (string)$object->gradeMarkStatus;
+            $output[$objectid]["grademarkstatus"]=(!is_null( $grademarkstatus ) AND $grademarkstatus != "-1" ) ? $grademarkstatus : null;
+            
+            $date_submitted = (string)$object->date_submitted;
+            $output[$objectid]["date_submitted"]=( !is_null( $date_submitted ) AND $date_submitted != "-1" ) ? $date_submitted : null;
+
+            $student_view = (string)$object->student_responses->student_response->response_time;
+            $output[$objectid]["student_view"]=( !is_null( $student_view ) AND !empty( $student_view ) ) ? $student_view : 0;
+        
+        }
+        
+        return $output;
+
     }
+
     /**
      * Returns the Session ID for the API call
      *
      * @return string The Session ID String or Empty if not available
      */
     function getSessionid() {
-        if ($this->xmlToArray($this->result) AND isset($this->_xmlkeys['SESSIONID'][0])) {
-            $pos = $this->_xmlkeys['SESSIONID'][0];
-            return $this->_xmlvalues[$pos]['value'];
+        if ( $this->xmlToSimple( $this->result ) AND !is_null( $this->simplexml->sessionid ) ) {
+            return (string)$this->simplexml->sessionid;
         } else {
             return '';
         }
@@ -234,9 +267,8 @@ class turnitintool_commclass {
      * @return string The RMESSAGE or Empty if not available
      */
     function getRmessage() {
-        if ($this->xmlToArray($this->result)) {
-            $pos = $this->_xmlkeys['RMESSAGE'][0];
-            return $this->_xmlvalues[$pos]['value'];
+        if ( $this->xmlToSimple( $this->result ) ) {
+            return (string)$this->simplexml->rmessage;
         } else if (strlen($this->curlerror)>0) {
             return 'CURL ERROR: '.$this->curlerror;
         } else {
@@ -246,12 +278,11 @@ class turnitintool_commclass {
     /**
      * Returns the User ID for the API call
      *
-     * @return string The USERID or Empty if not available
+     * @return integer The USERID or Empty if not available
      */
     function getUserID() {
-        if ($this->xmlToArray($this->result)) {
-            $pos = $this->_xmlkeys['USERID'][0];
-            return $this->_xmlvalues[$pos]['value'];
+        if ( $this->xmlToSimple( $this->result ) ) {
+            return (integer)$this->simplexml->userid;
         } else {
             return '';
         }
@@ -259,12 +290,11 @@ class turnitintool_commclass {
     /**
      * Returns the Class ID for the API call
      *
-     * @return string The CLASSID or Empty if not available
+     * @return integer The CLASSID or Empty if not available
      */
     function getClassID() {
-        if ($this->xmlToArray($this->result)) {
-            $pos = $this->_xmlkeys['CLASSID'][0];
-            return $this->_xmlvalues[$pos]['value'];
+        if ( $this->xmlToSimple( $this->result ) ) {
+            return (integer)$this->simplexml->classid;
         } else {
             return '';
         }
@@ -272,12 +302,11 @@ class turnitintool_commclass {
     /**
      * Returns the Return Code (rcode) for the API call
      *
-     * @return string The RCODE or NULL if not available
+     * @return integer The RCODE or NULL if not available
      */
     function getRcode() {
-        if ($this->xmlToArray($this->result)) {
-            $pos = $this->_xmlkeys['RCODE'][0];
-            return $this->_xmlvalues[$pos]['value'];
+        if ( $this->xmlToSimple( $this->result ) ) {
+            return (integer)$this->simplexml->rcode;
         } else {
             return NULL;
         }
@@ -309,12 +338,11 @@ class turnitintool_commclass {
     /**
      * Returns the Object ID (objectid) for the API call
      *
-     * @return string The OBJECTID or Empty String if not available
+     * @return integer The OBJECTID or Empty String if not available
      */
     function getObjectid() {
-        if ($this->xmlToArray($this->result)) {
-            $pos = $this->_xmlkeys['OBJECTID'][0];
-            return $this->_xmlvalues[$pos]['value'];
+        if ( $this->xmlToSimple( $this->result ) ) {
+            return (integer)$this->simplexml->objectID;
         } else {
             return '';
         }
@@ -322,12 +350,11 @@ class turnitintool_commclass {
     /**
      * Returns the Assignment ID (ASSIGNMENTID) for the API call
      *
-     * @return string The ASSIGNMENTID or Empty String if not available
+     * @return integer The ASSIGNMENTID or Empty String if not available
      */
     function getAssignid() {
-        if ($this->xmlToArray($this->result)) {
-            $pos = $this->_xmlkeys['ASSIGNMENTID'][0];
-            return $this->_xmlvalues[$pos]['value'];
+        if ( $this->xmlToSimple( $this->result ) ) {
+            return (integer)$this->simplexml->assignmentid;
         } else {
             return '';
         }
@@ -338,9 +365,8 @@ class turnitintool_commclass {
      * @return string The ORIGINALITYSCORE or Empty String if not available
      */
     function getScore() {
-        if ($this->xmlToArray($this->result) AND isset($this->_xmlkeys['ORIGINALITYSCORE'][0])) {
-            $pos = $this->_xmlkeys['ORIGINALITYSCORE'][0];
-            return $this->_xmlvalues[$pos]['value'];
+        if ( $this->xmlToSimple( $this->result ) AND !is_null( $this->simplexml->originalityscore ) ) {
+            return (string)$this->simplexml->originalityscore;
         } else {
             return '';
         }
@@ -375,8 +401,8 @@ class turnitintool_commclass {
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
         curl_setopt($ch, CURLOPT_ENCODING, '');
         curl_setopt($ch, CURLOPT_MAXREDIRS, 10);
-        curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
-        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 2);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 1);
         curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 20);
         if (isset($CFG->turnitin_proxyurl) AND !empty($CFG->turnitin_proxyurl)) {
             curl_setopt($ch, CURLOPT_PROXY, $CFG->turnitin_proxyurl.':'.$CFG->turnitin_proxyport);
@@ -399,7 +425,6 @@ class turnitintool_commclass {
             $result=curl_error($ch);
             $this->curlerror=$result;
         }
-        sleep(TII_LATENCY_SLEEP);
         $this->doLogging($vars,$result);
         return utf8_decode($result);
         curl_close($ch);
@@ -413,7 +438,8 @@ class turnitintool_commclass {
      */
     function doLogging($vars,$result) {
         global $CFG;
-        if ($CFG->turnitin_enablediagnostic) {
+        if ( $CFG->turnitin_enablediagnostic AND !empty( $vars ) ) {
+            $this->result=$result;
             // ###### DELETE SURPLUS LOGS #########
             $numkeeps=10;
             $prefix="commslog_";
@@ -433,23 +459,20 @@ class turnitintool_commclass {
                 unlink($dirpath."/".$files[$i]);
             }
             // ####################################
+            $newline = "\r\n";
             $filepath=$dirpath."/".$prefix.date('Ymd',time()).".log";
             $file=fopen($filepath,'ab');
             $fid = isset($vars["fid"]) ? $vars["fid"] : "N/A";
             $fcmd = isset($vars["fcmd"]) ? $vars["fcmd"] : "N/A";
-            $output="== FID:".$fid." | FCMD:".$fcmd." ===========================================================".PHP_EOL;
-            if ($this->getRerror() AND $fid!="N/A") {
-                $output.="== SUCCESS ===================================================================".PHP_EOL;
-            } else if ($fid!="N/A") {
-                $output.="== ERROR =====================================================================".PHP_EOL;
-            }
-            $output.="CALL DATE TIME: ".date('r',time()).PHP_EOL;
-            $output.="URL: ".$this->apiurl.PHP_EOL;
-            $output.="------------------------------------------------------------------------------".PHP_EOL;
-            $output.="REQUEST VARS: ".PHP_EOL.str_replace("\n",PHP_EOL,print_r($vars,true)).PHP_EOL;
-            $output.="------------------------------------------------------------------------------".PHP_EOL;
-            $output.="RESPONSE: ".PHP_EOL.str_replace("\n",PHP_EOL,$result).PHP_EOL;
-            $output.="##############################################################################".PHP_EOL.PHP_EOL;
+            $output="== FID:".$fid." | FCMD:".$fcmd." ===========================================================".$newline;
+            $output.="== RESPONSE =====================================================================".$newline;
+            $output.="CALL DATE TIME: ".date('r',time()).$newline;
+            $output.="URL: ".$this->apiurl.$newline;
+            $output.="------------------------------------------------------------------------------".$newline;
+            $output.="REQUEST VARS: ".PHP_EOL.str_replace("\n","\r\n",str_replace("\r\r\n","\r\n",print_r($vars,true))).$newline;
+            $output.="------------------------------------------------------------------------------".$newline;
+            $output.="RESPONSE: ".PHP_EOL.PHP_EOL.str_replace("\n","\r\n",str_replace("\r\r\n","\r\n",$result)).$newline;
+            $output.="##############################################################################".$newline.$newline;
             fwrite($file,$output);
             fclose($file);
         }
@@ -499,7 +522,8 @@ class turnitintool_commclass {
      * @param string $status The status to pass to the loaderbar class
      */
     function createAssignment($post,$do='INSERT',$status) {
-
+        global $CFG;
+        
         if (!turnitintool_check_config()) {
             turnitintool_print_error('configureerror','turnitintool',NULL,NULL,__FILE__,__LINE__);
             exit();
@@ -512,6 +536,9 @@ class turnitintool_commclass {
             $thisfcmd=2;
             $userid='';
         }
+        
+        // Use the Moodle Default Timezone and fallback on Server timzone if config not set
+        $timezone = isset( $CFG->timezone ) ? $CFG->timezone : 20;
 
         $assigndata=array('gmtime'=>$this->tiiGmtime(),
                 'encrypt'=>TII_ENCRYPT,
@@ -522,10 +549,9 @@ class turnitintool_commclass {
                 'ctl'=>stripslashes($post->ctl),
                 'assignid'=>$post->assignid,
                 'utp'=>2,
-                'ced'=>date('Ymd',strtotime('+24 months')), // extend the class end date to be two years
-                'dtstart'=>date('Y-m-d H:i:s',$post->dtstart),
-                'dtdue'=>date('Y-m-d H:i:s',$post->dtdue),
-                'dtpost'=>date('Y-m-d H:i:s',$post->dtpost),
+                'dtstart'=>userdate($post->dtstart,'%Y-%m-%d %H:%M:%S',$timezone,false), // Default Moodle Timezone
+                'dtdue'=>userdate($post->dtdue,'%Y-%m-%d %H:%M:%S',$timezone,false), // Default Moodle Timezone
+                'dtpost'=>userdate($post->dtpost,'%Y-%m-%d %H:%M:%S',$timezone,false), // Default Moodle Timezone
                 'fid'=>4,
                 'uid'=>$userid,
                 'uem'=>$this->uem,
@@ -582,14 +608,17 @@ class turnitintool_commclass {
             $assigndata["exclude_type"]=$post->exclude_type;
         }
         if (isset($post->erater) AND $post->erater != 0) {
-        	$assigndata["erater"]=$post->erater;
-        	$assigndata["ets_handbook"]=$post->erater_handbook;
-        	$assigndata["ets_dictionary"]=$post->erater_dictionary;
-        	$assigndata["ets_spelling"]=$post->erater_spelling;
-        	$assigndata["ets_grammar"]=$post->erater_grammar;
-        	$assigndata["ets_usage"]=$post->erater_usage;
-        	$assigndata["ets_mechanics"]=$post->erater_mechanics;
-        	$assigndata["ets_style"]=$post->erater_style;
+            $assigndata["erater"]=$post->erater;
+            $assigndata["ets_handbook"]=$post->erater_handbook;
+            $assigndata["ets_dictionary"]=$post->erater_dictionary;
+            $assigndata["ets_spelling"]=$post->erater_spelling;
+            $assigndata["ets_grammar"]=$post->erater_grammar;
+            $assigndata["ets_usage"]=$post->erater_usage;
+            $assigndata["ets_mechanics"]=$post->erater_mechanics;
+            $assigndata["ets_style"]=$post->erater_style;
+        }
+        if (isset($post->transmatch)) {
+            $assigndata["translated_matching"]=$post->transmatch;
         }
         if (isset($post->idsync)) {
             $assigndata['idsync']=$post->idsync;
@@ -650,7 +679,7 @@ class turnitintool_commclass {
                 'assign'=>stripslashes($post->assignname),
                 'tem'=>$post->tem,
                 'ptype'=>2,
-                'ptl'=>stripslashes(turnitintool_fix_quote($post->papertitle)),
+                'ptl'=>stripslashes($post->papertitle),
                 'utp'=>1,
                 'fid'=>5,
                 'uid'=>$this->uid,
@@ -707,45 +736,22 @@ class turnitintool_commclass {
      */
     function getAssignmentObject() {
         $output=new object();
-        $xmlcall=$this->xmlToArray($this->result);
-        if (isset($this->_xmlkeys['ASSIGN']) AND is_array($this->_xmlkeys['ASSIGN'])) {
-            for ($i=0;$i<count($this->_xmlkeys['ASSIGN']);$i++) {
-
-                $pos1 = $this->_xmlkeys['ASSIGN'][$i];
-                $pos2 = $this->_xmlkeys['DTSTART'][$i];
-                $pos3 = $this->_xmlkeys['DTDUE'][$i];
-                $pos4 = $this->_xmlkeys['DTPOST'][$i];
-                $pos5 = $this->_xmlkeys['AINST'][$i];
-                $pos6 = $this->_xmlkeys['GENERATE'][$i];
-                $pos7 = $this->_xmlkeys['SVIEWREPORTS'][$i];
-                $pos8 = $this->_xmlkeys['LATESUBMISSIONS'][$i];
-                $pos9 = $this->_xmlkeys['REPOSITORY'][$i];
-                $pos10 = $this->_xmlkeys['SEARCHPAPERS'][$i];
-                $pos11 = $this->_xmlkeys['SEARCHINTERNET'][$i];
-                $pos12 = $this->_xmlkeys['SEARCHJOURNALS'][$i];
-                $pos13 = $this->_xmlkeys['ANON'][$i];
-                $pos14 = $this->_xmlkeys['MAXPOINTS'][$i];
-
-                $output->assign = $this->_xmlvalues[$pos1]['value'];
-                $output->dtstart = strtotime($this->_xmlvalues[$pos2]['value']);
-                $output->dtdue = strtotime($this->_xmlvalues[$pos3]['value']);
-                $output->dtpost = strtotime($this->_xmlvalues[$pos4]['value']);
-                if (isset($this->_xmlvalues[$pos5]['value'])) {
-                    $output->ainst = $this->_xmlvalues[$pos5]['value'];
-                } else {
-                    $output->ainst = NULL;
-                }
-                $output->report_gen_speed = $this->_xmlvalues[$pos6]['value'];
-                $output->s_view_report = $this->_xmlvalues[$pos7]['value'];
-                $output->late_accept_flag = $this->_xmlvalues[$pos8]['value'];
-                $output->submit_papers_to = $this->_xmlvalues[$pos9]['value'];
-                $output->s_paper_check = $this->_xmlvalues[$pos10]['value'];
-                $output->internet_check = $this->_xmlvalues[$pos11]['value'];
-                $output->journal_check = $this->_xmlvalues[$pos12]['value'];
-                $output->anon = $this->_xmlvalues[$pos13]['value'];
-                $output->maxpoints = $this->_xmlvalues[$pos14]['value'];
-
-            }
+        $xmlcall=$this->xmlToSimple($this->result);
+        if ( isset($this->simplexml->object->assign) ) {
+            $output->assign = (string)$this->simplexml->object->assign;
+            $output->dtstart = (integer)$this->simplexml->object->dtstart;
+            $output->dtdue = (integer)$this->simplexml->object->dtdue;
+            $output->dtpost = (integer)$this->simplexml->object->dtpost;
+            $output->ainst = (string)$this->simplexml->object->ainst;
+            $output->report_gen_speed = (integer)$this->simplexml->object->generate;
+            $output->s_view_report = (boolean)$this->simplexml->object->sviewreports;
+            $output->late_accept_flag = (boolean)$this->simplexml->object->latesubmissions;
+            $output->submit_papers_to = (integer)$this->simplexml->object->repository;
+            $output->s_paper_check = (boolean)$this->simplexml->object->searchpapers;
+            $output->internet_check = (boolean)$this->simplexml->object->searchinternet;
+            $output->journal_check = (boolean)$this->simplexml->object->searchjournals;
+            $output->anon = (boolean)$this->simplexml->object->anon;
+            $output->maxpoints = (integer)$this->simplexml->object->maxpoints;
             return $output;
         } else {
             return $output;
@@ -816,7 +822,7 @@ class turnitintool_commclass {
      * @param object $post The post object that contains the necessary query parameters for the call
      * @param string $status The status to pass to the loaderbar class
      */
-    function createClass($post,$status) {
+    function createClass($post,$status,$type="INSERT") {
 
         if (!isset($post->cid)) {
             $post->cid="";
@@ -824,18 +830,25 @@ class turnitintool_commclass {
         } else {
             $userid=$this->uid;
         }
+        $ced = isset( $post->ced ) ? $post->ced : null;
+        if ( $type == "INSERT" ) {
+            $fcmd = 2;
+        } else {
+            $fcmd = 3;
+        }
 
         $assigndata=array('gmtime'=>$this->tiiGmtime(),
                 'encrypt'=>TII_ENCRYPT,
                 'aid'=>$this->accountid,
                 'diagnostic'=>0,
-                'fcmd'=>2,
+                'fcmd'=>$fcmd,
                 'utp'=>2,
                 'fid'=>2,
                 'cid'=>$post->cid,
                 'ctl'=>stripslashes($post->ctl),
                 'uid'=>$userid,
                 'uem'=>$this->uem,
+                'ced'=>$ced,
                 'ufn'=>$this->ufn,
                 'uln'=>$this->uln
         );
@@ -917,7 +930,7 @@ class turnitintool_commclass {
         );
         $assigndata['dis']=$this->disableEmail();
         $assigndata["md5"]=$this->doMD5($assigndata);
-        $assigndata['session-id']=$this->tiisession;
+        if ( !is_null( $this->tiisession ) ) $assigndata['session-id']=$this->tiisession;
         $assigndata['src']=TURNITIN_APISRC;
         $assigndata['apilang']=$this->getLang();
         $this->result=$this->doRequest("POST", $this->apiurl, $assigndata,true,$status);
@@ -1035,22 +1048,8 @@ class turnitintool_commclass {
     function getTutors($post,$status) {
         $this->listEnrollment($post,$status);
         $result=null;
-        $xmlcall=$this->xmlToArray($this->result);
-        if (isset($this->_xmlkeys['INSTRUCTOR']) AND is_array($this->_xmlkeys['INSTRUCTOR'])) {
-            $n=0;
-            for ($i=0;$i<count($this->_xmlkeys['INSTRUCTOR']);$i++) {
-                $pos=$this->_xmlkeys['INSTRUCTOR'][$i]+1;
-                $key=(isset($this->_xmlvalues[$pos]['tag'])) ? strtolower($this->_xmlvalues[$pos]['tag']) : null;;
-                $value=(isset($this->_xmlvalues[$pos]['value'])) ? $this->_xmlvalues[$pos]['value'] : null;
-                $level=(isset($this->_xmlvalues[$pos]['level'])) ? $this->_xmlvalues[$pos]['level'] : null;
-                if ($level==4) {
-                    $result[$n][$key]=$value;
-                } else {
-                    $n++;
-                    continue;
-                }
-            }
-        }
+        $this->xmlToSimple( $this->result );
+        if ( isset( $this->simplexml->instructors->instructor ) ) $result = $this->simplexml->instructors->instructor;
         return $result;
     }
      /**
@@ -1064,22 +1063,8 @@ class turnitintool_commclass {
     function getStudents($post,$status) {
         $this->listEnrollment($post,$status);
         $result=null;
-        $xmlcall=$this->xmlToArray($this->result);
-        if (isset($this->_xmlkeys['STUDENT']) AND is_array($this->_xmlkeys['STUDENT'])) {
-            $n=0;
-            for ($i=0;$i<count($this->_xmlkeys['STUDENT']);$i++) {
-                $pos=$this->_xmlkeys['STUDENT'][$i]+1;
-                $key=strtolower($this->_xmlvalues[$pos]['tag']);
-                $value=$this->_xmlvalues[$pos]['value'];
-                $level=$this->_xmlvalues[$pos]['level'];
-                if ($level==4) {
-                    $result[$n][$key]=$value;
-                } else {
-                    $n++;
-                    continue;
-                }
-            }
-        }
+        $this->xmlToSimple( $this->result );
+        if ( isset( $this->simplexml->students->student ) ) $result = $this->simplexml->students->student;
         return $result;
     }
     /**
@@ -1373,9 +1358,8 @@ class turnitintool_commclass {
      * @return string The RMESSAGE or Empty if not available
      */
     function getFileData() {
-        if ($this->xmlToArray($this->result)) {
-            $pos = $this->_xmlkeys['FILE_DATA'][0];
-            return base64_decode($this->_xmlvalues[$pos]['value']);
+        if ( $this->xmlToSimple( $this->result ) ) {
+            return base64_decode( (string)$this->simplexml->file_data );
         } else if (strlen($this->curlerror)>0) {
             return 'CURL ERROR: '.$this->curlerror;
         } else {
@@ -1450,11 +1434,17 @@ class turnitintool_commclass {
             'de_du'=>'de',
             'zh_cn'=>'cn',
             'zh_tw'=>'zh_tw',
+            'pt_br'=>'pt_br',
             'th'=>'th',
             'ja'=>'ja',
             'ko'=>'ko',
             'ms'=>'ms',
-            'tr'=>'tr'
+            'tr'=>'tr',
+            'ca'=>'es',
+            'sv'=>'sv',
+            'nl'=>'nl',
+            'fi'=>'fi',
+            'ar'=>'ar'
         );
         $langcode = (isset($langarray[$langcode])) ? $langarray[$langcode] : 'en_us';
         return $langcode;

@@ -1,7 +1,7 @@
 <?php
 /**
  * @package   turnitintool
- * @copyright 2010 iParadigms LLC
+ * @copyright 2012 Turnitin
  *
  */
 require_once ($CFG->dirroot.'/course/moodleform_mod.php');
@@ -22,6 +22,7 @@ class mod_turnitintool_mod_form extends moodleform_mod {
             $mform->setType('name', PARAM_CLEAN);
         }
         $mform->addRule('name', null, 'required', null, 'client');
+        $input = new stdClass();
         $input->length=40;
         $input->field=get_string('turnitintoolname','turnitintool');
         $mform->addRule('name', get_string('maxlength','turnitintool',$input), 'maxlength', 40, 'client');
@@ -33,6 +34,7 @@ class mod_turnitintool_mod_form extends moodleform_mod {
             $mform->addElement('htmleditor', 'intro', get_string('turnitintoolintro', 'turnitintool'));
             $mform->setType('intro', PARAM_RAW);
             $mform->addRule('intro', get_string('required'), 'required', null, 'client');
+            $input = new stdClass();
             $input->length=1000;
             $input->field=get_string('turnitintoolintro','turnitintool');
             $mform->addRule('intro', get_string('maxlength','turnitintool',$input), 'maxlength', 1000, 'client');
@@ -44,6 +46,7 @@ class mod_turnitintool_mod_form extends moodleform_mod {
         $mform->addElement('select', 'type', get_string('type', 'turnitintool'), $typeoptions);
         turnitintool_modform_help_icon('type', 'types', 'turnitintool', $mform);
         $mform->addRule('type', get_string('required'), 'required', null, 'client');
+        $mform->setDefault('type', $CFG->turnitin_default_type);
         
         $options = array();
         for($i = 1; $i <= 5; $i++) {
@@ -52,6 +55,7 @@ class mod_turnitintool_mod_form extends moodleform_mod {
         
         $mform->addElement('select', 'numparts', get_string('numberofparts', 'turnitintool'), $options);
         turnitintool_modform_help_icon('numparts', 'numberofparts', 'turnitintool', $mform);
+        $mform->setDefault('numparts', $CFG->turnitin_default_numparts);
         
         $suboptions = array( 0 => get_string('namedparts','turnitintool'), 1 => get_string('portfolio','turnitintool'));
         
@@ -78,12 +82,14 @@ class mod_turnitintool_mod_form extends moodleform_mod {
         for ($i=0;$i<=100;$i++) {
             $options[$i]=$i;
         }
-        $mform->addElement('modgrade', 'grade', get_string('overallgrade', 'turnitintool'));
-        turnitintool_modform_help_icon('grade', 'overallgrade', 'turnitintool', $mform);
-        $mform->setDefault('grade', 100);
+        if ( !is_callable(array($this,'standard_grading_coursemodule_elements')) ) {
+            $mform->addElement('modgrade', 'grade', get_string('overallgrade', 'turnitintool'));
+            turnitintool_modform_help_icon('grade', 'overallgrade', 'turnitintool', $mform);
+            $mform->setDefault('grade', $CFG->turnitin_default_grade);
+        }
 
         $ynoptions = array( 0 => get_string('no'), 1 => get_string('yes'));
-        
+
         $mform->addElement('hidden','defaultdtstart',time());
         $mform->addElement('hidden','defaultdtdue',strtotime('+7 days'));
         $mform->addElement('hidden','defaultdtpost',strtotime('+7 days'));
@@ -106,22 +112,23 @@ class mod_turnitintool_mod_form extends moodleform_mod {
         } else if ($CFG->turnitin_useanon) {
             $mform->addElement('select', 'anon', get_string('turnitinanon', 'turnitintool'), $ynoptions);
             turnitintool_modform_help_icon('anon', 'turnitinanon', 'turnitintool', $mform);
-            $mform->setDefault('anon', 0);
+            $anon_default = isset($CFG->turnitin_default_anon) ? $CFG->turnitin_default_anon : 0;
+            $mform->setDefault('anon', $anon_default);
         } else {
             $mform->addElement('hidden', 'anon', 0);
         }
         
         $mform->addElement('select', 'studentreports', get_string('studentreports', 'turnitintool'), $ynoptions);
         turnitintool_modform_help_icon('studentreports', 'studentreports', 'turnitintool', $mform);
-        $mform->setDefault('studentreports', 0);
+        $mform->setDefault('studentreports', $CFG->turnitin_default_studentreports);
         
         $mform->addElement('header', 'general', get_string('advancedoptions', 'turnitintool'));
         $mform->addElement('select', 'allowlate', get_string('allowlate', 'turnitintool'), $ynoptions);
-        $mform->setDefault('allowlate', 0);
+        $mform->setDefault('allowlate', $CFG->turnitin_default_allowlate);
         
         $genoptions = array( 0 => get_string('genimmediately1','turnitintool'), 1 => get_string('genimmediately2','turnitintool'), 2 => get_string('genduedate','turnitintool'));
         $mform->addElement('select', 'reportgenspeed', get_string('reportgenspeed', 'turnitintool'), $genoptions);
-        $mform->setDefault('reportgenspeed', 0);
+        $mform->setDefault('reportgenspeed', $CFG->turnitin_default_reportgenspeed);
         
         $suboptions = array( 0 => get_string('norepository','turnitintool'), 1 => get_string('standardrepository','turnitintool'));
 
@@ -130,16 +137,16 @@ class mod_turnitintool_mod_form extends moodleform_mod {
         }
 		
         $mform->addElement('select', 'submitpapersto', get_string('submitpapersto', 'turnitintool'), $suboptions);
-        $mform->setDefault('submitpapersto', 1);
+        $mform->setDefault('submitpapersto', $CFG->turnitin_default_submitpapersto);
         
         $mform->addElement('select', 'spapercheck', get_string('spapercheck', 'turnitintool'), $ynoptions);
-        $mform->setDefault('spapercheck', 1);
+        $mform->setDefault('spapercheck', $CFG->turnitin_default_spapercheck);
         
         $mform->addElement('select', 'internetcheck', get_string('internetcheck', 'turnitintool'), $ynoptions);
-        $mform->setDefault('internetcheck', 1);
+        $mform->setDefault('internetcheck', $CFG->turnitin_default_internetcheck);
 
         $mform->addElement('select', 'journalcheck', get_string('journalcheck', 'turnitintool'), $ynoptions);
-        $mform->setDefault('journalcheck', 1);
+        $mform->setDefault('journalcheck', $CFG->turnitin_default_journalcheck);
 
         if ($numsubs>0) {
 
@@ -163,12 +170,13 @@ class mod_turnitintool_mod_form extends moodleform_mod {
 
         } else {
             $mform->addElement('select', 'excludebiblio', get_string('excludebiblio', 'turnitintool'), $ynoptions);
-            $mform->setDefault('excludebiblio', 0);
+            $mform->setDefault('excludebiblio', $CFG->turnitin_default_excludebiblio);
 
             $mform->addElement('select', 'excludequoted', get_string('excludequoted', 'turnitintool'), $ynoptions);
-            $mform->setDefault('excludequoted', 0);
+            $mform->setDefault('excludequoted', $CFG->turnitin_default_excludequoted);
 
             $mform->addElement('text', 'excludevalue', get_string('excludevalue', 'turnitintool'), array('size'=>'12'));
+            $input = new stdClass();
             $input->length=9;
             $input->field=get_string('excludevalue','turnitintool');
             $mform->addRule('excludevalue', get_string('maxlength','turnitintool',$input), 'maxlength', 9, 'client');
@@ -228,12 +236,24 @@ class mod_turnitintool_mod_form extends moodleform_mod {
         	
         }
 
+        if ( isset($CFG->turnitin_transmatch) && $CFG->turnitin_transmatch=='1') {
+            $mform->addElement( 'select', 'transmatch', get_string('transmatch', 'turnitintool'), $ynoptions );
+            $mform->setDefault( 'transmatch', false);
+        } else {
+            $mform->addElement( 'hidden', 'transmatch', 0 );
+        }
+        
         $mform->addElement('hidden','ownerid',NULL);
 
         $features = new stdClass;
         $features->groups = true;
         $features->groupings = true;
         $features->groupmembersonly = true;
+        
+        if ( is_callable(array($this,'standard_grading_coursemodule_elements')) ) {
+            $this->standard_grading_coursemodule_elements();
+        }
+        
         $this->standard_coursemodule_elements($features);
         $this->add_action_buttons();
 
