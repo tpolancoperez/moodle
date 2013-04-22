@@ -23,8 +23,8 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$string['accesCAS'] = 'CAS users';
-$string['accesNOCAS'] = 'other users';
+$string['accesCAS'] = 'Portico users';
+$string['accesNOCAS'] = 'Guest and local Moodle accounts';
 $string['auth_cas_auth_user_create'] = 'Create users externally';
 $string['auth_cas_baseuri'] = 'URI of the server (nothing if no baseUri)<br />For example, if the CAS server responds to host.domaine.fr/CAS/ then<br />cas_baseuri = CAS/';
 $string['auth_cas_baseuri_key'] = 'Base URI';
