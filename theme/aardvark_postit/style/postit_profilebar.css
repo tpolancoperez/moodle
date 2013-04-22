@@ -1,0 +1,223 @@
+#profileblock {
+    float: right;
+    text-align: right;
+    width: auto;
+    right: 0;
+}
+#profilepic {
+    text-align: right;
+    float: right;
+    margin: 2px 0 2px 2px;
+    width: 80px;
+    height: 80px;
+    border: 1px solid #EEE;
+    display: inline;
+}
+#profilepic img {
+    width: 74px;
+    height: 74px;
+    border: 3px solid #FFF;
+}
+#profilelogin {
+    text-align: right;
+    width: 390px;
+    margin-right: 0;
+    margin-top: 40px;
+    float: right;
+}
+#profilelogin ul li {
+    padding-left: 10px;
+    padding-right: 0;
+    display: inline;
+    margin-right: 0;
+    color:#aeaeae;
+}
+#profilelogin .loginform {
+    width: 7em;
+    margin-left: 4px;
+    display: inline;
+    background:#EEEeee;
+    border:1px solid #CCC;
+    color:#333333;
+    padding:4px;
+}
+#profilelogin a {
+    text-decoration: none;
+}
+#profilelogin a:hover {
+    text-decoration: none;
+}
+#profilename {
+    float: right;
+    font-size: 1.4em;
+    font-weight: bold;
+    letter-spacing: -2px;
+    margin: 30px 2px 0 0;
+    text-align: right;
+    text-decoration: none;
+    width: 390px;
+}
+#profilename ul li {
+    padding-left: 10px;
+    padding-right: 0;
+    display: inline;
+    margin-right: 0;
+    list-style-type: none;
+}
+#profilename img {
+    vertical-align: middle;
+}
+#profilename .loginform {
+    width: 5em;
+    margin-left: 4px;
+    display: inline;
+    font-size: 0.8em;
+}
+#profilename a:hover {
+    text-decoration: none;
+}
+#profilebar-outerwrap {
+    clear: both;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+}
+#profilebar {
+    clear: both;
+    margin: 0 auto;
+    width: 870px;
+    height: auto;
+    font-size: 12px;
+    font-weight: 200;
+    max-height: 200px;
+}
+
+#profilebar-innerwrap {
+    float: right;
+    clear: right;
+    border: 6px solid #EEE;
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    -moz-border-topleft-radius: 10px;
+    -moz-border-topright-radius: 10px;
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+}
+
+#pbar-pre h4,
+#pbar-post h4,
+#profilebar-account h4,
+#profilebar-mystuff h4 {
+    padding: 0 0 10px 10px;
+    font-size: 12px;
+    text-transform: uppercase;
+    margin: 0;
+    font-weight: 400;
+    color: #333333;
+    padding-top: 8px;
+}
+
+#profilebar hr {
+    height: 1px;
+    border-top: 1px solid #EEE;
+}
+
+#pbar-pre,
+#pbar-post,
+#profilebar-account,
+#profilbar-mystuff {
+    position: relative;
+    margin: 0;
+    padding: 5px;
+    min-height: 150px;
+    overflow: hidden;
+    background: transparent;
+}
+#pbar-pre,
+#pbar-post {
+    width: 210px;
+    min-height: 200px;
+    background:  url([[pix:theme|profile/postit-note]]) no-repeat 0 5px;
+    box-shadow: 10px 10px 10px #CCC;
+}
+#pbar-pre {
+    float: left;
+    clear: left;
+}
+#pbar-post {
+    float: right;
+    margin-right: 10px;
+}
+#pbar-pre .region-content,
+#pbar-post .region-content {
+    position: relative;
+    top: 45px;
+    left: 20px;
+    width: 175px;
+    padding: 0;
+    margin: 0;
+}
+#profilebar-center {
+    float: left;
+    margin: 3px;
+    padding: 0 20px;
+    width: 370px;
+    height: 230px;
+    box-shadow: 10px 10px 10px #CCC;
+    background-color: white;
+    border: 1px solid #DDD;
+}
+#profilebar-mystuff,
+#profilebar-account {
+    width: 170px;
+    height: 210px;
+}
+#profilebar-account {
+    float: left;
+    border-right: 1px dashed #999;
+}
+#profilebar-mystuff {
+    float: right;
+    padding: 5px 0 0 10px;
+}
+.profilebar-options ul {
+    margin-left: 0;
+}
+.profilebar-options ul li {
+    margin: 0;
+    padding: 0 10px;
+    list-style-type: none;
+    width: 75%;
+    height: 55px;
+    border-bottom: 1px dashed #999;
+}
+.profilebar-options img {
+    vertical-align: middle;
+    padding: 2px;
+    width: 50px;
+    height: 50px;
+}
+.profilebar-options li i,
+.profilebar-options li:hover i {
+    position: relative;
+    right: -50px;
+    top: -50px;
+    text-decoration: none;
+    margin: 0;
+    padding: 5px;
+    display: block;
+}
+.profilebar-options li i {
+    color: #333;
+}
+.profilebar-options li:hover i {
+    color: #80000;
+}
+#profilebar-clear {
+    clear:both;
+    padding-bottom:5px;
+}
+a#toggle {
+    font-size: 1em;
+}

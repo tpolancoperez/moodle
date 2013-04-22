@@ -1,0 +1,75 @@
+#page-content {
+    clear:both;
+    float:left;
+    overflow:hidden;
+    position:relative;
+    width:100%;
+}
+#region-main-box {
+    float:left;
+    left:210px;
+    position:relative;
+    width:200%;
+}
+#region-post-box {
+    float:left;
+    margin-left:-420px;
+    position:relative;
+    left:50%;
+    width:100%;
+}
+#region-main-wrap {
+    float:right;
+    position:relative;
+    right:100%;
+    width:50%;
+}
+#region-main {
+    margin-right: 0;
+    margin-left: 420px;
+    overflow:hidden;
+}
+#region-pre,
+#region-post {
+    overflow: hidden;
+    position: relative;
+    width: 210px;
+}
+#region-pre {
+    float: left;
+    left: 210px;
+    margin-left: -50%;
+}
+#region-post {
+    float: left;
+    left: 0;
+}
+#region-main .region-content,
+#region-pre .region-content,
+#region-post .region-content{
+    overflow: hidden;
+    position: relative;
+    padding: 20px 10px;
+}
+/** Only side pre **/
+
+.side-pre-only #region-post-box {margin-left:-210px;}
+.side-pre-only #region-main {margin-left:210px;}
+.side-pre-only #region-pre {left: 0;}
+.side-pre-only #region-post {width: 0;}
+
+/** Only side post **/
+.side-post-only #region-main-box {left: 0;}
+.side-post-only #region-post-box {margin-left:-210px;}
+.side-post-only #region-main {margin-left:210px;}
+.side-post-only #page-content #region-pre {width: 0; left: 0; border: 0 none;}
+.side-post-only #page-content #region-post {width: 210px; left: 0}
+.has_dock.side-post-only .page-middle #region-main {margin-left: 210px;}
+
+/** No blocks whatsoever **/
+
+.content-only #region-main-box {left: 0;}
+.content-only #region-post-box {margin-left: 0;}
+.content-only #region-main {margin-left: 0;}
+.content-only #region-pre {border: 0 none; width: 0; left: 0;}
+.content-only #region-post {width: 0;}
