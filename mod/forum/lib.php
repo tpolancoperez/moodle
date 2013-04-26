@@ -3426,7 +3426,16 @@ function forum_print_post($post, $discussion, $forum, &$cm, $course, $ownpost=fa
     $by = new stdClass();
     $by->name = html_writer::link($postuser->profilelink, $postuser->fullname);
     $by->date = userdate($post->modified);
+    
+    // Word count patch applied by T.P.
     $output .= html_writer::tag('div', get_string('bynameondate', 'forum', $by), array('class'=>'author'));
+    $options = new stdClass;
+    $options->para    = false;
+    $options->trusted = $post->messagetrust;
+    $options->context = $modcontext;
+    $output .= html_writer::tag('span', '('.get_string('numwords','moodle', count_words(strip_tags($post->message))).')...', array('class'=>'post-word-count'));
+    // End this section of word count patch, one more below T.P.
+
 
     $output .= html_writer::end_tag('div'); //topic
     $output .= html_writer::end_tag('div'); //row
@@ -3449,11 +3458,12 @@ function forum_print_post($post, $discussion, $forum, &$cm, $course, $ownpost=fa
     if (!empty($attachments)) {
         $output .= html_writer::tag('div', $attachments, array('class'=>'attachments'));
     }
-
-    $options = new stdClass;
-    $options->para    = false;
-    $options->trusted = $post->messagetrust;
-    $options->context = $modcontext;
+    // Word count patch section 2 applied by T.P.
+    // $options = new stdClass;
+    // $options->para    = false;
+    // $options->trusted = $post->messagetrust;
+    // $options->context = $modcontext;
+    // End of second section word count patch T.P.
     if ($shortenpost) {
         // Prepare shortened version
         $postclass    = 'shortenedpost';
