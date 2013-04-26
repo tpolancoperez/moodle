@@ -227,12 +227,20 @@ function lti_build_request($instance, $typeconfig, $course) {
     }
 
     $role = lti_get_ims_role($USER, $instance->cmid, $instance->course);
-
+	////////////////////////////////////////////
+        // 2/12/13 - MIKE SEILER x5237
+        // Modified to use the "sourced_id" from the
+        // Banner LMB enrollment, which in our
+        // instance gets put into 'idnumber' in the
+        // database; use this instead of $USER->id.
+        // Also added 'username'
+        ////////////////////////////////////////////
     $requestparams = array(
         'resource_link_id' => $instance->id,
         'resource_link_title' => $instance->name,
         'resource_link_description' => $instance->intro,
-        'user_id' => $USER->id,
+        'user_id' => $USER->idnumber,
+        'username' => $USER->username,
         'roles' => $role,
         'context_id' => $course->id,
         'context_label' => $course->shortname,
