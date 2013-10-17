@@ -116,10 +116,10 @@ M.format_grid.shadebox.initialize_shadebox = function() {
 
     var content = document.getElementById('shadebox_content');
     content.style.position = 'absolute';
-    content.style.width = '800px';
+    content.style.width = '90%';
     content.style.top = '50px';
-    content.style.left = '50%';
-    content.style.marginLeft = '-400px';
+    content.style.left = '5%';
+    //content.style.marginLeft = '-400px';
     content.style.zIndex = '9000001';
 }
 
@@ -128,8 +128,8 @@ M.format_grid.shadebox.toggle_shadebox = function() {
     if (this.shadebox_open) {
         this.hide_shadebox();
         this.shadebox_open = false;
-        window.scrollTo(0, 0);
     } else {
+        window.scrollTo(0, 0);
         this.show_shadebox();
         this.shadebox_open = true;
     }

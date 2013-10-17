@@ -42,8 +42,11 @@ All 'Grid format' does is integrate with the course page and control it's layout
 with the format is in fact to do with a theme or core component.  Please be confident that it is an issue with 'Grid format'
 but if in doubt, ask.
 
-We operate a policy that we will fix all genuine issues for free.  Improvements are at my discretion.  We am happy to make bespoke
-customisations / improvements for a negotiated fee. 
+We operate a policy that we will fix all genuine issues for free.  Improvements are at our discretion.  We are happy to make bespoke
+customisations / improvements for a negotiated fee.  We will endeavour to respond to all requests for support as quickly as possible,
+if you require a faster service then offering payment for the service will expedite the response.
+
+It takes time and effort to maintain the format, therefore donations are appreciated.
 
 When reporting an issue you can post in the course format's forum on Moodle.org (currently 'moodle.org/mod/forum/view.php?id=47'), 
 on Moodle tracker 'tracker.moodle.org' ensuring that you chose the 'Non-core contributed modules' and 'Course Format: Grid'
@@ -111,6 +114,18 @@ Roadmap
 
 History
 =============
+10th August 2013 Version 2.5.3.1 - Stable
+  1.  Fixed CONTRIB-4216 - Error importing quizzes with grid course format.
+  2.  Fixed CONTRIB-4253 - mdl_log queried too often to generate New Activity tag.  This has been fixed by using the 'course_sections'
+      table instead to spot when a new activity / resource has been added since last login.
+
+4th August 2013 Version 2.5.3 - Stable
+Change by G J Barnard
+  1.  Fixed scroll to top when clicking on an icon.  Thanks to Javier Dorfsman for reporting this.
+  2.  Added in code developed by Nadav Kavalerchik to facilitate multi-lingual support for the 'new activity' icon.  Thank
+      you Nadav :).
+  3.  Adapted the width of the shade box such that it is dynamic against the size of the window.
+
 5th July 2013 Version 2.5.2 - Stable
 Change by G J Barnard
   1.  Code refactoring to reduce and separate the format as a separate entity.
