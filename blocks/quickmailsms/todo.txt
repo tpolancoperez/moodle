@@ -1,0 +1,6 @@
+
+Some things to do:
+
+   1. Replace the HTML editor with a standard text area.  I tried to do this by editing the formslib call, but there was some other function expecting input and I couldn't get it to work properly.  My workaround was to use the php function 'strip_tags' to remove any html from the form.  Ideas would be greatly appreciated.
+   2. Delete all references to code involving attachments, signatures and alternate emails.  As is, they are removed from the forms, but I think leaving the functionality in the code is not a good idea.  Again, ideas would be greatly appreciated.
+   3. Possibly have the 'install.xml' file automatically create the proper entries in mdl_user_info_field and mdl_user_info_data
