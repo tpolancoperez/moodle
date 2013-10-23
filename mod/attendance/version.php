@@ -22,10 +22,10 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$module->version  = 2013070403;
-$module->requires = 2012120300;
-$module->release = '2.4.1';
-$module->maturity  = MATURITY_ALPHA;
+$module->version  = 2013082901;
+$module->requires = 2013040500;
+$module->release = '2.5.2';
+$module->maturity  = MATURITY_STABLE;
 $module->cron     = 0;
 $module->component = 'mod_attendance';
 
@@ -33,8 +33,16 @@ $module->component = 'mod_attendance';
 // TODO: remove this asap.
 if (defined('MOODLE_INTERNAL')) { // Only run if config.php has already been included.
     global $DB;
-    if ($DB->record_exists('modules', array('name' =>'attforblock'))) {
+    $moduleexists = false;
+
+    try {
+        $moduleexists = $DB->record_exists('modules', array('name' =>'attforblock'));
+    } catch (Exception $e) {
+        // Probably a fresh install - modules table doesn't exist
+    }
+    if ($moduleexists) {
         require_once('locallib.php');
         attforblock_upgrade();
     }
+
 }

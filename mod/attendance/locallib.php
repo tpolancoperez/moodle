@@ -795,11 +795,21 @@ class attendance {
         }
 
         $info_array = array();
+        $maxlog = 7; // Only log first 10 sessions and last session in the log info. as we can only store 255 chars.
+        $i = 0;
         foreach ($sessions as $sess) {
-            $info_array[] = construct_session_full_date_time($sess->sessdate, $sess->duration);
+            if ($i > $maxlog) {
+                $lastsession = end($sessions);
+                $info_array[] = '...';
+                $info_array[] = construct_session_full_date_time($lastsession->sessdate, $lastsession->duration);
+                break;
+            } else {
+                $info_array[] = construct_session_full_date_time($sess->sessdate, $sess->duration);
+            }
+            $i++;
         }
-
-        $this->log('sessions added', $this->url_manage(), implode(', ', $info_array));
+        add_to_log($this->course->id, 'attendance', 'sessions added', $this->url_manage(),
+            implode(',', $info_array), $this->cm->id);
     }
 
     public function update_session_from_form_data($formdata, $sessionid) {
@@ -821,7 +831,7 @@ class attendance {
 
         $url = $this->url_sessions(array('sessionid' => $sessionid, 'action' => att_sessions_page_params::ACTION_UPDATE));
         $info = construct_session_full_date_time($sess->sessdate, $sess->duration);
-        $this->log('session updated', $url, $info);
+        add_to_log($this->course->id, 'attendance', 'session updated', $url, $info, $this->cm->id);
     }
 
     public function take_from_form_data($formdata) {
@@ -875,7 +885,7 @@ class attendance {
                 'sessionid' => $this->pageparams->sessionid,
                 'grouptype' => $this->pageparams->grouptype);
         $url = $this->url_take($params);
-        $this->log('attendance taked', $url, $USER->firstname.' '.$USER->lastname);
+        add_to_log($this->course->id, 'attendance', 'taken', $url, '', $this->cm->id);
 
         redirect($this->url_manage(), get_string('attendancesuccess', 'attendance'));
     }
@@ -1091,50 +1101,46 @@ class attendance {
 
         // All taked sessions (including previous groups).
 
-        if ($this->pageparams->startdate && $this->pageparams->enddate) {
-            $where = "ats.attendanceid = :aid AND ats.sessdate >= :csdate AND
-                      ats.sessdate >= :sdate AND ats.sessdate < :edate";
-        } else {
-            $where = "ats.attendanceid = :aid AND ats.sessdate >= :csdate";
-        }
-
-        $sql = "SELECT ats.id, ats.groupid, ats.sessdate, ats.duration, ats.description, al.statusid, al.remarks
-                  FROM {attendance_sessions} ats
-            RIGHT JOIN {attendance_log} al
-                    ON ats.id = al.sessionid AND al.studentid = :uid
-                 WHERE $where
-              ORDER BY ats.sessdate ASC";
-
-        $params = array(
-                'uid'       => $userid,
-                'aid'       => $this->id,
-                'csdate'    => $this->course->startdate,
-                'sdate'     => $this->pageparams->startdate,
-                'edate'     => $this->pageparams->enddate);
-        $sessions = $DB->get_records_sql($sql, $params);
-
-        // All sessions for current groups.
-
         $groups = array_keys(groups_get_all_groups($this->course->id, $userid));
         $groups[] = 0;
         list($gsql, $gparams) = $DB->get_in_or_equal($groups, SQL_PARAMS_NAMED, 'gid0');
 
         if ($this->pageparams->startdate && $this->pageparams->enddate) {
             $where = "ats.attendanceid = :aid AND ats.sessdate >= :csdate AND
-                      ats.sessdate >= :sdate AND ats.sessdate < :edate AND ats.groupid $gsql";
+                      ats.sessdate >= :sdate AND ats.sessdate < :edate";
+            $where2 = "ats.attendanceid = :aid2 AND ats.sessdate >= :csdate2 AND
+                      ats.sessdate >= :sdate2 AND ats.sessdate < :edate2 AND ats.groupid $gsql";
         } else {
-            $where = "ats.attendanceid = :aid AND ats.sessdate >= :csdate AND ats.groupid $gsql";
+            $where = "ats.attendanceid = :aid AND ats.sessdate >= :csdate";
+            $where2 = "ats.attendanceid = :aid2 AND ats.sessdate >= :csdate2 AND ats.groupid $gsql";
         }
 
         $sql = "SELECT ats.id, ats.groupid, ats.sessdate, ats.duration, ats.description, al.statusid, al.remarks
                   FROM {attendance_sessions} ats
-             LEFT JOIN {attendance_log} al
+                RIGHT JOIN {attendance_log} al
                     ON ats.id = al.sessionid AND al.studentid = :uid
                  WHERE $where
-              ORDER BY ats.sessdate ASC";
+            UNION
+                SELECT ats.id, ats.groupid, ats.sessdate, ats.duration, ats.description, al.statusid, al.remarks
+                  FROM {attendance_sessions} ats
+                LEFT JOIN {attendance_log} al
+                    ON ats.id = al.sessionid AND al.studentid = :uid2
+                 WHERE $where2
+             ORDER BY sessdate ASC";
 
+        $params = array(
+                'uid'       => $userid,
+                'aid'       => $this->id,
+                'csdate'    => $this->course->startdate,
+                'sdate'     => $this->pageparams->startdate,
+                'edate'     => $this->pageparams->enddate,
+                'uid2'       => $userid,
+                'aid2'       => $this->id,
+                'csdate2'    => $this->course->startdate,
+                'sdate2'     => $this->pageparams->startdate,
+                'edate2'     => $this->pageparams->enddate);
         $params = array_merge($params, $gparams);
-        $sessions = array_merge($sessions, $DB->get_records_sql($sql, $params));
+        $sessions = $DB->get_records_sql($sql, $params);
 
         foreach ($sessions as $sess) {
             if (empty($sess->description)) {
@@ -1154,8 +1160,8 @@ class attendance {
         list($sql, $params) = $DB->get_in_or_equal($sessionsids);
         $DB->delete_records_select('attendance_log', "sessionid $sql", $params);
         $DB->delete_records_list('attendance_sessions', 'id', $sessionsids);
-
-        $this->log('sessions deleted', null, get_string('sessionsids', 'attendance').implode(', ', $sessionsids));
+        add_to_log($this->course->id, 'attendance', 'sessions deleted', $this->url_manage(),
+            get_string('sessionsids', 'attendance').implode(', ', $sessionsids), $this->cm->id);
     }
 
     public function update_sessions_duration($sessionsids, $duration) {
@@ -1168,9 +1174,8 @@ class attendance {
             $sess->timemodified = $now;
             $DB->update_record('attendance_sessions', $sess);
         }
-
-        $this->log('sessions duration updated', $this->url_manage(),
-                   get_string('sessionsids', 'attendance').implode(', ', $sessionsids));
+        add_to_log($this->course->id, 'attendance', 'sessions duration updated', $this->url_manage(),
+            get_string('sessionsids', 'attendance').implode(', ', $sessionsids), $this->cm->id);
     }
 
     public function remove_status($statusid) {
@@ -1191,7 +1196,8 @@ class attendance {
             $rec->grade = $grade;
             $DB->insert_record('attendance_statuses', $rec);
 
-            $this->log('status added', $this->url_preferences(), $acronym.': '.$description.' ('.$grade.')');
+            add_to_log($this->course->id, 'attendance', 'status added', $this->url_preferences(),
+                $acronym.': '.$description.' ('.$grade.')', $this->cm->id);
         } else {
             print_error('cantaddstatus', 'attendance', $this->url_preferences());
         }
@@ -1222,27 +1228,8 @@ class attendance {
         }
         $DB->update_record('attendance_statuses', $status);
 
-        $this->log('status updated', $this->url_preferences(), implode(' ', $updated));
-    }
-
-    /**
-     * wrapper around {@see add_to_log()}
-     *
-     * @param string $action to be logged
-     * @param moodle_url $url absolute url, if null will be used $this->url_manage()
-     * @param mixed $info additional info, usually id in a table
-     */
-    public function log($action, moodle_url $url = null, $info = null) {
-        if (is_null($url)) {
-            $url = $this->url_manage();
-        }
-
-        if (is_null($info)) {
-            $info = $this->id;
-        }
-
-        $logurl = att_log_convert_url($url);
-        add_to_log($this->course->id, 'attendance', $action, $logurl, $info, $this->cm->id);
+        add_to_log($this->course->id, 'attendance', 'status updated', $this->url_preferences(),
+            implode(' ', $updated), $this->cm->id);
     }
 }
 
@@ -1407,4 +1394,11 @@ function attforblock_upgrade() {
     // Now convert module record.
     $module->name = 'attendance';
     $DB->update_record('modules', $module);
+
+    // Clear cache for courses with attendances.
+    $attendances = $DB->get_recordset('attendance', array(), '', 'course');
+    foreach ($attendances as $attendance) {
+        rebuild_course_cache($attendance->course, true);
+    }
+    $attendances->close();
 }
