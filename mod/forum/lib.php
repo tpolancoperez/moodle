@@ -3101,7 +3101,7 @@ function forum_make_mail_post($course, $cm, $forum, $discussion, $post, $userfro
     $by->name = '<a href="'.$CFG->wwwroot.'/user/view.php?id='.$userfrom->id.'&amp;course='.$course->id.'">'.$fullname.'</a>';
     $by->date = userdate($post->modified, '', $userto->timezone);
     $output .= '<div class="author">'.get_string('bynameondate', 'forum', $by).'</div>';
-
+    
     $output .= '</td></tr>';
 
     $output .= '<tr><td class="left side" valign="top">';
@@ -3442,8 +3442,16 @@ function forum_print_post($post, $discussion, $forum, &$cm, $course, $ownpost=fa
     $by = new stdClass();
     $by->name = html_writer::link($postuser->profilelink, $postuser->fullname);
     $by->date = userdate($post->modified);
+    // Word count patch applied by T.P. 10/28/13
+    //$output .= html_writer::tag('div', get_string('bynameondate', 'forum', $by), array('class'=>'author'));
     $output .= html_writer::tag('div', get_string('bynameondate', 'forum', $by), array('class'=>'author'));
-
+    $options = new stdClass;
+    $options->para    = false;
+    $options->trusted = $post->messagetrust;
+    $options->context = $modcontext;
+    $output .= html_writer::tag('span', '('.get_string('numwords','moodle', count_words(strip_tags($post->message))).')...', array('class'=>'post-word-count'));
+    // End this section of word count patch, one more below T.P.
+    
     $output .= html_writer::end_tag('div'); //topic
     $output .= html_writer::end_tag('div'); //row
 
@@ -3465,11 +3473,14 @@ function forum_print_post($post, $discussion, $forum, &$cm, $course, $ownpost=fa
     if (!empty($attachments)) {
         $output .= html_writer::tag('div', $attachments, array('class'=>'attachments'));
     }
+    
+    // Word count patch section 2 applied by T.P. 10/28/13
+    // $options = new stdClass;
+    // $options->para    = false;
+    // $options->trusted = $post->messagetrust;
+    // $options->context = $modcontext;
+    // End of second section word count patch T.P.
 
-    $options = new stdClass;
-    $options->para    = false;
-    $options->trusted = $post->messagetrust;
-    $options->context = $modcontext;
     if ($shortenpost) {
         // Prepare shortened version by filtering the text then shortening it.
         $postclass    = 'shortenedpost';
