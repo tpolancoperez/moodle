@@ -41,6 +41,7 @@ a:hover {
 }
 
 /* Header
+   Modified nav bar values for headermain margin top 2em Thelma Polanco-Perez 12/6/13
 ------------------------*/
 
 #page-header {
@@ -54,7 +55,7 @@ a:hover {
 
 .headermain {
     font-weight: normal;
-    margin: 1em 0.5em 0.75em;
+    margin: 2em 0.5em 0.75em;
 }
 
 #page-content {
@@ -193,7 +194,7 @@ body.has_dock {
 }
 
 #dock .dockeditem.firstdockitem {
-    margin-top: 50px;
+    margin-top: 100px;
 }
 
 #dock .dockeditem {
