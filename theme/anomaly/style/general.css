@@ -23,6 +23,7 @@ html, body {
     min-width: 0;
 }
 /** Header **/
+/** Modified nav bar values for headermain margin 55px Thelma Polanco-Perez 12/13/13 **/
 
 .pagelayout-frontpage #page-header {
     border-bottom: 5px solid #697F55;
@@ -36,7 +37,7 @@ html, body {
 }
 h1.headermain {
     font-size: 30px;
-    margin: 20px;
+    margin: 55px;
     font-weight: 400;
 }
 .pagelayout-frontpage h1.headermain,
