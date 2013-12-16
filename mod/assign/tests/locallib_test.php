@@ -166,6 +166,8 @@ class mod_assign_locallib_testcase extends mod_assign_base_testcase {
         $data->grade = '50.0';
         $assign->testable_apply_grade_to_user($data, $this->students[0]->id, 0);
 
+        
+
         // Now see if the data is in the gradebook.
         $gradinginfo = grade_get_grades($this->course->id,
                                         'mod',
@@ -439,6 +441,10 @@ class mod_assign_locallib_testcase extends mod_assign_base_testcase {
         $data = new stdClass();
         $data->grade = '50.0';
         $assign->testable_apply_grade_to_user($data, $this->students[0]->id, 0);
+        
+        // Added MDL-33600 Assign: Allow teachers to skip notifying students about grades. Thelma Polanco-Perez 12/16/13
+        $data->sendstudentnotifications = false;
+        $assign->testable_apply_grade_to_user($data, $this->students[2]->id, 0);
 
         // Now run cron and see that one message was sent.
         $this->preventResetByRollback();
@@ -448,7 +454,9 @@ class mod_assign_locallib_testcase extends mod_assign_base_testcase {
         assign::cron();
 
         $messages = $sink->get_messages();
-        $this->assertEquals(1, count($messages));
+        // Added MDL-33600 Assign: Allow teachers to skip notifying students about grades. Thelma Polanco-Perez 12/16/13
+        // The sent count should be 2, because the 3rd one was marked as do not send notifications.
+        $this->assertEquals(2, count($messages));
         $this->assertEquals(1, $messages[0]->notification);
         $this->assertEquals($assign->get_instance()->name, $messages[0]->contexturlname);
     }

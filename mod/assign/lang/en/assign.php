@@ -20,6 +20,7 @@
  * @package   mod_assign
  * @copyright 2012 NetSpot {@link http://www.netspot.com.au}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * Added MDL-33600 Assign: Allow teachers to skip notifying students about grades. Thelma Polanco-Perez 12/16/13
  */
 
 $string['activityoverview'] = 'You have assignments that need attention';
@@ -268,6 +269,8 @@ $string['savegradingresult'] = 'Grade';
 $string['saveallquickgradingchanges'] = 'Save all quick grading changes';
 $string['savenext'] = 'Save and show next';
 $string['scale'] = 'Scale';
+$string['sendstudentnotifications'] = 'Notify students';
+$string['sendstudentnotifications_help'] = 'If enabled, students receive a message about the updated grade or feedback.';
 $string['sendnotifications'] = 'Notify graders about submissions';
 $string['sendnotifications_help'] = 'If enabled, graders (usually teachers) receive a message whenever a student submits an assignment, early, on time and late. Message methods are configurable.';
 $string['selectlink'] = 'Select...';
