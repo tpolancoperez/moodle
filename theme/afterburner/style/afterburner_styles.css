@@ -39,6 +39,7 @@ Page
 }
 /*
 Header and Logo
+Modified nav bar values for headermenu top 30px Thelma Polanco-Perez 12/13/13
 ---------------------------*/
 #page-header {
     height: 100px;
@@ -61,7 +62,7 @@ a.logo {
     margin: 0;
     text-align: right;
     position: relative;
-    top: 10px;
+    top: 30px;
 }
 .headermenu {
     right: 10px;

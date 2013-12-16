@@ -1,10 +1,12 @@
 /*
 Docking Module
+Modified nav bar values for dock  top 60px Thelma Polanco-Perez 12/13/13
 ---------------*/
+
 #dock {
     width: 30px;
     position:fixed;
-    top: 0;
+    top: 60;
     left: 0;
     height: 100%;
     z-index:11000;
