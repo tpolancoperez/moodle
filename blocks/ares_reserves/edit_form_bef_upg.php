@@ -13,8 +13,7 @@ class block_ares_reserves_edit_form extends block_edit_form {
         
         if(empty($this->config->courseSemester))
         {
-            //$this->config->courseSemester = "current_semester";
-            $this->config->courseSemester = "";
+            $this->config->courseSemester = "current_semester";
         }
         
         if(isset($CFG->defaultDisplayFormat))
@@ -29,7 +28,7 @@ class block_ares_reserves_edit_form extends block_edit_form {
         // Student view config options
         if(empty($this->config->student_itemDisplayMode))
         {
-            $this->config->student_itemDisplayMode = "none";
+            $this->config->student_itemDisplayMode = "link";
         }
         if(empty($this->config->student_itemDisplayFormat))
         {
@@ -43,7 +42,7 @@ class block_ares_reserves_edit_form extends block_edit_form {
         // Teacher view config options
         if(empty($this->config->teacher_itemDisplayMode))
         {
-            $this->config->teacher_itemDisplayMode = "none";
+            $this->config->teacher_itemDisplayMode = "link";
         }
         if(empty($this->config->teacher_itemDisplayFormat))
         {
@@ -60,48 +59,54 @@ class block_ares_reserves_edit_form extends block_edit_form {
         $semesterList = $this->GetSemesters();
         $mform->addElement('select', 'config_courseSemester', get_string('semesterLabel', 'block_ares_reserves'), $semesterList);
 		$mform->setDefault('config_courseSemester', $this->config->courseSemester);
-        
+        ///////////////////////////////////////////////////
+	// MODIFIED 7/26/2012
+	// COMMENTING OUT ADDELEMENT REMOVES ITEMS FROM FORM
+	// UNCOMMENT IF YOU WISH TO ADD ELEMENTS BACK TO ERESERVES FORM
+	// MODIFIED BY MIKE SEILER & MATT LUMPKIN
+	// SET THE DEFAULT VALUES IN BLOCK_ARES_RESERVES.PHP FUNCTION LoadStartingConfig() 
+        // Added to Moodle v.2.5. Thelma Polanco-Perez. 12/16/13
         // Student item display format
-        $mform->addElement('select', 'config_student_itemDisplayFormat', get_string('student_itemDisplayFormatLabel', 'block_ares_reserves'), $formatTypes);
+        //$mform->addElement('select', 'config_student_itemDisplayFormat', get_string('student_itemDisplayFormatLabel', 'block_ares_reserves'), $formatTypes);
         $mform->setDefault('config_student_itemDisplayFormat', $this->config->student_itemDisplayFormat);
         
         // Student item display mode
-        $mform->addElement('select', 'config_student_itemDisplayMode', get_string('student_itemDisplayModeLabel', 'block_ares_reserves'), $itemDisplayModes);
+        //$mform->addElement('select', 'config_student_itemDisplayMode', get_string('student_itemDisplayModeLabel', 'block_ares_reserves'), $itemDisplayModes);
         $mform->setDefault('config_student_itemDisplayMode', $this->config->student_itemDisplayMode);
         
         // Student course display mode
-        $mform->addElement('select', 'config_student_courseDisplayMode', get_string('student_courseDisplayModeLabel', 'block_ares_reserves'), $courseDisplayModes);
+        //$mform->addElement('select', 'config_student_courseDisplayMode', get_string('student_courseDisplayModeLabel', 'block_ares_reserves'), $courseDisplayModes);
         $mform->setDefault('config_student_courseDisplayMode', $this->config->student_courseDisplayMode);
         
         // Teacher item display format
-        $mform->addElement('select', 'config_teacher_itemDisplayFormat', get_string('teacher_itemDisplayFormatLabel', 'block_ares_reserves'), $formatTypes);
+        //$mform->addElement('select', 'config_teacher_itemDisplayFormat', get_string('teacher_itemDisplayFormatLabel', 'block_ares_reserves'), $formatTypes);
         $mform->setDefault('config_teacher_itemDisplayFormat', $this->config->teacher_itemDisplayFormat);
         
         // Teacher item display mode
-        $mform->addElement('select', 'config_teacher_itemDisplayMode', get_string('teacher_itemDisplayModeLabel', 'block_ares_reserves'), $itemDisplayModes);
+        //$mform->addElement('select', 'config_teacher_itemDisplayMode', get_string('teacher_itemDisplayModeLabel', 'block_ares_reserves'), $itemDisplayModes);
         $mform->setDefault('config_teacher_itemDisplayMode', $this->config->teacher_itemDisplayMode);
         
         // Teacher course display mode
-        $mform->addElement('select', 'config_teacher_courseDisplayMode', get_string('teacher_courseDisplayModeLabel', 'block_ares_reserves'), $courseDisplayModes);
+        //$mform->addElement('select', 'config_teacher_courseDisplayMode', get_string('teacher_courseDisplayModeLabel', 'block_ares_reserves'), $courseDisplayModes);
         $mform->setDefault('config_teacher_courseDisplayMode', $this->config->teacher_courseDisplayMode);        
     }
 	
 	function GetSemesters() {
 		global $CFG;
 		
-        $semesters = array("current_semester" => "Current Semester");
+        $semesters = array("current_semester" => "Current Quarter");
         
-		$webServiceLocation = $CFG->block_ares_reserves_serviceLoc."/areswebservice.asmx";
-        $userAgent = (isset($CFG->block_ares_reserves_userAgent) ? $CFG->block_ares_reserves_userAgent : "Moodle");
-
-		// Setting location to override WSDL location in order to be able to use a service such as Runscope
-        $options = array(
-            "user_agent"    => $userAgent,
-            "location"      => $webServiceLocation,
-            "cache_wsdl"    => WSDL_CACHE_NONE
-        );
-
-        $soapClient = new SoapClient($webServiceLocation."?wsdl", $options);
+		if(isset($CFG->block_ares_reserves_userAgent))
+		{
+			$userAgent = $CFG->block_ares_reserves_userAgent;
+		}
+		else
+		{
+			$userAgent = "Moodle";
+		}
+		
+        ini_set("soap.wsdl_cache_enabled", "0");
+        $soapClient = new SoapClient($CFG->block_ares_reserves_serviceLoc."/areswebservice.asmx?wsdl", array("user_agent" => $userAgent));
         
 		$semesterList = $soapClient->GetSemesters()->GetSemestersResult;
 		if(property_exists($semesterList, "MySemester"))

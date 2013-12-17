@@ -7,6 +7,7 @@
         
 		function init()
         {
+                        // Change title from Ares Reserves to eReserves. Thelma Polanco-Perez. 12/16/13
 			$this->title = 'eReserves';
 		}
 
